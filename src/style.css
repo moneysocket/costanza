@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.main-button {
+    @apply bg-yellow-700 hover:bg-yellow-600 text-white font-bold py-2 px-10 rounded;
+}
+
+.tx-button-qr {
+    @apply bg-gray-600 hover:bg-gray-300 text-gray-300 py-2;
+}
+
+.tx-button-socket {
+    @apply bg-gray-500 hover:bg-gray-300 text-gray-300 py-2;
+}
+
+.section-background {
+    @apply text-center bg-yellow-400 px-5 py-3 m-2 rounded;
+}
+
+
