@@ -15,6 +15,13 @@ class CostanzaController {
         }).bind(this);
     }
 
+    connectToAppConsumer(scan_str) {
+        console.log("app consumer connect stub");
+    }
+
+    connectToWalletProvider(scan_str) {
+        console.log("wallet provider connect stub");
+    }
 
     postScanResult(scan_str) {
         var action = this.scan_interpret.interpret_action(scan_str);
@@ -31,13 +38,15 @@ class CostanzaController {
             break;
         case "CONNECT_WALLET_BEACON":
             // TODO
-            this.view.changeToConnect(scan_str);
-            this.controller.connectToWalletProvider(scan_str);
+            //this.view.changeToConnect(scan_str);
+            this.view.changeToMain();
+            this.connectToWalletProvider(scan_str);
             break;
         case "CONNECT_APP_BEACON":
             // TODO
-            this.view.changeToConnect(scan_str);
-            this.controller.connectToAppConsumer(scan_str);
+            //this.view.changeToConnect(scan_str);
+            this.view.changeToMain();
+            this.connectToAppConsumer(scan_str);
             break;
         case "CONNECT_BEACON_ERROR":
             this.view.changeToError(

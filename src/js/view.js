@@ -54,6 +54,18 @@ class CostanzaView {
         s.onbackclick = (function() {
             this.changeToMain();
         }).bind(this);
+        s.onwalletproviderclick = (function() {
+            this.changeToWalletProviderSetup();
+        }).bind(this);
+        s.onappconsumerclick = (function() {
+            this.changeToAppConsumerSetup();
+        }).bind(this);
+        s.onbolt11receiveclick = (function() {
+            this.changeToBolt11Receive();
+        }).bind(this);
+        s.onstoragesettingsclick = (function() {
+            this.changeToStorageSettings();
+        }).bind(this);
         return s;
     }
 
@@ -114,6 +126,22 @@ class CostanzaView {
     changeToConnect(beacon) {
         D.deleteChildren(this.app_div);
         // TODO
+    }
+
+    changeToWalletProviderSetup() {
+        console.log("wallet provider setup stub");
+    }
+
+    changeToAppConsumerSetup() {
+        console.log("app consumer setup stub");
+    }
+
+    changeToBolt11Receive() {
+        console.log("receive bolt11 stub");
+    }
+
+    changeToStorageSettings() {
+        console.log("storage settings stub");
     }
 }
 
