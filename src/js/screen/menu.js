@@ -10,6 +10,11 @@ class MenuScreen {
     constructor(app_div) {
         this.app_div = app_div;
         this.onbackclick = null;
+
+        this.onwalletproviderclick = null;
+        this.onappconsumerclick = null;
+        this.onbolt11receiveclick = null;
+        this.onstoragesettingsclick = null;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -44,6 +49,63 @@ class MenuScreen {
         this.drawMenuTitle(title_flex);
     }
 
+    drawWalletProviderEntry(div) {
+        var d = D.emptyDiv(div,
+                           "bg-gray-500 hover:bg-gray-300 text-gray-300 py-2");
+        d.onclick = (function() {
+            this.onwalletproviderclick();
+        }).bind(this);
+        var flex = D.emptyDiv(d, "flex items-center justify-start");
+        var icon_span = D.emptySpan(flex, "px-2 font-bold");
+        I.cog1x(icon_span);
+        D.textSpan(flex, "Wallet Provider Connection", "flex-grow text-sm");
+    }
+
+    drawAppConsumerEntry(div) {
+        var d = D.emptyDiv(div,
+                           "bg-gray-500 hover:bg-gray-300 text-gray-300 py-2");
+        d.onclick = (function() {
+            this.onappconsumerclick();
+        }).bind(this);
+        var flex = D.emptyDiv(d, "flex items-center justify-start");
+        var icon_span = D.emptySpan(flex, "px-2 font-bold");
+        I.cog1x(icon_span);
+        D.textSpan(flex, "App Consumer Connection", "flex-grow text-sm");
+    }
+
+    drawCreateBolt11Entry(div) {
+        var d = D.emptyDiv(div,
+                           "bg-gray-500 hover:bg-gray-300 text-gray-300 py-2");
+        d.onclick = (function() {
+            this.onbolt11receiveclick();
+        }).bind(this);
+        var flex = D.emptyDiv(d, "flex items-center justify-start");
+        var icon_span = D.emptySpan(flex, "px-2 font-bold");
+        I.bolt(icon_span);
+        D.textSpan(flex, "Create Bolt11 To Recieve", "flex-grow text-sm");
+    }
+
+    drawStorageSettingsEntry(div) {
+        var d = D.emptyDiv(div,
+                           "bg-gray-500 hover:bg-gray-300 text-gray-300 py-2");
+        d.onclick = (function() {
+            this.onstoragesettingsclick();
+        }).bind(this);
+        var flex = D.emptyDiv(d, "flex items-center justify-start");
+        var icon_span = D.emptySpan(flex, "px-2 font-bold");
+        I.floppy(icon_span);
+        D.textSpan(flex, "Storage Settings", "flex-grow text-sm");
+    }
+
+    drawEntryPanel(div) {
+        var flex = D.emptyDiv(div,
+                              "flex-col justify-evenly section-background");
+        this.drawWalletProviderEntry(flex);
+        this.drawAppConsumerEntry(flex);
+        this.drawCreateBolt11Entry(flex);
+        this.drawStorageSettingsEntry(flex);
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // Screens
     ///////////////////////////////////////////////////////////////////////////
@@ -52,6 +114,7 @@ class MenuScreen {
         var flex = D.emptyDiv(this.app_div, "flex flex-col h-screen");
         var flex_top = D.emptyDiv(flex, "flex-none");
         this.drawTitlePanel(flex_top);
+        this.drawEntryPanel(flex_top);
     }
 }
 

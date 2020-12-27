@@ -5,6 +5,8 @@
 var D = require("./dom.js").DomUtl;
 
 const FLYING_MONEY = "💸";
+const BOLT = "⚡";
+const FLOPPY = "💾";
 
 class IconUtl {
     static qrcode2x(div) {
@@ -51,8 +53,24 @@ class IconUtl {
         return D.emptyI(div, "fas fa-2x fa-bolt");
     }
 
+    static cog2x(div) {
+        return D.emptyI(div, "fas fa-2x fa-cog");
+    }
+
+    static cog1x(div) {
+        return D.emptyI(div, "fas fa-cog");
+    }
+
     static flyingmoney(div) {
         return D.textSpan(div, FLYING_MONEY);
+    }
+
+    static bolt(div) {
+        return D.textSpan(div, BOLT);
+    }
+
+    static floppy(div) {
+        return D.textSpan(div, FLOPPY);
     }
 }
 
