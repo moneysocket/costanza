@@ -8,6 +8,10 @@ var MainScreen = require("./screen/main.js").MainScreen;
 var MenuScreen = require("./screen/menu.js").MenuScreen;
 var ScanScreen = require("./screen/scan.js").ScanScreen;
 var ErrorScreen = require("./screen/error.js").ErrorScreen;
+var ConnectWalletScreen = require(
+    "./screen/connect-wallet.js").ConnectWalletScreen;
+var ConnectingWalletScreen = require(
+    "./screen/connecting-wallet.js").ConnectingWalletScreen;
 
 
 class CostanzaView {
@@ -18,12 +22,18 @@ class CostanzaView {
         this.scan_screen = this.setupScanScreen(this.app_div);
         this.error_screen = this.setupErrorScreen(this.app_div);
         this.menu_screen = this.setupMenuScreen(this.app_div);
+        this.connect_wallet_screen =
+            this.setupConnectWalletScreen(this.app_div);
+        this.connecting_wallet_screen =
+            this.setupConnectingWalletScreen(this.app_div);
 
         this.receipt_screen = null;
         this.bolt11_screen = null;
-        this.connect_screen = null;
 
         this.onscanresult = null;
+
+        this.ongeneratewalletbeaconselect = null;
+        this.onconnectstoredwalletselect = null;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -33,8 +43,7 @@ class CostanzaView {
     setupMainScreen(div) {
         var s = new MainScreen(div);
         s.onconnectwalletclick = (function() {
-            this.changeToScan();
-            this.scan_screen.startScanning();
+            this.changeToWalletProviderSetup();
         }).bind(this);
         s.onscanclick = (function() {
             this.changeToScan();
@@ -90,6 +99,38 @@ class CostanzaView {
         return s;
     }
 
+    setupConnectWalletScreen(div) {
+        var s = new ConnectWalletScreen(div, this.model);
+        s.onbackclick = (function() {
+            this.changeToMain();
+        }).bind(this);
+        s.onbeaconselect = (function(result) {
+            this.onscanresult(result);
+        }).bind(this);
+        s.ongenerateselect = (function() {
+            this.ongeneratewalletbeaconselect();
+        }).bind(this);
+        s.onscanselect = (function() {
+            this.changeToScan();
+            this.scan_screen.startScanning();
+        }).bind(this);
+        s.onconnectstoredselect = (function() {
+            this.onconnectstoredwalletselect();
+        }).bind(this);
+        s.onforgetselect = (function() {
+            this.onforgetselect();
+        }).bind(this);
+        return s;
+    }
+
+    setupConnectingWalletScreen(div) {
+        var s = new ConnectingWalletScreen(div, this.model);
+        s.ondisconnectclick = (function() {
+            this.changeToMain();
+        }).bind(this);
+        return s;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // goto ui
     ///////////////////////////////////////////////////////////////////////////
@@ -126,9 +167,20 @@ class CostanzaView {
     changeToConnect(beacon) {
         D.deleteChildren(this.app_div);
         // TODO
+        //this.connect_wallet_screen.drawConnnecting(beacon);
+        this.connect_wallet_screen.draw();
+    }
+
+    changeToConnecting() {
+        D.deleteChildren(this.app_div);
+        // TODO
+        //this.connect_wallet_screen.drawConnnecting(beacon);
+        this.connecting_wallet_screen.draw();
     }
 
     changeToWalletProviderSetup() {
+        D.deleteChildren(this.app_div);
+        this.connect_wallet_screen.draw();
         console.log("wallet provider setup stub");
     }
 

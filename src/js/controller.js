@@ -13,6 +13,18 @@ class CostanzaController {
         this.view.onscanresult = (function(scan_str) {
             this.postScanResult(scan_str);
         }).bind(this);
+        this.view.ongeneratewalletbeaconselect = (function() {
+            var beacon = this.model.generateNewBeacon();
+            this.postScanResult(beacon);
+        }).bind(this);
+        this.view.onconnectstoredwalletselect = (function() {
+            var beacon = this.model.getStoredConsumerBeacon();
+            this.postScanResult(beacon);
+        }).bind(this);
+        this.view.onforgetselect = (function() {
+            this.model.clearStoredConsumerBeacon();
+            this.view.changeToConnect()
+        }).bind(this);
     }
 
     connectToAppConsumer(scan_str) {
@@ -20,8 +32,17 @@ class CostanzaController {
     }
 
     connectToWalletProvider(scan_str) {
-        console.log("wallet provider connect stub");
+        this.view.changeToConnecting();
     }
+
+    storeWalletBeacon(beacon) {
+        this.model.setEphemeralConsumerBeacon(beacon);
+        if (this.model.hasStoredConsumerBeacon()) {
+            return;
+        }
+        this.model.storeConsumerBeacon(beacon);
+    }
+
 
     postScanResult(scan_str) {
         var action = this.scan_interpret.interpret_action(scan_str);
@@ -39,7 +60,7 @@ class CostanzaController {
         case "CONNECT_WALLET_BEACON":
             // TODO
             //this.view.changeToConnect(scan_str);
-            this.view.changeToMain();
+            this.storeWalletBeacon(scan_str);
             this.connectToWalletProvider(scan_str);
             break;
         case "CONNECT_APP_BEACON":
