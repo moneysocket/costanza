@@ -7,6 +7,9 @@ const Uuid = require("moneysocket").Uuid;
 const Timestamp = require("moneysocket").Timestamp;
 const Wad = require("moneysocket").Wad;
 
+const MoneysocketBeacon = require('moneysocket').MoneysocketBeacon;
+const WebsocketLocation = require('moneysocket').WebsocketLocation;
+
 const ProviderStack = require('moneysocket').ProviderStack;
 const ConsumerStack = require('moneysocket').ConsumerStack;
 
@@ -52,11 +55,19 @@ var Receipts = [
 ];
 
 
+const DEFAULT_HOST = "relay.socket.money";
+const DEFAULT_PORT = 443;
+const DEFAULT_USE_TLS = true;
+
+
 class CostanzaModel {
     constructor() {
         this.receipts = Receipts;
         this.provider_stack = this.setupProviderStack();
         this.consumer_stack = this.setupConsumerStack();
+
+        console.log("consumer_beacon: " + this.getStoredConsumerBeacon());
+        this.ephemeral_wallet_beacon = this.getStoredConsumerBeacon();
     }
 
     setupProviderStack() {
@@ -165,6 +176,44 @@ class CostanzaModel {
 
     connectToAppConsumer(beacon) {
     }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // call-ins
+    ///////////////////////////////////////////////////////////////////////////
+
+    setEphemeralConsumerBeacon(beacon) {
+        this.ephemeral_wallet_beacon = beacon;
+    }
+
+    getEphemeralConsumerBeacon() {
+        return this.ephemeral_wallet_beacon;
+    }
+
+    hasStoredConsumerBeacon() {
+        return window.localStorage.getItem("consumer_beacon") ? true: false;
+    }
+
+    getStoredConsumerBeacon() {
+        return window.localStorage.getItem("consumer_beacon");
+    }
+
+    storeConsumerBeacon(beacon) {
+        window.localStorage.setItem("consumer_beacon", beacon);
+    }
+
+    clearStoredConsumerBeacon() {
+        window.localStorage.removeItem("consumer_beacon");
+    }
+
+    generateNewBeacon() {
+        var location = new WebsocketLocation(DEFAULT_HOST, DEFAULT_PORT,
+                                             DEFAULT_USE_TLS);
+        var beacon = new MoneysocketBeacon();
+        beacon.addLocation(location);
+        var beacon_str = beacon.toBech32Str();
+        return beacon_str;
+    }
+
 }
 
 

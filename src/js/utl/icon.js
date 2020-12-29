@@ -57,8 +57,24 @@ class IconUtl {
         return D.emptyI(div, "fas fa-2x fa-cog");
     }
 
+    static magic2x(div) {
+        return D.emptyI(div, "fas fa-2x fa-magic");
+    }
+
+    static trash2x(div) {
+        return D.emptyI(div, "fas fa-2x fa-trash");
+    }
+
     static cog1x(div) {
         return D.emptyI(div, "fas fa-cog");
+    }
+
+    static plug2x(div) {
+        return D.emptyI(div, "fas fa-2x fa-plug");
+    }
+
+    static copy2x(div) {
+        return D.emptyI(div, "fas fa-2x fa-copy");
     }
 
     static flyingmoney(div) {

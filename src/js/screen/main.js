@@ -9,7 +9,7 @@ var Wad = require("moneysocket").Wad;
 class MainScreen {
     constructor(app_div) {
         this.app_div = app_div;
-        this.onproviderclick = null;
+        this.onconnectwalletclick = null;
         this.onscanclick = null;
         this.onmenuclick = null;
         this.onreceiptclick = null;
