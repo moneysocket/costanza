@@ -66,6 +66,8 @@ class CostanzaModel {
         this.provider_stack = this.setupProviderStack();
         this.consumer_stack = this.setupConsumerStack();
 
+        this.onconsumerstackevent = null;
+
         console.log("consumer_beacon: " + this.getStoredConsumerBeacon());
         this.ephemeral_wallet_beacon = this.getStoredConsumerBeacon();
     }
@@ -130,6 +132,9 @@ class CostanzaModel {
     }
 
     consumerOnStackEvent(layer_name, nexus, status) {
+        if (this.onconsumerstackevent != null) {
+            this.onconsumerstackevent(layer_name, status);
+        }
     }
 
     consumerOnProviderInfo(provider_info) {
@@ -171,7 +176,14 @@ class CostanzaModel {
     // call-ins
     ///////////////////////////////////////////////////////////////////////////
 
-    connectToWalletProvider(beacon) {
+    connectToWalletProvider(beacon_str) {
+        console.log("connect: " + beacon_str);
+        var [beacon, err] = MoneysocketBeacon.fromBech32Str(beacon_str);
+        if (err != null) {
+            console.log("could not interpret: " + beacon_str + " : " + err);
+            return
+        }
+        this.consumer_stack.doConnect(beacon);
     }
 
     connectToAppConsumer(beacon) {

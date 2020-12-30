@@ -25,14 +25,19 @@ class CostanzaController {
             this.model.clearStoredConsumerBeacon();
             this.view.changeToConnect()
         }).bind(this);
+
+        this.model.onconsumerstackevent = (function(layer_name, event) {
+            this.view.postWalletConnectEvent(layer_name, event);
+        }).bind(this);
     }
 
-    connectToAppConsumer(scan_str) {
+    connectToAppConsumer(beacon) {
         console.log("app consumer connect stub");
     }
 
-    connectToWalletProvider(scan_str) {
+    connectToWalletProvider(beacon) {
         this.view.changeToConnecting();
+        this.model.connectToWalletProvider(beacon);
     }
 
     storeWalletBeacon(beacon) {

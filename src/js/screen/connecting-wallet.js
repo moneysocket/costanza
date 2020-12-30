@@ -5,14 +5,22 @@
 
 const Kjua = require('kjua');
 
-var D = require('../utl/dom.js').DomUtl;
-var I = require('../utl/icon.js').IconUtl;
+const D = require('../utl/dom.js').DomUtl;
+const I = require('../utl/icon.js').IconUtl;
+
+const ConnectProgress = require("./connect-progress.js").ConnectProgress;
+
 
 
 class ConnectingWalletScreen {
     constructor(app_div, model) {
         this.app_div = app_div;
         this.model = model;
+
+        var d = document.createElement("div");
+        D.setClass(d, "font-black text-2xl text-yellow-800");
+        this.connect_progress = new ConnectProgress(d);
+
         this.ondisconnectclick = null;
     }
 
@@ -96,6 +104,10 @@ class ConnectingWalletScreen {
         var q = D.emptyDiv(flex, "flex justify-center");
         this.drawQr(q);
 
+        var p = D.emptyDiv(flex, "py-4");
+        p.appendChild(this.connect_progress.parent_div);
+        this.connect_progress.draw("DISCONNECTED");
+
         var buttons = D.emptyDiv(flex, "flex justify-around py-4");
         this.drawDisconnectButton(buttons,
                              (function() {this.doDisconnect()}).bind(this));
@@ -106,6 +118,10 @@ class ConnectingWalletScreen {
     ///////////////////////////////////////////////////////////////////////////
     // Screens
     ///////////////////////////////////////////////////////////////////////////
+
+    postConnectEvent(layer_name, event) {
+       this.connect_progress.drawStackEvent(layer_name, event);
+    }
 
     draw() {
         //console.log("path: " + QrScanner.WORKER_PATH);
