@@ -2,16 +2,20 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
-var D = require('./utl/dom.js').DomUtl;
+const D = require('./utl/dom.js').DomUtl;
 
-var MainScreen = require("./screen/main.js").MainScreen;
-var MenuScreen = require("./screen/menu.js").MenuScreen;
-var ScanScreen = require("./screen/scan.js").ScanScreen;
-var ErrorScreen = require("./screen/error.js").ErrorScreen;
-var ConnectWalletScreen = require(
+const CONNECT_STATE = require('./model.js').CONNECT_STATE;
+
+const MainScreen = require("./screen/main.js").MainScreen;
+const MenuScreen = require("./screen/menu.js").MenuScreen;
+const ScanScreen = require("./screen/scan.js").ScanScreen;
+const ErrorScreen = require("./screen/error.js").ErrorScreen;
+const ConnectWalletScreen = require(
     "./screen/connect-wallet.js").ConnectWalletScreen;
-var ConnectingWalletScreen = require(
+const ConnectingWalletScreen = require(
     "./screen/connecting-wallet.js").ConnectingWalletScreen;
+const ConnectedWalletScreen = require(
+    "./screen/connected-wallet.js").ConnectedWalletScreen;
 
 
 class CostanzaView {
@@ -26,6 +30,8 @@ class CostanzaView {
             this.setupConnectWalletScreen(this.app_div);
         this.connecting_wallet_screen =
             this.setupConnectingWalletScreen(this.app_div);
+        this.connected_wallet_screen =
+            this.setupConnectedWalletScreen(this.app_div);
 
         this.receipt_screen = null;
         this.bolt11_screen = null;
@@ -34,6 +40,7 @@ class CostanzaView {
 
         this.ongeneratewalletbeaconselect = null;
         this.onconnectstoredwalletselect = null;
+        this.ondisconnectselect = null;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -126,7 +133,15 @@ class CostanzaView {
     setupConnectingWalletScreen(div) {
         var s = new ConnectingWalletScreen(div, this.model);
         s.ondisconnectclick = (function() {
-            this.changeToMain();
+            this.ondisconnectselect();
+        }).bind(this);
+        return s;
+    }
+
+    setupConnectedWalletScreen(div) {
+        var s = new ConnectedWalletScreen(div);
+        s.ondisconnectclick = (function() {
+            this.ondisconnectselect();
         }).bind(this);
         return s;
     }
@@ -159,6 +174,7 @@ class CostanzaView {
     }
 
     changeToMenu() {
+        console.log("change to main");
         D.deleteChildren(this.app_div);
         this.menu_screen.draw();
     }
@@ -188,8 +204,20 @@ class CostanzaView {
 
     changeToWalletProviderSetup() {
         D.deleteChildren(this.app_div);
-        this.connect_wallet_screen.draw();
-        console.log("wallet provider setup stub");
+        switch (this.model.getConsumerConnectState()) {
+        case CONNECT_STATE.CONNECTED:
+            this.connected_wallet_screen.draw();
+            break;
+        case CONNECT_STATE.CONNECTING:
+            this.connecting_wallet_screen.draw();
+            break;
+        case CONNECT_STATE.DISCONNECTED:
+            this.connect_wallet_screen.draw();
+            break;
+        default:
+            console.error("unknown state");
+            break;
+        }
     }
 
     changeToAppConsumerSetup() {

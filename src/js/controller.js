@@ -25,9 +25,19 @@ class CostanzaController {
             this.model.clearStoredConsumerBeacon();
             this.view.changeToConnect()
         }).bind(this);
+        this.view.ondisconnectselect = (function() {
+            this.model.disconnectAll();
+            this.view.changeToMain();
+        }).bind(this);
 
         this.model.onconsumerstackevent = (function(layer_name, event) {
             this.view.postWalletConnectEvent(layer_name, event);
+        }).bind(this);
+        this.model.onconsumeronline = (function() {
+            this.view.changeToMain();
+        }).bind(this);
+        this.model.onconsumeroffline = (function() {
+            this.view.changeToMain();
         }).bind(this);
     }
 

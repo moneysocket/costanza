@@ -60,13 +60,23 @@ const DEFAULT_PORT = 443;
 const DEFAULT_USE_TLS = true;
 
 
+const CONNECT_STATE = {
+    DISCONNECTED: 'DISCONNECTED',
+    CONNECTING:   'CONNECTING',
+    CONNECTED:    'CONNECTED',
+}
+
+
 class CostanzaModel {
     constructor() {
         this.receipts = Receipts;
         this.provider_stack = this.setupProviderStack();
         this.consumer_stack = this.setupConsumerStack();
+        this.consumer_state = CONNECT_STATE.DISCONNECTED;
 
         this.onconsumerstackevent = null;
+        this.onconsumeronline = null;
+        this.onconsumeroffline = null;
 
         console.log("consumer_beacon: " + this.getStoredConsumerBeacon());
         this.ephemeral_wallet_beacon = this.getStoredConsumerBeacon();
@@ -126,9 +136,19 @@ class CostanzaModel {
     ///////////////////////////////////////////////////////////////////////////
 
     consumerOnAnnounce(nexus) {
+        console.log("consumer announce");
+        this.consumer_state = CONNECT_STATE.CONNECTED;
+        if (this.onconsumeronline != null) {
+            this.onconsumeronline();
+        }
     }
 
     consumerOnRevoke(nexus) {
+        console.log("consumer revoke");
+        this.consumer_state = CONNECT_STATE.DISCONNECTED;
+        if (this.onconsumeroffline != null) {
+            this.onconsumeroffline();
+        }
     }
 
     consumerOnStackEvent(layer_name, nexus, status) {
@@ -138,15 +158,18 @@ class CostanzaModel {
     }
 
     consumerOnProviderInfo(provider_info) {
+        console.log("consumer provider info: " + JSON.stringify(provider_info));
     }
 
     consumerOnPing(msecs) {
     }
 
     consumerOnInvoice(bolt11, request_reference_uuid) {
+        console.log("consumer announce");
     }
 
     consumerOnPreimage(preimage, request_reference_uuid) {
+        console.log("consumer revoke");
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -183,15 +206,27 @@ class CostanzaModel {
             console.log("could not interpret: " + beacon_str + " : " + err);
             return
         }
+        this.consumer_state = CONNECT_STATE.CONNECTING;
         this.consumer_stack.doConnect(beacon);
     }
 
     connectToAppConsumer(beacon) {
     }
 
+    disconnectAll() {
+        this.provider_stack.doDisconnect();
+        this.consumer_stack.doDisconnect();
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // call-ins
     ///////////////////////////////////////////////////////////////////////////
+
+    getConsumerConnectState() {
+        return this.consumer_state; 
+    }
+
+    // consumer beacon
 
     setEphemeralConsumerBeacon(beacon) {
         this.ephemeral_wallet_beacon = beacon;
@@ -230,3 +265,4 @@ class CostanzaModel {
 
 
 exports.CostanzaModel = CostanzaModel;
+exports.CONNECT_STATE = CONNECT_STATE;
