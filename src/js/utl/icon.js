@@ -45,6 +45,14 @@ class IconUtl {
         return D.emptyI(div, "fas fa-2x fa-times-circle");
     }
 
+    static qcircle2x(div) {
+        return D.emptyI(div, "fas fa-2x fa-question-circle");
+    }
+
+    static qcircle(div) {
+        return D.emptyI(div, "fas fa-question-circle");
+    }
+
     static exclaimcircle2x(div) {
         return D.emptyI(div, "fas fa-2x fa-exclamation-circle");
     }

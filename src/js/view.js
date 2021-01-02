@@ -16,6 +16,7 @@ const ConnectingWalletScreen = require(
     "./screen/connecting-wallet.js").ConnectingWalletScreen;
 const ConnectedWalletScreen = require(
     "./screen/connected-wallet.js").ConnectedWalletScreen;
+const AboutScreen = require("./screen/about.js").AboutScreen;
 
 
 class CostanzaView {
@@ -32,6 +33,7 @@ class CostanzaView {
             this.setupConnectingWalletScreen(this.app_div);
         this.connected_wallet_screen =
             this.setupConnectedWalletScreen(this.app_div);
+        this.about_screen = this.setupAboutScreen(this.app_div);
 
         this.receipt_screen = null;
         this.bolt11_screen = null;
@@ -81,6 +83,9 @@ class CostanzaView {
         }).bind(this);
         s.onstoragesettingsclick = (function() {
             this.changeToStorageSettings();
+        }).bind(this);
+        s.onaboutclick = (function() {
+            this.changeToAbout();
         }).bind(this);
         return s;
     }
@@ -146,6 +151,14 @@ class CostanzaView {
         return s;
     }
 
+    setupAboutScreen(div) {
+        var s = new AboutScreen(div);
+        s.onbackclick = (function() {
+            this.changeToMenu();
+        }).bind(this);
+        return s;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // model events
     ///////////////////////////////////////////////////////////////////////////
@@ -200,6 +213,11 @@ class CostanzaView {
         // TODO
         //this.connect_wallet_screen.drawConnnecting(beacon);
         this.connecting_wallet_screen.draw();
+    }
+
+    changeToAbout(beacon) {
+        D.deleteChildren(this.app_div);
+        this.about_screen.draw();
     }
 
     changeToWalletProviderSetup() {
