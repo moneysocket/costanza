@@ -51,15 +51,15 @@ class AboutScreen {
                         "font-black text-2xl text-yellow-800");
         D.textParagraph(flex, "Reckless! Use at your own risk!",
                         "font-black text-2xl text-yellow-800");
-        D.hyperlink(flex, "Wallet Source",
-                    "https://github.com/moneysocket/costanza",
-                    "font-black text-2xl text-blue-800");
-        D.hyperlink(flex, "Moneysocket Homepage", "https://socket.money",
-                    "font-black text-2xl text-blue-800");
-        D.hyperlink(flex, "Telegram Chat", "https://t.me/moneysocket",
-                    "font-black text-2xl text-blue-800");
-        D.hyperlink(flex, "Donate", "https://socket.money/#donate",
-                    "font-black text-2xl text-blue-800");
+        D.hyperlinkTabOpen(flex, "Wallet Source",
+                           "https://github.com/moneysocket/costanza",
+                           "font-black text-2xl text-blue-800");
+        D.hyperlinkTabOpen(flex, "Moneysocket Homepage", "https://socket.money",
+                           "font-black text-2xl text-blue-800");
+        D.hyperlinkTabOpen(flex, "Telegram Chat", "https://t.me/moneysocket",
+                           "font-black text-2xl text-blue-800");
+        D.hyperlinkTabOpen(flex, "Donate", "https://socket.money/#donate",
+                           "font-black text-2xl text-blue-800");
     }
 
     ///////////////////////////////////////////////////////////////////////////

@@ -37,7 +37,7 @@ class MenuScreen {
 
     drawMenuTitle(div) {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
-        D.textParagraph(flex, "WALLET MENU:",
+        D.textParagraph(flex, "MENU:",
                         "font-black text-2xl text-yellow-800");
     }
 

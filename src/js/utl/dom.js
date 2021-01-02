@@ -72,9 +72,10 @@ class DomUtl {
         return s;
     }
 
-    static hyperlink(div, text, url, class_str) {
+    static hyperlinkTabOpen(div, text, url, class_str) {
         var i = document.createElement("a");
         i.setAttribute("href", url);
+        i.setAttribute("target", "_blank");
         DomUtl.setClass(i, class_str);
         var t = document.createTextNode(text);
         i.appendChild(t);
