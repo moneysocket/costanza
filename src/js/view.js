@@ -23,7 +23,7 @@ class CostanzaView {
     constructor(app_div, model) {
         this.app_div = app_div;
         this.model = model;
-        this.main_screen = this.setupMainScreen(this.app_div, this.model);
+        this.main_screen = this.setupMainScreen(this.app_div);
         this.scan_screen = this.setupScanScreen(this.app_div);
         this.error_screen = this.setupErrorScreen(this.app_div);
         this.menu_screen = this.setupMenuScreen(this.app_div);
@@ -49,8 +49,8 @@ class CostanzaView {
     // setup screens
     ///////////////////////////////////////////////////////////////////////////
 
-    setupMainScreen(div, model) {
-        var s = new MainScreen(div, model);
+    setupMainScreen(div) {
+        var s = new MainScreen(div, this.model);
         s.onconnectwalletclick = (function() {
             this.changeToWalletProviderSetup();
         }).bind(this);
@@ -144,7 +144,10 @@ class CostanzaView {
     }
 
     setupConnectedWalletScreen(div) {
-        var s = new ConnectedWalletScreen(div);
+        var s = new ConnectedWalletScreen(div, this.model);
+        s.onbackclick = (function() {
+            this.changeToMain();
+        }).bind(this);
         s.ondisconnectclick = (function() {
             this.ondisconnectselect();
         }).bind(this);
@@ -176,8 +179,9 @@ class CostanzaView {
         this.main_screen.draw(this.model.receipts);
     }
 
-    redrawMainInfo() {
+    redrawDynamicInfo() {
         this.main_screen.redrawInfo();
+        this.connected_wallet_screen.redrawInfo();
     }
 
     changeToScan() {

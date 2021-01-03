@@ -40,10 +40,10 @@ class CostanzaController {
             this.view.changeToMain();
         }).bind(this);
         this.model.onconsumerproviderinfochange = (function() {
-            this.view.redrawMainInfo();
+            this.view.redrawDynamicInfo();
         }).bind(this);
         this.model.onping = (function() {
-            this.view.redrawMainInfo();
+            this.view.redrawDynamicInfo();
         }).bind(this);
     }
 

@@ -125,7 +125,6 @@ class CostanzaModel {
             this.consumerOnStackEvent(layer_name, nexus, status);
         }).bind(this);
         s.onping = (function(msecs) {
-            console.log("got ping: " + msecs);
             this.consumer_last_ping = msecs;
             this.consumerOnPing();
         }).bind(this);
