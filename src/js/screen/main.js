@@ -51,6 +51,32 @@ class MainScreen {
     }
 
     ///////////////////////////////////////////////////////////////////////////
+    // Items
+    ///////////////////////////////////////////////////////////////////////////
+
+    drawBalance() {
+        var wad = this.model.getConsumerBalanceWad();
+        D.deleteChildren(this.balance_div);
+        D.textParagraph(this.balance_div, wad.toString(),
+                        "font-bold text-3xl text-yellow-900 " +
+                        "hover:text-yellow-700");
+        this.balance_div.onclick = (function() {
+            this.onconnectwalletclick();
+        }).bind(this);
+        var sats = (wad['msats'] / 1000.0).toFixed(3) + " sats";
+        var hoverstring = wad['name'] + "\n" + sats;
+        this.balance_div.setAttribute("title", hoverstring);
+    }
+
+    drawPing() {
+        var msecs = this.model.getConsumerLastPing();
+        D.deleteChildren(this.ping_div);
+        D.textParagraph(this.ping_div, msecs.toString() + " ms",
+                        "text-sm");
+    }
+
+
+    ///////////////////////////////////////////////////////////////////////////
     // Receipt
     ///////////////////////////////////////////////////////////////////////////
 
@@ -137,14 +163,11 @@ class MainScreen {
     drawBalancePanel(div) {
         var flex = D.emptyDiv(div,
                               "flex-col justify-evenly section-background");
-        var wad = this.model.getConsumerBalanceWad();
         this.balance_div = D.emptyDiv(flex);
-        D.textParagraph(this.balance_div, wad.toString(), "font-bold px-2");
-
-        var msecs = this.model.getConsumerLastPing();
-        this.ping_div = D.emptyDiv(flex);
-        D.textParagraph(this.ping_div, msecs.toString() + " ms",
-                        "font-bold px-2");
+        this.drawBalance();
+        var right_box = D.emptyDiv(flex, "flex flex-row-reverse");
+        this.ping_div = D.emptyDiv(right_box);
+        this.drawPing();
     }
 
     drawReceiptPanel(div, receipts, click_func) {
@@ -179,20 +202,11 @@ class MainScreen {
     ///////////////////////////////////////////////////////////////////////////
 
     redrawInfo() {
-        console.log("redraw?");
         if (this.balance_div != null) {
-            console.log("yes balance?");
-            var wad = this.model.getConsumerBalanceWad();
-            D.deleteChildren(this.balance_div);
-            D.textParagraph(this.balance_div, wad.toString(), "font-bold px-2");
+            this.drawBalance();
         }
-
         if (this.ping_div != null) {
-            console.log("yes ping?");
-            var msecs = this.model.getConsumerLastPing();
-            D.deleteChildren(this.ping_div);
-            D.textParagraph(this.ping_div, msecs.toString() + " ms",
-                            "font-bold px-2");
+            this.drawPing();
         }
     }
 
