@@ -14,6 +14,8 @@ class ConnectedWalletScreen {
         this.ondisconnectclick = null;
         this.model = model;
         this.balance_div = null;
+        this.payer_div = null;
+        this.payee_div = null;
         this.ping_div = null;
     }
 
@@ -59,6 +61,22 @@ class ConnectedWalletScreen {
         this.balance_div.setAttribute("title", hoverstring);
     }
 
+    drawPayer() {
+        var is_payer = this.model.getConsumerIsPayer();
+        D.deleteChildren(this.payer_div);
+        D.textSpan(this.payer_div, "Is Payer: ", "text-sm text-yellow-900");
+        D.textSpan(this.payer_div, is_payer ? "True" : "False",
+                   "font-bold text-sm text-yellow-900");
+    }
+
+    drawPayee() {
+        var is_payee = this.model.getConsumerIsPayee();
+        D.deleteChildren(this.payee_div);
+        D.textSpan(this.payee_div, "Is Payee: ", "text-sm text-yellow-900");
+        D.textSpan(this.payee_div, is_payee ? "True" : "False",
+                   "font-bold text-sm text-yellow-900");
+    }
+
     drawPing() {
         var msecs = this.model.getConsumerLastPing();
         D.deleteChildren(this.ping_div);
@@ -89,6 +107,10 @@ class ConnectedWalletScreen {
                               "flex flex-col section-background");
         this.balance_div = D.emptyDiv(flex);
         this.drawBalance();
+        this.payer_div = D.emptyDiv(flex);
+        this.drawPayer();
+        this.payee_div = D.emptyDiv(flex);
+        this.drawPayee();
         this.ping_div = D.emptyDiv(flex);
         this.drawPing();
 
@@ -104,6 +126,12 @@ class ConnectedWalletScreen {
     redrawInfo() {
         if (this.balance_div != null) {
             this.drawBalance();
+        }
+        if (this.payer_div != null) {
+            this.drawPayer();
+        }
+        if (this.payee_div != null) {
+            this.drawPayee();
         }
         if (this.ping_div != null) {
             this.drawPing();

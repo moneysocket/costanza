@@ -243,6 +243,20 @@ class CostanzaModel {
         return this.consumer_reported_info.wad;
     }
 
+    getConsumerIsPayer() {
+        if (this.consumer_reported_info == null) {
+            return false;
+        }
+        return this.consumer_reported_info.payer;
+    }
+
+    getConsumerIsPayee() {
+        if (this.consumer_reported_info == null) {
+            return false;
+        }
+        return this.consumer_reported_info.payee;
+    }
+
     getConsumerLastPing() {
         return this.consumer_last_ping;
     }
