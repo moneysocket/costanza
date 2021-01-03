@@ -74,9 +74,14 @@ class CostanzaModel {
         this.consumer_stack = this.setupConsumerStack();
         this.consumer_state = CONNECT_STATE.DISCONNECTED;
 
+        this.consumer_reported_info = null;
+        this.consumer_last_ping = 0;
+
         this.onconsumerstackevent = null;
         this.onconsumeronline = null;
         this.onconsumeroffline = null;
+        this.onconsumerproviderinfochange = null;
+        this.onping = null;
 
         console.log("consumer_beacon: " + this.getStoredConsumerBeacon());
         this.ephemeral_wallet_beacon = this.getStoredConsumerBeacon();
@@ -120,7 +125,9 @@ class CostanzaModel {
             this.consumerOnStackEvent(layer_name, nexus, status);
         }).bind(this);
         s.onping = (function(msecs) {
-            this.consumerOnPing(msecs);
+            console.log("got ping: " + msecs);
+            this.consumer_last_ping = msecs;
+            this.consumerOnPing();
         }).bind(this);
         s.oninvoice = (function(bolt11, request_reference_uuid) {
             this.consumerOnInvoice(bolt11, request_reference_uuid);
@@ -146,6 +153,7 @@ class CostanzaModel {
     consumerOnRevoke(nexus) {
         console.log("consumer revoke");
         this.consumer_state = CONNECT_STATE.DISCONNECTED;
+        this.consumer_reported_info = null;
         if (this.onconsumeroffline != null) {
             this.onconsumeroffline();
         }
@@ -159,9 +167,16 @@ class CostanzaModel {
 
     consumerOnProviderInfo(provider_info) {
         console.log("consumer provider info: " + JSON.stringify(provider_info));
+        this.consumer_reported_info = provider_info;
+        if (this.onconsumerproviderinfochange != null) {
+            this.onconsumerproviderinfochange();
+        }
     }
 
-    consumerOnPing(msecs) {
+    consumerOnPing() {
+        if (this.onping != null) {
+            this.onping();
+        }
     }
 
     consumerOnInvoice(bolt11, request_reference_uuid) {
@@ -222,8 +237,19 @@ class CostanzaModel {
     // call-ins
     ///////////////////////////////////////////////////////////////////////////
 
+    getConsumerBalanceWad() {
+        if (this.consumer_reported_info == null) {
+            return Wad.bitcoin(0);
+        }
+        return this.consumer_reported_info.wad;
+    }
+
+    getConsumerLastPing() {
+        return this.consumer_last_ping;
+    }
+
     getConsumerConnectState() {
-        return this.consumer_state; 
+        return this.consumer_state;
     }
 
     // consumer beacon

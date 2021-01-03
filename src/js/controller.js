@@ -39,6 +39,12 @@ class CostanzaController {
         this.model.onconsumeroffline = (function() {
             this.view.changeToMain();
         }).bind(this);
+        this.model.onconsumerproviderinfochange = (function() {
+            this.view.redrawMainInfo();
+        }).bind(this);
+        this.model.onping = (function() {
+            this.view.redrawMainInfo();
+        }).bind(this);
     }
 
     connectToAppConsumer(beacon) {

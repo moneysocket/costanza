@@ -6,13 +6,20 @@ var D = require('../utl/dom.js').DomUtl;
 var I = require('../utl/icon.js').IconUtl;
 var Wad = require("moneysocket").Wad;
 
+const CONNECT_STATE = require('../model.js').CONNECT_STATE;
+
+
 class MainScreen {
-    constructor(app_div) {
+    constructor(app_div, model) {
         this.app_div = app_div;
+        this.model = model;
         this.onconnectwalletclick = null;
         this.onscanclick = null;
         this.onmenuclick = null;
         this.onreceiptclick = null;
+
+        this.balance_div = null;
+        this.ping_div = null;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -127,6 +134,19 @@ class MainScreen {
         this.drawConnectWalletButton(flex, connect_func);
     }
 
+    drawBalancePanel(div) {
+        var flex = D.emptyDiv(div,
+                              "flex-col justify-evenly section-background");
+        var wad = this.model.getConsumerBalanceWad();
+        this.balance_div = D.emptyDiv(flex);
+        D.textParagraph(this.balance_div, wad.toString(), "font-bold px-2");
+
+        var msecs = this.model.getConsumerLastPing();
+        this.ping_div = D.emptyDiv(flex);
+        D.textParagraph(this.ping_div, msecs.toString() + " ms",
+                        "font-bold px-2");
+    }
+
     drawReceiptPanel(div, receipts, click_func) {
         var flex = D.emptyDiv(div,
                               "flex-col justify-evenly section-background");
@@ -158,13 +178,45 @@ class MainScreen {
     // Screens
     ///////////////////////////////////////////////////////////////////////////
 
+    redrawInfo() {
+        console.log("redraw?");
+        if (this.balance_div != null) {
+            console.log("yes balance?");
+            var wad = this.model.getConsumerBalanceWad();
+            D.deleteChildren(this.balance_div);
+            D.textParagraph(this.balance_div, wad.toString(), "font-bold px-2");
+        }
+
+        if (this.ping_div != null) {
+            console.log("yes ping?");
+            var msecs = this.model.getConsumerLastPing();
+            D.deleteChildren(this.ping_div);
+            D.textParagraph(this.ping_div, msecs.toString() + " ms",
+                            "font-bold px-2");
+        }
+    }
+
     draw(receipts) {
         var flex = D.emptyDiv(this.app_div, "flex flex-col h-screen");
         var flex_top = D.emptyDiv(flex, "flex-none");
         var flex_mid = D.emptyDiv(flex, "flex-grow");
         var flex_bottom = D.emptyDiv(flex, "flex-none");
 
-        this.drawConnectWalletPanel(flex_top, this.onconnectwalletclick);
+        switch (this.model.getConsumerConnectState()) {
+        case CONNECT_STATE.CONNECTED:
+            this.drawBalancePanel(flex_top);
+            break;
+        case CONNECT_STATE.CONNECTING:
+            this.drawConnectWalletPanel(flex_top, this.onconnectwalletclick);
+            break;
+        case CONNECT_STATE.DISCONNECTED:
+            this.drawConnectWalletPanel(flex_top, this.onconnectwalletclick);
+            break;
+        default:
+            console.error("unknown state");
+            break;
+        }
+
         this.drawReceiptPanel(flex_mid, receipts, this.onreceiptclick);
         this.drawActionPanel(flex_bottom, this.onscanclick, this.onmenuclick);
     }
