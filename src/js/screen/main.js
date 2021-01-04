@@ -14,6 +14,7 @@ class MainScreen {
         this.app_div = app_div;
         this.model = model;
         this.onconnectwalletclick = null;
+        this.onconnectappclick = null;
         this.onscanclick = null;
         this.onmenuclick = null;
         this.onreceiptclick = null;
@@ -50,6 +51,16 @@ class MainScreen {
         var text = D.textSpan(flex, "Connect Wallet Provider");
     }
 
+    drawConnectAppButton(div, connect_func) {
+        var b = D.button(div, connect_func,
+                         "bg-yellow-700 hover:bg-yellow-600 text-white " +
+                         "rounded px-2 py-1");
+        var flex = D.emptyDiv(b, "flex items-center justify-around");
+        var bars_span = D.emptySpan(flex, "");
+        var bars = I.flyingmoney(bars_span);
+        var text = D.textSpan(flex, "App");
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // Items
     ///////////////////////////////////////////////////////////////////////////
@@ -71,8 +82,7 @@ class MainScreen {
     drawPing() {
         var msecs = this.model.getConsumerLastPing();
         D.deleteChildren(this.ping_div);
-        D.textParagraph(this.ping_div, msecs.toString() + " ms",
-                        "text-sm");
+        D.textParagraph(this.ping_div, msecs.toString() + " ms", "text-sm");
     }
 
 
@@ -160,9 +170,13 @@ class MainScreen {
         this.drawConnectWalletButton(flex, connect_func);
     }
 
-    drawBalancePanel(div) {
+    drawBalancePanel(div, connect_func) {
         var flex = D.emptyDiv(div,
                               "flex-col justify-evenly section-background");
+        var left_box = D.emptyDiv(flex, "flex flex-row");
+        var button_div = D.emptyDiv(left_box);
+        this.drawConnectAppButton(button_div, connect_func);
+
         this.balance_div = D.emptyDiv(flex);
         this.drawBalance();
         var right_box = D.emptyDiv(flex, "flex flex-row-reverse");
@@ -218,7 +232,7 @@ class MainScreen {
 
         switch (this.model.getConsumerConnectState()) {
         case CONNECT_STATE.CONNECTED:
-            this.drawBalancePanel(flex_top);
+            this.drawBalancePanel(flex_top, this.onconnectappclick);
             break;
         case CONNECT_STATE.CONNECTING:
             this.drawConnectWalletPanel(flex_top, this.onconnectwalletclick);
