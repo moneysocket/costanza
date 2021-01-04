@@ -6,7 +6,7 @@ var ScanInterpret = require("./scan-interpret.js").ScanInterpret;
 
 class CostanzaController {
     constructor(model, view) {
-        this.scan_interpret = new ScanInterpret();
+        this.scan_interpret = new ScanInterpret(model);
         this.model = model;
         this.view = view;
 
@@ -17,12 +17,25 @@ class CostanzaController {
             var beacon = this.model.generateNewBeacon();
             this.postScanResult(beacon);
         }).bind(this);
+        this.view.ongenerateappbeaconselect = (function() {
+            console.log("generate app beacon");
+            var beacon = this.model.generateNewBeacon();
+            this.postScanResult(beacon);
+        }).bind(this);
         this.view.onconnectstoredwalletselect = (function() {
             var beacon = this.model.getStoredConsumerBeacon();
             this.postScanResult(beacon);
         }).bind(this);
-        this.view.onforgetselect = (function() {
+        this.view.onconnectstoredappselect = (function() {
+            var beacon = this.model.getStoredProviderBeacon();
+            this.postScanResult(beacon);
+        }).bind(this);
+        this.view.onforgetwalletbeaconselect = (function() {
             this.model.clearStoredConsumerBeacon();
+            this.view.changeToConnect()
+        }).bind(this);
+        this.view.onforgetappbeaconselect = (function() {
+            this.model.clearStoredAppBeacon();
             this.view.changeToConnect()
         }).bind(this);
         this.view.ondisconnectselect = (function() {
@@ -49,6 +62,8 @@ class CostanzaController {
 
     connectToAppConsumer(beacon) {
         console.log("app consumer connect stub");
+        //this.view.changeToConnecting();
+        //this.model.connectToWalletProvider(beacon);
     }
 
     connectToWalletProvider(beacon) {
@@ -62,6 +77,14 @@ class CostanzaController {
             return;
         }
         this.model.storeConsumerBeacon(beacon);
+    }
+
+    storeAppBeacon(beacon) {
+        this.model.setEphemeralProviderBeacon(beacon);
+        if (this.model.hasStoredProviderBeacon()) {
+            return;
+        }
+        this.model.storeProviderBeacon(beacon);
     }
 
 
@@ -87,7 +110,7 @@ class CostanzaController {
         case "CONNECT_APP_BEACON":
             // TODO
             //this.view.changeToConnect(scan_str);
-            this.view.changeToMain();
+            this.storeAppBeacon(scan_str);
             this.connectToAppConsumer(scan_str);
             break;
         case "CONNECT_BEACON_ERROR":

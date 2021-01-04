@@ -110,7 +110,7 @@ class ConnectScreen {
 
     drawTitle(div) {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
-        D.textParagraph(flex, "Connect Wallet:",
+        D.textParagraph(flex, this.title_string,
                         "font-black text-xl text-yellow-800");
     }
 
@@ -142,14 +142,14 @@ class ConnectScreen {
 
     drawStored(div) {
         var flex = D.emptyDiv(div, "flex flex-col");
-        D.textParagraph(flex, "Stored Wallet Beacon:",
+        D.textParagraph(flex, this.stored_string,
                         "font-black text-yellow-800 py-5");
-        if (! this.model.hasStoredConsumerBeacon()) {
+        if (! this.hasBeacon()) {
             D.textParagraph(flex, "(none)",
                             "font-black text-yellow-800 py-5");
             return;
         }
-        var beacon = this.model.getStoredConsumerBeacon();
+        var beacon = this.getBeacon();
         D.textParagraph(flex, beacon,
                         "font-black break-words text-yellow-800 py-5");
 
@@ -205,12 +205,32 @@ class ConnectScreen {
 class ConnectWalletScreen extends ConnectScreen {
     constructor(app_div, model) {
         super(app_div, model);
+        this.title_string = "Connect Wallet:";
+        this.stored_string = "Stored Wallet Beacon:";
+    }
+
+    hasBeacon() {
+        return this.model.hasStoredConsumerBeacon();
+    }
+
+    getBeacon() {
+        return this.model.getStoredConsumerBeacon();
     }
 }
 
 class ConnectAppScreen extends ConnectScreen {
     constructor(app_div, model) {
         super(app_div, model);
+        this.title_string = "Connect App:";
+        this.stored_string = "Stored App Beacon:";
+    }
+
+    hasBeacon() {
+        return this.model.hasStoredProviderBeacon();
+    }
+
+    getBeacon() {
+        return this.model.getStoredProviderBeacon();
     }
 }
 

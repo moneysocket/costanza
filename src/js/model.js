@@ -71,6 +71,7 @@ class CostanzaModel {
     constructor() {
         this.receipts = Receipts;
         this.provider_stack = this.setupProviderStack();
+        this.provider_state = CONNECT_STATE.DISCONNECTED;
         this.consumer_stack = this.setupConsumerStack();
         this.consumer_state = CONNECT_STATE.DISCONNECTED;
 
@@ -85,6 +86,8 @@ class CostanzaModel {
 
         console.log("consumer_beacon: " + this.getStoredConsumerBeacon());
         this.ephemeral_wallet_beacon = this.getStoredConsumerBeacon();
+        console.log("provider_beacon: " + this.getStoredProviderBeacon());
+        this.ephemeral_app_beacon = this.getStoredProviderBeacon();
     }
 
     setupProviderStack() {
@@ -234,7 +237,7 @@ class CostanzaModel {
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    // call-ins
+    // get consumer state
     ///////////////////////////////////////////////////////////////////////////
 
     getConsumerBalanceWad() {
@@ -266,7 +269,9 @@ class CostanzaModel {
         return this.consumer_state;
     }
 
+    ///////////////////////////////////////////////////////////////////////////
     // consumer beacon
+    ///////////////////////////////////////////////////////////////////////////
 
     setEphemeralConsumerBeacon(beacon) {
         this.ephemeral_wallet_beacon = beacon;
@@ -291,6 +296,47 @@ class CostanzaModel {
     clearStoredConsumerBeacon() {
         window.localStorage.removeItem("consumer_beacon");
     }
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    // get provider state
+    ///////////////////////////////////////////////////////////////////////////
+
+    getProviderConnectState() {
+        return this.provider_state;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // provider beacon
+    ///////////////////////////////////////////////////////////////////////////
+
+    setEphemeralProviderBeacon(beacon) {
+        this.ephemeral_app_beacon = beacon;
+    }
+
+    getEphemeralProviderBeacon() {
+        return this.ephemeral_app_beacon;
+    }
+
+    hasStoredProviderBeacon() {
+        return window.localStorage.getItem("provider_beacon") ? true: false;
+    }
+
+    getStoredProviderBeacon() {
+        return window.localStorage.getItem("provider_beacon");
+    }
+
+    storeProviderBeacon(beacon) {
+        window.localStorage.setItem("provider_beacon", beacon);
+    }
+
+    clearStoredProviderBeacon() {
+        window.localStorage.removeItem("provider_beacon");
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // general beacon
+    ///////////////////////////////////////////////////////////////////////////
 
     generateNewBeacon() {
         var location = new WebsocketLocation(DEFAULT_HOST, DEFAULT_PORT,

@@ -43,7 +43,11 @@ class CostanzaView {
         this.onscanresult = null;
 
         this.ongeneratewalletbeaconselect = null;
+        this.ongenerateappbeaconselect = null;
         this.onconnectstoredwalletselect = null;
+        this.onconnectstoredappselect = null;
+        this.onforgetwalletbeaconselect = null;
+        this.onforgetappbeaconselect = null;
         this.ondisconnectselect = null;
     }
 
@@ -55,6 +59,9 @@ class CostanzaView {
         var s = new MainScreen(div, this.model);
         s.onconnectwalletclick = (function() {
             this.changeToWalletProviderSetup();
+        }).bind(this);
+        s.onconnectappclick = (function() {
+            this.changeToAppConsumerSetup();
         }).bind(this);
         s.onscanclick = (function() {
             this.changeToScan();
@@ -131,8 +138,8 @@ class CostanzaView {
         s.onconnectstoredselect = (function() {
             this.onconnectstoredwalletselect();
         }).bind(this);
-        s.onforgetselect = (function() {
-            this.onforgetselect();
+        s.onforgetwalletbeaconselect = (function() {
+            this.onforgetappbeaconselect();
         }).bind(this);
         return s;
     }
@@ -165,17 +172,17 @@ class CostanzaView {
             this.onscanresult(result);
         }).bind(this);
         s.ongenerateselect = (function() {
-            this.ongeneratewalletbeaconselect();
+            this.ongenerateappbeaconselect();
         }).bind(this);
         s.onscanselect = (function() {
             this.changeToScan();
             this.scan_screen.startScanning();
         }).bind(this);
         s.onconnectstoredselect = (function() {
-            this.onconnectstoredwalletselect();
+            this.onconnectstoredappselect();
         }).bind(this);
         s.onforgetselect = (function() {
-            this.onforgetselect();
+            this.onforgetappbeaconselect();
         }).bind(this);
         return s;
     }
@@ -273,7 +280,21 @@ class CostanzaView {
     }
 
     changeToAppConsumerSetup() {
-        console.log("app consumer setup stub");
+        D.deleteChildren(this.app_div);
+        switch (this.model.getProviderConnectState()) {
+        case CONNECT_STATE.CONNECTED:
+            // TODO
+            break;
+        case CONNECT_STATE.CONNECTING:
+            // TODO
+            break;
+        case CONNECT_STATE.DISCONNECTED:
+            this.connect_app_screen.draw();
+            break;
+        default:
+            console.error("unknown state");
+            break;
+        }
     }
 
     changeToBolt11Receive() {
