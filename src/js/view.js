@@ -10,12 +10,12 @@ const MainScreen = require("./screen/main.js").MainScreen;
 const MenuScreen = require("./screen/menu.js").MenuScreen;
 const ScanScreen = require("./screen/scan.js").ScanScreen;
 const ErrorScreen = require("./screen/error.js").ErrorScreen;
-const ConnectWalletScreen = require(
-    "./screen/connect-wallet.js").ConnectWalletScreen;
+const ConnectWalletScreen = require("./screen/connect.js").ConnectWalletScreen;
 const ConnectingWalletScreen = require(
     "./screen/connecting-wallet.js").ConnectingWalletScreen;
 const ConnectedWalletScreen = require(
     "./screen/connected-wallet.js").ConnectedWalletScreen;
+const ConnectAppScreen = require("./screen/connect.js").ConnectAppScreen;
 const AboutScreen = require("./screen/about.js").AboutScreen;
 
 
@@ -33,6 +33,8 @@ class CostanzaView {
             this.setupConnectingWalletScreen(this.app_div);
         this.connected_wallet_screen =
             this.setupConnectedWalletScreen(this.app_div);
+        this.connect_app_screen =
+            this.setupConnectAppScreen(this.app_div);
         this.about_screen = this.setupAboutScreen(this.app_div);
 
         this.receipt_screen = null;
@@ -150,6 +152,30 @@ class CostanzaView {
         }).bind(this);
         s.ondisconnectclick = (function() {
             this.ondisconnectselect();
+        }).bind(this);
+        return s;
+    }
+
+    setupConnectAppScreen(div) {
+        var s = new ConnectAppScreen(div, this.model);
+        s.onbackclick = (function() {
+            this.changeToMain();
+        }).bind(this);
+        s.onbeaconselect = (function(result) {
+            this.onscanresult(result);
+        }).bind(this);
+        s.ongenerateselect = (function() {
+            this.ongeneratewalletbeaconselect();
+        }).bind(this);
+        s.onscanselect = (function() {
+            this.changeToScan();
+            this.scan_screen.startScanning();
+        }).bind(this);
+        s.onconnectstoredselect = (function() {
+            this.onconnectstoredwalletselect();
+        }).bind(this);
+        s.onforgetselect = (function() {
+            this.onforgetselect();
         }).bind(this);
         return s;
     }

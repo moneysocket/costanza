@@ -6,7 +6,7 @@ var D = require('../utl/dom.js').DomUtl;
 var I = require('../utl/icon.js').IconUtl;
 
 
-class ConnectWalletScreen {
+class ConnectScreen {
     constructor(app_div, model) {
         this.app_div = app_div;
         this.onbbackclick = null;
@@ -201,4 +201,18 @@ class ConnectWalletScreen {
     }
 }
 
+
+class ConnectWalletScreen extends ConnectScreen {
+    constructor(app_div, model) {
+        super(app_div, model);
+    }
+}
+
+class ConnectAppScreen extends ConnectScreen {
+    constructor(app_div, model) {
+        super(app_div, model);
+    }
+}
+
 exports.ConnectWalletScreen = ConnectWalletScreen;
+exports.ConnectAppScreen = ConnectAppScreen;
