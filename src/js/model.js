@@ -228,6 +228,7 @@ class CostanzaModel {
     }
 
     disconnectAll() {
+        this.consumer_state = CONNECT_STATE.DISCONNECTED;
         this.provider_stack.doDisconnect();
         this.consumer_stack.doDisconnect();
     }

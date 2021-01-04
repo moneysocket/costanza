@@ -33,8 +33,7 @@ class ConnectWalletScreen {
    drawPasteButton(div, paste_func) {
         var b = D.button(div, paste_func, "p-2 main-button");
         var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-1");
-        var back = I.paste2x(icon_span);
+        D.textSpan(flex, "Use");
     }
 
    drawGenerateButton(div, generate_func) {
@@ -170,7 +169,9 @@ class ConnectWalletScreen {
 
         this.drawDisconnected(flex);
 
-        var paste = D.emptyDiv(flex, "flex justify-center");
+        var paste = D.emptyDiv(flex,
+                               "flex justify-center items-center " +
+                               "bg-yellow-500 py-2 m-2 rounded");
         this.paste_input = D.emptyInput(paste,
             "w-auto appearance-none rounded shadow " +
             "p-3 text-grey-dark mr-2 focus:outline-none");
