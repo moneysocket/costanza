@@ -111,7 +111,7 @@ class ConnectWalletScreen {
     drawTitle(div) {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
         D.textParagraph(flex, "Connect Wallet:",
-                        "font-black text-2xl text-yellow-800");
+                        "font-black text-xl text-yellow-800");
     }
 
     drawDisconnected(div) {
@@ -144,14 +144,12 @@ class ConnectWalletScreen {
         var flex = D.emptyDiv(div, "flex flex-col");
         D.textParagraph(flex, "Stored Wallet Beacon:",
                         "font-black text-yellow-800 py-5");
-
         if (! this.model.hasStoredConsumerBeacon()) {
             D.textParagraph(flex, "(none)",
                             "font-black text-yellow-800 py-5");
             return;
         }
         var beacon = this.model.getStoredConsumerBeacon();
-
         D.textParagraph(flex, beacon,
                         "font-black break-words text-yellow-800 py-5");
 
@@ -178,30 +176,17 @@ class ConnectWalletScreen {
         this.paste_input.setAttribute("placeholder", "paste beacon");
         this.drawPasteButton(paste,
                              (function() {this.pasteResult()}).bind(this));
-
-
         var buttons = D.emptyDiv(flex, "flex justify-around py-4");
         this.drawGenerateButton(buttons,
                              (function() {this.doGenerate()}).bind(this));
         this.drawScanButton(buttons,
                             (function() {this.doScan()}).bind(this));
-
         this.drawStored(flex);
-
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Screens
     ///////////////////////////////////////////////////////////////////////////
-
-    drawConnecting(beacon) {
-        var flex = D.emptyDiv(this.app_div, "flex flex-col h-screen");
-        var flex_top = D.emptyDiv(flex, "flex-none");
-        this.drawTitlePanel(flex_top);
-        var flex_mid = D.emptyDiv(flex, "flex-none");
-        D.textParagraph(flex_mid, "Connect To :" + beacon,
-                        "font-black text-2xl text-yellow-800");
-    }
 
     draw() {
         //console.log("path: " + QrScanner.WORKER_PATH);
