@@ -84,6 +84,8 @@ class CostanzaModel {
         this.onconsumerproviderinfochange = null;
         this.onping = null;
 
+        this.onproviderstackevent = null;
+
         console.log("consumer_beacon: " + this.getStoredConsumerBeacon());
         this.ephemeral_wallet_beacon = this.getStoredConsumerBeacon();
         console.log("provider_beacon: " + this.getStoredProviderBeacon());
@@ -194,21 +196,29 @@ class CostanzaModel {
     ///////////////////////////////////////////////////////////////////////////
 
     providerOnAnnounce(nexus) {
+        console.log("provider announce");
     }
 
     providerOnRevoke() {
+        console.log("provider revoke");
     }
 
     providerOnStackEvent(layer_name, nexus, status) {
+        if (this.onproviderstackevent != null) {
+            this.onproviderstackevent(layer_name, status);
+        }
     }
 
     providerHandleInvoiceRequest(msats, request_uuid) {
+        console.log("provider invoice request");
     }
 
     providerHandlePayRequest(bolt11, request_uuid) {
+        console.log("provider pay request");
     }
 
     handleProviderInfoRequest(shared_seed) {
+        console.log("provider info request");
         return {'ready': false};
     }
 
@@ -239,8 +249,9 @@ class CostanzaModel {
     }
 
     disconnectAll() {
-        this.consumer_state = CONNECT_STATE.DISCONNECTED;
+        this.provider_state = CONNECT_STATE.DISCONNECTED;
         this.provider_stack.doDisconnect();
+        this.consumer_state = CONNECT_STATE.DISCONNECTED;
         this.consumer_stack.doDisconnect();
     }
 

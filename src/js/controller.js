@@ -32,11 +32,11 @@ class CostanzaController {
         }).bind(this);
         this.view.onforgetwalletbeaconselect = (function() {
             this.model.clearStoredConsumerBeacon();
-            this.view.changeToConnect()
+            this.view.changeToConnectWallet()
         }).bind(this);
         this.view.onforgetappbeaconselect = (function() {
             this.model.clearStoredProviderBeacon();
-            this.view.changeToConnect()
+            this.view.changeToConnectApp()
         }).bind(this);
         this.view.ondisconnectselect = (function() {
             this.model.disconnectAll();
@@ -45,6 +45,9 @@ class CostanzaController {
 
         this.model.onconsumerstackevent = (function(layer_name, event) {
             this.view.postWalletConnectEvent(layer_name, event);
+        }).bind(this);
+        this.model.onproviderstackevent = (function(layer_name, event) {
+            this.view.postAppConnectEvent(layer_name, event);
         }).bind(this);
         this.model.onconsumeronline = (function() {
             this.view.changeToMain();
@@ -61,13 +64,12 @@ class CostanzaController {
     }
 
     connectToAppConsumer(beacon) {
-        console.log("app consumer connect stub");
-        //this.view.changeToConnecting();
-        //this.model.connectToWalletProvider(beacon);
+        this.view.changeToConnectingApp();
+        this.model.connectToAppConsumer(beacon);
     }
 
     connectToWalletProvider(beacon) {
-        this.view.changeToConnecting();
+        this.view.changeToConnectingWallet();
         this.model.connectToWalletProvider(beacon);
     }
 

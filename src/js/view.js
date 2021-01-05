@@ -16,6 +16,8 @@ const ConnectingWalletScreen = require(
 const ConnectedWalletScreen = require(
     "./screen/connected-wallet.js").ConnectedWalletScreen;
 const ConnectAppScreen = require("./screen/connect.js").ConnectAppScreen;
+const ConnectingAppScreen = require(
+    "./screen/connecting.js").ConnectingAppScreen;
 const AboutScreen = require("./screen/about.js").AboutScreen;
 
 
@@ -35,6 +37,8 @@ class CostanzaView {
             this.setupConnectedWalletScreen(this.app_div);
         this.connect_app_screen =
             this.setupConnectAppScreen(this.app_div);
+        this.connecting_app_screen =
+            this.setupConnectingAppScreen(this.app_div);
         this.about_screen = this.setupAboutScreen(this.app_div);
 
         this.receipt_screen = null;
@@ -187,6 +191,14 @@ class CostanzaView {
         return s;
     }
 
+    setupConnectingAppScreen(div) {
+        var s = new ConnectingAppScreen(div, this.model);
+        s.ondisconnectclick = (function() {
+            this.ondisconnectselect();
+        }).bind(this);
+        return s;
+    }
+
     setupAboutScreen(div) {
         var s = new AboutScreen(div);
         s.onbackclick = (function() {
@@ -201,6 +213,10 @@ class CostanzaView {
 
     postWalletConnectEvent(layer_name, event) {
         this.connecting_wallet_screen.postConnectEvent(layer_name, event);
+    }
+
+    postAppConnectEvent(layer_name, event) {
+        this.connecting_app_screen.postConnectEvent(layer_name, event);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -239,21 +255,26 @@ class CostanzaView {
 
     changeToPayBolt11(bolt11) {
         D.deleteChildren(this.app_div);
-        // TODO
     }
 
-    changeToConnect(beacon) {
+    changeToConnectWallet(beacon) {
         D.deleteChildren(this.app_div);
-        // TODO
-        //this.connect_wallet_screen.drawConnnecting(beacon);
         this.connect_wallet_screen.draw();
     }
 
-    changeToConnecting() {
+    changeToConnectApp(beacon) {
         D.deleteChildren(this.app_div);
-        // TODO
-        //this.connect_wallet_screen.drawConnnecting(beacon);
+        this.connect_app_screen.draw();
+    }
+
+    changeToConnectingWallet() {
+        D.deleteChildren(this.app_div);
         this.connecting_wallet_screen.draw();
+    }
+
+    changeToConnectingApp() {
+        D.deleteChildren(this.app_div);
+        this.connecting_app_screen.draw();
     }
 
     changeToAbout(beacon) {
@@ -286,7 +307,7 @@ class CostanzaView {
             // TODO
             break;
         case CONNECT_STATE.CONNECTING:
-            // TODO
+            this.connecting_app_screen.draw();
             break;
         case CONNECT_STATE.DISCONNECTED:
             this.connect_app_screen.draw();

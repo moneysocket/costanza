@@ -33,17 +33,17 @@ class ConnectingScreen {
     drawDisconnectButton(div, disconnect_func) {
         var b = D.button(div, disconnect_func, "main-button");
         var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
+        var icon_span = D.emptySpan(flex);
         var back = I.plug2x(icon_span);
-        var text = D.textSpan(flex, "Disconnect");
+        var text = D.textSpan(flex, "Disconnect", "px-1");
     }
 
     drawCopyBeaconButton(div, copy_func) {
         var b = D.button(div, copy_func, "p-2 main-button");
         var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
+        var icon_span = D.emptySpan(flex);
         var qr = I.copy2x(icon_span);
-        this.copy_span = D.textSpan(flex, "Copy Beacon");
+        this.copy_span = D.textSpan(flex, "Copy", "px-1");
     }
 
 
@@ -65,7 +65,7 @@ class ConnectingScreen {
 
     drawTitle(div) {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
-        D.textParagraph(flex, "Connecting To Wallet:",
+        D.textParagraph(flex, this.title_string,
                         "font-black text-2xl text-yellow-800");
     }
 
@@ -78,21 +78,21 @@ class ConnectingScreen {
     }
 
     drawQr(div) {
-        var beacon = this.model.getEphemeralConsumerBeacon();
+        var beacon = this.getBeacon()
         this.displayed_beacon = beacon;
         beacon = beacon.toUpperCase();
 
         var qr = Kjua({
-            ecLevel: "M",
-            render:  "canvas",
-            size:    360,
-            text:    beacon,
-            label:   "beacon",
+            ecLevel:   "M",
+            render:    "canvas",
+            size:      360,
+            text:      beacon,
+            label:     this.qr_string,
             mode:      "label",
-            mSize:     10,
+            mSize:     6,
             fontname:  "sans",
-            fontcolor: "#f00",
-            quiet:   0,
+            fontcolor: "#941",
+            quiet:     0,
         });
         var b = D.emptyDiv(div, "border-8 border-white");
         b.onclick = (function() {this.doCopy()}).bind(this);
@@ -141,12 +141,24 @@ class ConnectingScreen {
 class ConnectingWalletScreen extends ConnectingScreen {
     constructor(app_div, model) {
         super(app_div, model);
+        this.title_string = "Connecting To Wallet:";
+        this.qr_string = "Wallet Provider";
+    }
+
+    getBeacon() {
+        return this.model.getEphemeralConsumerBeacon();
     }
 }
 
 class ConnectingAppScreen extends ConnectingScreen {
     constructor(app_div, model) {
         super(app_div, model);
+        this.title_string = "Connecting To App:";
+        this.qr_string = "App Consumer";
+    }
+
+    getBeacon() {
+        return this.model.getEphemeralProviderBeacon();
     }
 }
 
