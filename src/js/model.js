@@ -217,7 +217,7 @@ class CostanzaModel {
     ///////////////////////////////////////////////////////////////////////////
 
     connectToWalletProvider(beacon_str) {
-        console.log("connect: " + beacon_str);
+        console.log("connect wallet: " + beacon_str);
         var [beacon, err] = MoneysocketBeacon.fromBech32Str(beacon_str);
         if (err != null) {
             console.log("could not interpret: " + beacon_str + " : " + err);
@@ -227,7 +227,15 @@ class CostanzaModel {
         this.consumer_stack.doConnect(beacon);
     }
 
-    connectToAppConsumer(beacon) {
+    connectToAppConsumer(beacon_str) {
+        console.log("connect app: " + beacon_str);
+        var [beacon, err] = MoneysocketBeacon.fromBech32Str(beacon_str);
+        if (err != null) {
+            console.log("could not interpret: " + beacon_str + " : " + err);
+            return
+        }
+        this.provider_state = CONNECT_STATE.CONNECTING;
+        this.provider_stack.doConnect(beacon);
     }
 
     disconnectAll() {

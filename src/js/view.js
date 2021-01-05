@@ -12,7 +12,7 @@ const ScanScreen = require("./screen/scan.js").ScanScreen;
 const ErrorScreen = require("./screen/error.js").ErrorScreen;
 const ConnectWalletScreen = require("./screen/connect.js").ConnectWalletScreen;
 const ConnectingWalletScreen = require(
-    "./screen/connecting-wallet.js").ConnectingWalletScreen;
+    "./screen/connecting.js").ConnectingWalletScreen;
 const ConnectedWalletScreen = require(
     "./screen/connected-wallet.js").ConnectedWalletScreen;
 const ConnectAppScreen = require("./screen/connect.js").ConnectAppScreen;

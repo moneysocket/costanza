@@ -35,7 +35,7 @@ class CostanzaController {
             this.view.changeToConnect()
         }).bind(this);
         this.view.onforgetappbeaconselect = (function() {
-            this.model.clearStoredAppBeacon();
+            this.model.clearStoredProviderBeacon();
             this.view.changeToConnect()
         }).bind(this);
         this.view.ondisconnectselect = (function() {

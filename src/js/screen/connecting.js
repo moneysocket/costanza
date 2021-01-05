@@ -9,11 +9,9 @@ const D = require('../utl/dom.js').DomUtl;
 const I = require('../utl/icon.js').IconUtl;
 
 const ConnectProgress = require("./connect-progress.js").ConnectProgress;
-
 const Copy = require('clipboard-copy');
 
-
-class ConnectingWalletScreen {
+class ConnectingScreen {
     constructor(app_div, model) {
         this.app_div = app_div;
         this.model = model;
@@ -140,4 +138,17 @@ class ConnectingWalletScreen {
     }
 }
 
+class ConnectingWalletScreen extends ConnectingScreen {
+    constructor(app_div, model) {
+        super(app_div, model);
+    }
+}
+
+class ConnectingAppScreen extends ConnectingScreen {
+    constructor(app_div, model) {
+        super(app_div, model);
+    }
+}
+
+exports.ConnectingAppScreen = ConnectingAppScreen;
 exports.ConnectingWalletScreen = ConnectingWalletScreen;
