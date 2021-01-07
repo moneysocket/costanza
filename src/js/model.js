@@ -13,6 +13,8 @@ const WebsocketLocation = require('moneysocket').WebsocketLocation;
 const ProviderStack = require('moneysocket').ProviderStack;
 const ConsumerStack = require('moneysocket').ConsumerStack;
 
+const Balance = require("./balance.js").Balance;
+
 
 var Receipts = [
     {'receipt_id':  Uuid.uuidv4(),
@@ -74,6 +76,7 @@ class CostanzaModel {
         this.provider_state = CONNECT_STATE.DISCONNECTED;
         this.consumer_stack = this.setupConsumerStack();
         this.consumer_state = CONNECT_STATE.DISCONNECTED;
+        this.balance = new Balance(this);
 
         this.consumer_reported_info = null;
         this.consumer_last_ping = 0;
@@ -90,6 +93,10 @@ class CostanzaModel {
         this.ephemeral_wallet_beacon = this.getStoredConsumerBeacon();
         console.log("provider_beacon: " + this.getStoredProviderBeacon());
         this.ephemeral_app_beacon = this.getStoredProviderBeacon();
+
+        if (! this.hasStoredAccountUuid()) {
+            this.storeAccountUuid(Uuid.uuidv4());
+        }
     }
 
     setupProviderStack() {
@@ -172,6 +179,9 @@ class CostanzaModel {
     consumerOnProviderInfo(provider_info) {
         console.log("consumer provider info: " + JSON.stringify(provider_info));
         this.consumer_reported_info = provider_info;
+        this.balance.setIncomingProviderInfo(provider_info['wad'],
+                                             provider_info['payer'],
+                                             provider_info['payee']);
         if (this.onconsumerproviderinfochange != null) {
             this.onconsumerproviderinfochange();
         }
@@ -219,7 +229,9 @@ class CostanzaModel {
 
     handleProviderInfoRequest(shared_seed) {
         console.log("provider info request");
-        return {'ready': false};
+        var p = this.balance.getOutgoingProviderInfo();
+        console.log("p: " + JSON.stringify(p));
+        return p;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -351,6 +363,26 @@ class CostanzaModel {
 
     clearStoredProviderBeacon() {
         window.localStorage.removeItem("provider_beacon");
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // account_uuid
+    ///////////////////////////////////////////////////////////////////////////
+
+    hasStoredAccountUuid() {
+        return window.localStorage.getItem("account_uuid") ? true: false;
+    }
+
+    getStoredAccountUuid() {
+        return window.localStorage.getItem("account_uuid");
+    }
+
+    storeAccountUuid(uuid) {
+        window.localStorage.setItem("account_uuid", uuid);
+    }
+
+    clearStoredAccountUuid() {
+        window.localStorage.removeItem("account_uuid");
     }
 
     ///////////////////////////////////////////////////////////////////////////
