@@ -15,6 +15,8 @@ class MenuScreen {
         this.onappconsumerclick = null;
         this.onbolt11receiveclick = null;
         this.onstoragesettingsclick = null;
+        this.onstoragesettingsclick = null;
+        this.onaboutclick = null;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -35,7 +37,7 @@ class MenuScreen {
 
     drawMenuTitle(div) {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
-        D.textParagraph(flex, "WALLET MENU:",
+        D.textParagraph(flex, "MENU:",
                         "font-black text-2xl text-yellow-800");
     }
 
@@ -97,6 +99,18 @@ class MenuScreen {
         D.textSpan(flex, "Storage Settings", "flex-grow text-sm");
     }
 
+    drawAboutEntry(div) {
+        var d = D.emptyDiv(div,
+                           "bg-gray-500 hover:bg-gray-300 text-gray-300 py-2");
+        d.onclick = (function() {
+            this.onaboutclick();
+        }).bind(this);
+        var flex = D.emptyDiv(d, "flex items-center justify-start");
+        var icon_span = D.emptySpan(flex, "px-2 font-bold");
+        I.qcircle(icon_span);
+        D.textSpan(flex, "About", "flex-grow text-sm");
+    }
+
     drawEntryPanel(div) {
         var flex = D.emptyDiv(div,
                               "flex-col justify-evenly section-background");
@@ -104,6 +118,7 @@ class MenuScreen {
         this.drawAppConsumerEntry(flex);
         this.drawCreateBolt11Entry(flex);
         this.drawStorageSettingsEntry(flex);
+        this.drawAboutEntry(flex);
     }
 
     ///////////////////////////////////////////////////////////////////////////

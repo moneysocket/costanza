@@ -72,6 +72,17 @@ class DomUtl {
         return s;
     }
 
+    static hyperlinkTabOpen(div, text, url, class_str) {
+        var i = document.createElement("a");
+        i.setAttribute("href", url);
+        i.setAttribute("target", "_blank");
+        DomUtl.setClass(i, class_str);
+        var t = document.createTextNode(text);
+        i.appendChild(t);
+        div.appendChild(i);
+        return i;
+    }
+
     static textParagraph(div, text, class_str) {
         var p = DomUtl.emptyParagraph(div, class_str);
         var t = document.createTextNode(text);

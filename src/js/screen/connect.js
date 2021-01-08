@@ -6,7 +6,7 @@ var D = require('../utl/dom.js').DomUtl;
 var I = require('../utl/icon.js').IconUtl;
 
 
-class ConnectWalletScreen {
+class ConnectScreen {
     constructor(app_div, model) {
         this.app_div = app_div;
         this.onbbackclick = null;
@@ -33,8 +33,7 @@ class ConnectWalletScreen {
    drawPasteButton(div, paste_func) {
         var b = D.button(div, paste_func, "p-2 main-button");
         var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-1");
-        var back = I.paste2x(icon_span);
+        D.textSpan(flex, "Use");
     }
 
    drawGenerateButton(div, generate_func) {
@@ -111,8 +110,8 @@ class ConnectWalletScreen {
 
     drawTitle(div) {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
-        D.textParagraph(flex, "Connect Wallet:",
-                        "font-black text-2xl text-yellow-800");
+        D.textParagraph(flex, this.title_string,
+                        "font-black text-xl text-yellow-800");
     }
 
     drawDisconnected(div) {
@@ -143,16 +142,14 @@ class ConnectWalletScreen {
 
     drawStored(div) {
         var flex = D.emptyDiv(div, "flex flex-col");
-        D.textParagraph(flex, "Stored Wallet Beacon:",
+        D.textParagraph(flex, this.stored_string,
                         "font-black text-yellow-800 py-5");
-
-        if (! this.model.hasStoredConsumerBeacon()) {
+        if (! this.hasBeacon()) {
             D.textParagraph(flex, "(none)",
                             "font-black text-yellow-800 py-5");
             return;
         }
-        var beacon = this.model.getStoredConsumerBeacon();
-
+        var beacon = this.getBeacon();
         D.textParagraph(flex, beacon,
                         "font-black break-words text-yellow-800 py-5");
 
@@ -170,37 +167,26 @@ class ConnectWalletScreen {
 
         this.drawDisconnected(flex);
 
-        var paste = D.emptyDiv(flex, "flex justify-center");
+        var paste = D.emptyDiv(flex,
+                               "flex justify-center items-center " +
+                               "bg-yellow-500 py-2 m-2 rounded");
         this.paste_input = D.emptyInput(paste,
             "w-auto appearance-none rounded shadow " +
             "p-3 text-grey-dark mr-2 focus:outline-none");
         this.paste_input.setAttribute("placeholder", "paste beacon");
         this.drawPasteButton(paste,
                              (function() {this.pasteResult()}).bind(this));
-
-
         var buttons = D.emptyDiv(flex, "flex justify-around py-4");
         this.drawGenerateButton(buttons,
                              (function() {this.doGenerate()}).bind(this));
         this.drawScanButton(buttons,
                             (function() {this.doScan()}).bind(this));
-
         this.drawStored(flex);
-
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Screens
     ///////////////////////////////////////////////////////////////////////////
-
-    drawConnecting(beacon) {
-        var flex = D.emptyDiv(this.app_div, "flex flex-col h-screen");
-        var flex_top = D.emptyDiv(flex, "flex-none");
-        this.drawTitlePanel(flex_top);
-        var flex_mid = D.emptyDiv(flex, "flex-none");
-        D.textParagraph(flex_mid, "Connect To :" + beacon,
-                        "font-black text-2xl text-yellow-800");
-    }
 
     draw() {
         //console.log("path: " + QrScanner.WORKER_PATH);
@@ -215,4 +201,38 @@ class ConnectWalletScreen {
     }
 }
 
+
+class ConnectWalletScreen extends ConnectScreen {
+    constructor(app_div, model) {
+        super(app_div, model);
+        this.title_string = "Connect Wallet:";
+        this.stored_string = "Stored Wallet Beacon:";
+    }
+
+    hasBeacon() {
+        return this.model.hasStoredConsumerBeacon();
+    }
+
+    getBeacon() {
+        return this.model.getStoredConsumerBeacon();
+    }
+}
+
+class ConnectAppScreen extends ConnectScreen {
+    constructor(app_div, model) {
+        super(app_div, model);
+        this.title_string = "Connect App:";
+        this.stored_string = "Stored App Beacon:";
+    }
+
+    hasBeacon() {
+        return this.model.hasStoredProviderBeacon();
+    }
+
+    getBeacon() {
+        return this.model.getStoredProviderBeacon();
+    }
+}
+
 exports.ConnectWalletScreen = ConnectWalletScreen;
+exports.ConnectAppScreen = ConnectAppScreen;

@@ -13,6 +13,8 @@ const WebsocketLocation = require('moneysocket').WebsocketLocation;
 const ProviderStack = require('moneysocket').ProviderStack;
 const ConsumerStack = require('moneysocket').ConsumerStack;
 
+const Balance = require("./balance.js").Balance;
+
 
 var Receipts = [
     {'receipt_id':  Uuid.uuidv4(),
@@ -60,14 +62,41 @@ const DEFAULT_PORT = 443;
 const DEFAULT_USE_TLS = true;
 
 
+const CONNECT_STATE = {
+    DISCONNECTED: 'DISCONNECTED',
+    CONNECTING:   'CONNECTING',
+    CONNECTED:    'CONNECTED',
+}
+
+
 class CostanzaModel {
     constructor() {
         this.receipts = Receipts;
         this.provider_stack = this.setupProviderStack();
+        this.provider_state = CONNECT_STATE.DISCONNECTED;
         this.consumer_stack = this.setupConsumerStack();
+        this.consumer_state = CONNECT_STATE.DISCONNECTED;
+        this.balance = new Balance(this);
+
+        this.consumer_reported_info = null;
+        this.consumer_last_ping = 0;
+
+        this.onconsumerstackevent = null;
+        this.onconsumeronline = null;
+        this.onconsumeroffline = null;
+        this.onconsumerproviderinfochange = null;
+        this.onping = null;
+
+        this.onproviderstackevent = null;
 
         console.log("consumer_beacon: " + this.getStoredConsumerBeacon());
         this.ephemeral_wallet_beacon = this.getStoredConsumerBeacon();
+        console.log("provider_beacon: " + this.getStoredProviderBeacon());
+        this.ephemeral_app_beacon = this.getStoredProviderBeacon();
+
+        if (! this.hasStoredAccountUuid()) {
+            this.storeAccountUuid(Uuid.uuidv4());
+        }
     }
 
     setupProviderStack() {
@@ -108,7 +137,8 @@ class CostanzaModel {
             this.consumerOnStackEvent(layer_name, nexus, status);
         }).bind(this);
         s.onping = (function(msecs) {
-            this.consumerOnPing(msecs);
+            this.consumer_last_ping = msecs;
+            this.consumerOnPing();
         }).bind(this);
         s.oninvoice = (function(bolt11, request_reference_uuid) {
             this.consumerOnInvoice(bolt11, request_reference_uuid);
@@ -124,24 +154,52 @@ class CostanzaModel {
     ///////////////////////////////////////////////////////////////////////////
 
     consumerOnAnnounce(nexus) {
+        console.log("consumer announce");
+        this.consumer_state = CONNECT_STATE.CONNECTED;
+        if (this.onconsumeronline != null) {
+            this.onconsumeronline();
+        }
     }
 
     consumerOnRevoke(nexus) {
+        console.log("consumer revoke");
+        this.consumer_state = CONNECT_STATE.DISCONNECTED;
+        this.consumer_reported_info = null;
+        if (this.onconsumeroffline != null) {
+            this.onconsumeroffline();
+        }
     }
 
     consumerOnStackEvent(layer_name, nexus, status) {
+        if (this.onconsumerstackevent != null) {
+            this.onconsumerstackevent(layer_name, status);
+        }
     }
 
     consumerOnProviderInfo(provider_info) {
+        console.log("consumer provider info: " + JSON.stringify(provider_info));
+        this.consumer_reported_info = provider_info;
+        this.balance.setIncomingProviderInfo(provider_info['wad'],
+                                             provider_info['payer'],
+                                             provider_info['payee']);
+        this.providerNotifyChange();
+        if (this.onconsumerproviderinfochange != null) {
+            this.onconsumerproviderinfochange();
+        }
     }
 
-    consumerOnPing(msecs) {
+    consumerOnPing() {
+        if (this.onping != null) {
+            this.onping();
+        }
     }
 
     consumerOnInvoice(bolt11, request_reference_uuid) {
+        console.log("consumer announce");
     }
 
     consumerOnPreimage(preimage, request_reference_uuid) {
+        console.log("consumer revoke");
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -149,36 +207,121 @@ class CostanzaModel {
     ///////////////////////////////////////////////////////////////////////////
 
     providerOnAnnounce(nexus) {
+        this.provider_state = CONNECT_STATE.CONNECTED;
+        console.log("provider announce");
+        if (this.onprovideronline != null) {
+            this.onprovideronline();
+        }
     }
 
     providerOnRevoke() {
+        this.provider_state = CONNECT_STATE.DISCONNECTED;
+        console.log("provider revoke");
+        if (this.oncprovideroffline != null) {
+            this.oncprovideroffline();
+        }
     }
 
     providerOnStackEvent(layer_name, nexus, status) {
+        if (this.onproviderstackevent != null) {
+            this.onproviderstackevent(layer_name, status);
+        }
     }
 
     providerHandleInvoiceRequest(msats, request_uuid) {
+        console.log("provider invoice request");
     }
 
     providerHandlePayRequest(bolt11, request_uuid) {
+        console.log("provider pay request");
     }
 
     handleProviderInfoRequest(shared_seed) {
-        return {'ready': false};
+        console.log("provider info request");
+        var p = this.balance.getOutgoingProviderInfo();
+        console.log("p: " + JSON.stringify(p));
+        return p;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // provider
+    ///////////////////////////////////////////////////////////////////////////
+
+    providerNotifyChange() {
+        if (this.provider_state != CONNECT_STATE.CONNECTED) {
+            return;
+        }
+        this.provider_stack.sendProviderInfoUpdate();
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // call-ins
     ///////////////////////////////////////////////////////////////////////////
 
-    connectToWalletProvider(beacon) {
+    connectToWalletProvider(beacon_str) {
+        console.log("connect wallet: " + beacon_str);
+        var [beacon, err] = MoneysocketBeacon.fromBech32Str(beacon_str);
+        if (err != null) {
+            console.log("could not interpret: " + beacon_str + " : " + err);
+            return
+        }
+        this.consumer_state = CONNECT_STATE.CONNECTING;
+        this.consumer_stack.doConnect(beacon);
     }
 
-    connectToAppConsumer(beacon) {
+    connectToAppConsumer(beacon_str) {
+        console.log("connect app: " + beacon_str);
+        var [beacon, err] = MoneysocketBeacon.fromBech32Str(beacon_str);
+        if (err != null) {
+            console.log("could not interpret: " + beacon_str + " : " + err);
+            return
+        }
+        this.provider_state = CONNECT_STATE.CONNECTING;
+        this.provider_stack.doConnect(beacon);
+    }
+
+    disconnectAll() {
+        this.provider_state = CONNECT_STATE.DISCONNECTED;
+        this.provider_stack.doDisconnect();
+        this.consumer_state = CONNECT_STATE.DISCONNECTED;
+        this.consumer_stack.doDisconnect();
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    // call-ins
+    // get consumer state
+    ///////////////////////////////////////////////////////////////////////////
+
+    getConsumerBalanceWad() {
+        if (this.consumer_reported_info == null) {
+            return Wad.bitcoin(0);
+        }
+        return this.consumer_reported_info.wad;
+    }
+
+    getConsumerIsPayer() {
+        if (this.consumer_reported_info == null) {
+            return false;
+        }
+        return this.consumer_reported_info.payer;
+    }
+
+    getConsumerIsPayee() {
+        if (this.consumer_reported_info == null) {
+            return false;
+        }
+        return this.consumer_reported_info.payee;
+    }
+
+    getConsumerLastPing() {
+        return this.consumer_last_ping;
+    }
+
+    getConsumerConnectState() {
+        return this.consumer_state;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // consumer beacon
     ///////////////////////////////////////////////////////////////////////////
 
     setEphemeralConsumerBeacon(beacon) {
@@ -205,6 +348,79 @@ class CostanzaModel {
         window.localStorage.removeItem("consumer_beacon");
     }
 
+
+    ///////////////////////////////////////////////////////////////////////////
+    // get provider state
+    ///////////////////////////////////////////////////////////////////////////
+
+    getProviderBalanceWad() {
+        return this.balance.calcOutgoingWad();
+    }
+
+    getProviderIsPayer() {
+        return this.balance.calcOutgoingPayer();
+    }
+
+    getProviderIsPayee() {
+        return this.balance.calcOutgoingPayee();
+    }
+
+    getProviderConnectState() {
+        return this.provider_state;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // provider beacon
+    ///////////////////////////////////////////////////////////////////////////
+
+    setEphemeralProviderBeacon(beacon) {
+        this.ephemeral_app_beacon = beacon;
+    }
+
+    getEphemeralProviderBeacon() {
+        return this.ephemeral_app_beacon;
+    }
+
+    hasStoredProviderBeacon() {
+        return window.localStorage.getItem("provider_beacon") ? true: false;
+    }
+
+    getStoredProviderBeacon() {
+        return window.localStorage.getItem("provider_beacon");
+    }
+
+    storeProviderBeacon(beacon) {
+        window.localStorage.setItem("provider_beacon", beacon);
+    }
+
+    clearStoredProviderBeacon() {
+        window.localStorage.removeItem("provider_beacon");
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // account_uuid
+    ///////////////////////////////////////////////////////////////////////////
+
+    hasStoredAccountUuid() {
+        return window.localStorage.getItem("account_uuid") ? true: false;
+    }
+
+    getStoredAccountUuid() {
+        return window.localStorage.getItem("account_uuid");
+    }
+
+    storeAccountUuid(uuid) {
+        window.localStorage.setItem("account_uuid", uuid);
+    }
+
+    clearStoredAccountUuid() {
+        window.localStorage.removeItem("account_uuid");
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // general beacon
+    ///////////////////////////////////////////////////////////////////////////
+
     generateNewBeacon() {
         var location = new WebsocketLocation(DEFAULT_HOST, DEFAULT_PORT,
                                              DEFAULT_USE_TLS);
@@ -218,3 +434,4 @@ class CostanzaModel {
 
 
 exports.CostanzaModel = CostanzaModel;
+exports.CONNECT_STATE = CONNECT_STATE;

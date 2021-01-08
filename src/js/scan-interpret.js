@@ -2,40 +2,25 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
-var b11 = require("bolt11");
-var MoneysocketBeacon = require("moneysocket").MoneysocketBeacon;
+const b11 = require("bolt11");
+const MoneysocketBeacon = require("moneysocket").MoneysocketBeacon;
+
+const CONNECT_STATE = require("./model.js").CONNECT_STATE;
 
 class ScanInterpret {
-    constructor() {
-        this.wallet_online = false;
-        this.app_online = false;
+    constructor(model) {
+        this.model = model;
     }
 
-    ///////////////////////////////////////////////////////////////////////////
-    // Context
-    ///////////////////////////////////////////////////////////////////////////
-
-    set_wallet_socket_online() {
-        this.wallet_online = true;
+    isWalletOnline() {
+        return this.model.getConsumerConnectState() == CONNECT_STATE.CONNECTED;
     }
 
-    set_wallet_socket_offline() {
-        this.wallet_online = false;
+    isAppOnline() {
+        return this.model.getProviderConnectState() == CONNECT_STATE.CONNECTED;
     }
 
-    set_app_socket_online() {
-        this.app_online = true;
-    }
-
-    set_app_socket_offline() {
-        this.app_online = false;
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // validation
-    ///////////////////////////////////////////////////////////////////////////
-
-    is_bolt11(scan_str) {
+    isBolt11(scan_str) {
         try {
             const decoded = b11.decode(scan_str);
             console.log(decoded);
@@ -46,7 +31,7 @@ class ScanInterpret {
         }
     }
 
-    is_beacon(scan_str) {
+    isBeacon(scan_str) {
         var [beacon, err] = MoneysocketBeacon.fromBech32Str(scan_str);
         if (beacon == null) {
             return false;
@@ -55,25 +40,26 @@ class ScanInterpret {
     }
 
     interpret_action(scan_str) {
-        var is_bolt11 = this.is_bolt11(scan_str);
-        var is_beacon = this.is_beacon(scan_str);
+        var is_bolt11 = this.isBolt11(scan_str);
+        var is_beacon = this.isBeacon(scan_str);
 
         if (! (is_bolt11 || is_beacon)) {
             return "PARSE_ERROR";
         }
-        if (is_bolt11 && this.wallet_online) {
+        if (is_bolt11 && this.isWalletOnline()) {
             return "PAY_BOLT11_MANUALLY";
         }
-        if (is_bolt11 && ! this.wallet_online) {
+        if (is_bolt11 && ! this.isWalletOnline()) {
             return "PAY_BOLT11_MANUALLY_ERROR";
         }
-        if (is_beacon && ! this.wallet_online) {
+        if (is_beacon && ! this.isWalletOnline()) {
             return "CONNECT_WALLET_BEACON";
         }
-        if (is_beacon && this.wallet_online && ! this.app_online) {
+        if (is_beacon && this.isWalletOnline() && ! this.isAppOnline()) {
             return "CONNECT_APP_BEACON";
         }
-        console.assert(is_beacon && this.app_online && this.wallet_online);
+        console.assert(is_beacon && this.isAppOnline() &&
+                       this.isWalletOnline());
         return "CONNECT_BEACON_ERROR";
     }
 }

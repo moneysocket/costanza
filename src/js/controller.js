@@ -6,7 +6,7 @@ var ScanInterpret = require("./scan-interpret.js").ScanInterpret;
 
 class CostanzaController {
     constructor(model, view) {
-        this.scan_interpret = new ScanInterpret();
+        this.scan_interpret = new ScanInterpret(model);
         this.model = model;
         this.view = view;
 
@@ -17,22 +17,66 @@ class CostanzaController {
             var beacon = this.model.generateNewBeacon();
             this.postScanResult(beacon);
         }).bind(this);
+        this.view.ongenerateappbeaconselect = (function() {
+            console.log("generate app beacon");
+            var beacon = this.model.generateNewBeacon();
+            this.postScanResult(beacon);
+        }).bind(this);
         this.view.onconnectstoredwalletselect = (function() {
             var beacon = this.model.getStoredConsumerBeacon();
             this.postScanResult(beacon);
         }).bind(this);
-        this.view.onforgetselect = (function() {
+        this.view.onconnectstoredappselect = (function() {
+            var beacon = this.model.getStoredProviderBeacon();
+            this.postScanResult(beacon);
+        }).bind(this);
+        this.view.onforgetwalletbeaconselect = (function() {
             this.model.clearStoredConsumerBeacon();
-            this.view.changeToConnect()
+            this.view.changeToConnectWallet()
+        }).bind(this);
+        this.view.onforgetappbeaconselect = (function() {
+            this.model.clearStoredProviderBeacon();
+            this.view.changeToConnectApp()
+        }).bind(this);
+        this.view.ondisconnectselect = (function() {
+            this.model.disconnectAll();
+            this.view.changeToMain();
+        }).bind(this);
+
+        this.model.onconsumerstackevent = (function(layer_name, event) {
+            this.view.postWalletConnectEvent(layer_name, event);
+        }).bind(this);
+        this.model.onproviderstackevent = (function(layer_name, event) {
+            this.view.postAppConnectEvent(layer_name, event);
+        }).bind(this);
+        this.model.onconsumeronline = (function() {
+            this.view.changeToMain();
+        }).bind(this);
+        this.model.onconsumeroffline = (function() {
+            this.view.changeToMain();
+        }).bind(this);
+        this.model.onprovideronline = (function() {
+            this.view.changeToMain();
+        }).bind(this);
+        this.model.onprovideroffline = (function() {
+            this.view.changeToMain();
+        }).bind(this);
+        this.model.onconsumerproviderinfochange = (function() {
+            this.view.redrawDynamicInfo();
+        }).bind(this);
+        this.model.onping = (function() {
+            this.view.redrawDynamicInfo();
         }).bind(this);
     }
 
-    connectToAppConsumer(scan_str) {
-        console.log("app consumer connect stub");
+    connectToAppConsumer(beacon) {
+        this.view.changeToConnectingApp();
+        this.model.connectToAppConsumer(beacon);
     }
 
-    connectToWalletProvider(scan_str) {
-        this.view.changeToConnecting();
+    connectToWalletProvider(beacon) {
+        this.view.changeToConnectingWallet();
+        this.model.connectToWalletProvider(beacon);
     }
 
     storeWalletBeacon(beacon) {
@@ -41,6 +85,14 @@ class CostanzaController {
             return;
         }
         this.model.storeConsumerBeacon(beacon);
+    }
+
+    storeAppBeacon(beacon) {
+        this.model.setEphemeralProviderBeacon(beacon);
+        if (this.model.hasStoredProviderBeacon()) {
+            return;
+        }
+        this.model.storeProviderBeacon(beacon);
     }
 
 
@@ -66,7 +118,7 @@ class CostanzaController {
         case "CONNECT_APP_BEACON":
             // TODO
             //this.view.changeToConnect(scan_str);
-            this.view.changeToMain();
+            this.storeAppBeacon(scan_str);
             this.connectToAppConsumer(scan_str);
             break;
         case "CONNECT_BEACON_ERROR":

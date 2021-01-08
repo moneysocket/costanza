@@ -69,10 +69,9 @@ class ScanScreen {
     }
 
     drawPasteButton(div, paste_func) {
-        var b = D.button(div, paste_func, "main-button");
+        var b = D.button(div, paste_func, "p-2 main-button");
         var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-1");
-        var back = I.paste2x(icon_span);
+        D.textSpan(flex, "Use");
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -97,12 +96,15 @@ class ScanScreen {
 
     drawPastePanel(div) {
         var flex = D.emptyDiv(div,
-                              "flex flex-wrap section-background");
-        this.paste_input = D.emptyInput(flex,
+                              "flex flex-col section-background");
+        var paste = D.emptyDiv(flex,
+                               "flex justify-center items-center " +
+                               "bg-yellow-500 px-2 py-2 m-2 rounded");
+        this.paste_input = D.emptyInput(paste,
             "flex-initial w-auto appearance-none rounded shadow " +
             "p-3 text-grey-dark mr-2 focus:outline-none");
         this.paste_input.setAttribute("placeholder", "beacon or bolt11");
-        var button_flex = D.emptyDiv(flex, "flex-initial");
+        var button_flex = D.emptyDiv(paste, "flex-initial");
         this.drawPasteButton(button_flex,
                              (function() { this.pasteResult()}).bind(this));
 
