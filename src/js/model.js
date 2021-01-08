@@ -206,11 +206,19 @@ class CostanzaModel {
     ///////////////////////////////////////////////////////////////////////////
 
     providerOnAnnounce(nexus) {
+        this.provider_state = CONNECT_STATE.CONNECTED;
         console.log("provider announce");
+        if (this.onprovideronline != null) {
+            this.onprovideronline();
+        }
     }
 
     providerOnRevoke() {
+        this.provider_state = CONNECT_STATE.DISCONNECTED;
         console.log("provider revoke");
+        if (this.oncprovideroffline != null) {
+            this.oncprovideroffline();
+        }
     }
 
     providerOnStackEvent(layer_name, nexus, status) {
@@ -332,6 +340,10 @@ class CostanzaModel {
     ///////////////////////////////////////////////////////////////////////////
     // get provider state
     ///////////////////////////////////////////////////////////////////////////
+
+    getProviderBalanceWad() {
+        return this.balance.calcOutgoingWad();
+    }
 
     getProviderConnectState() {
         return this.provider_state;

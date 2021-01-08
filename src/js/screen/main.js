@@ -19,6 +19,7 @@ class MainScreen {
         this.onmenuclick = null;
         this.onreceiptclick = null;
 
+        this.auth_balance_div = null;
         this.balance_div = null;
         this.ping_div = null;
     }
@@ -70,13 +71,31 @@ class MainScreen {
         D.deleteChildren(this.balance_div);
         D.textParagraph(this.balance_div, wad.toString(),
                         "font-bold text-3xl text-yellow-900 " +
-                        "hover:text-yellow-700");
+                        "hover:text-yellow-700 py-4");
         this.balance_div.onclick = (function() {
             this.onconnectwalletclick();
         }).bind(this);
         var sats = (wad['msats'] / 1000.0).toFixed(3) + " sats";
         var hoverstring = wad['name'] + "\n" + sats;
         this.balance_div.setAttribute("title", hoverstring);
+    }
+
+    drawAuthorizedBalance() {
+        var wad = this.model.getProviderBalanceWad();
+        D.deleteChildren(this.auth_balance_div);
+        var border = D.emptyDiv(this.auth_balance_div,
+                                "px-2 bg-yellow-300 hover:bg-yellow-200");
+        var icon_span = D.emptySpan(border, "px-2 font-bold");
+        I.flyingmoney(icon_span);
+        D.textSpan(border, "App", "px-2 font-bold text-yellow-900");
+        D.textParagraph(border, wad.toString(),
+                        "font-bold text-sm text-yellow-900");
+        border.onclick = (function() {
+            console.log("click");
+        }).bind(this);
+        var sats = (wad['msats'] / 1000.0).toFixed(3) + " sats";
+        var hoverstring = wad['name'] + "\n" + sats;
+        border.setAttribute("title", hoverstring);
     }
 
     drawPing() {
@@ -170,12 +189,33 @@ class MainScreen {
         this.drawConnectWalletButton(flex, connect_func);
     }
 
+    drawAppSocketInfo(connect_func) {
+        switch (this.model.getProviderConnectState()) {
+        case CONNECT_STATE.CONNECTED:
+            this.drawAuthorizedBalance();
+            break;
+        case CONNECT_STATE.CONNECTING:
+            break;
+        case CONNECT_STATE.DISCONNECTED:
+            D.deleteChildren(this.auth_balance_div);
+            var button_div = D.emptyDiv(this.auth_balance_div);
+            this.drawConnectAppButton(button_div, connect_func);
+            break;
+        default:
+            console.error("unknown provider state");
+            break;
+        }
+    }
+
     drawBalancePanel(div, connect_func) {
         var flex = D.emptyDiv(div,
                               "flex-col justify-evenly section-background");
         var left_box = D.emptyDiv(flex, "flex flex-row");
-        var button_div = D.emptyDiv(left_box);
-        this.drawConnectAppButton(button_div, connect_func);
+
+        this.auth_balance_div = D.emptyDiv(left_box);
+        this.drawAppSocketInfo(left_box, connect_func);
+        //var button_div = D.emptyDiv(left_box);
+        //this.drawConnectAppButton(button_div, connect_func);
 
         this.balance_div = D.emptyDiv(flex);
         this.drawBalance();
@@ -218,6 +258,9 @@ class MainScreen {
     redrawInfo() {
         if (this.balance_div != null) {
             this.drawBalance();
+        }
+        if (this.auth_balance_div != null) {
+            this.drawAppSocketInfo(this.onconnectappclick);
         }
         if (this.ping_div != null) {
             this.drawPing();

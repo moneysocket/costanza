@@ -55,6 +55,12 @@ class CostanzaController {
         this.model.onconsumeroffline = (function() {
             this.view.changeToMain();
         }).bind(this);
+        this.model.onprovideronline = (function() {
+            this.view.changeToMain();
+        }).bind(this);
+        this.model.onprovideroffline = (function() {
+            this.view.changeToMain();
+        }).bind(this);
         this.model.onconsumerproviderinfochange = (function() {
             this.view.redrawDynamicInfo();
         }).bind(this);
