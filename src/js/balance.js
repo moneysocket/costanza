@@ -12,8 +12,8 @@ class Balance {
         this.incoming_payer = false;
 
         this.outgoing_wad = Wad.bitcoin(0);
-        this.outgoing_payee = false;
-        this.outgoing_payer = false;
+        this.outgoing_payee = true;
+        this.outgoing_payer = true;
     }
 
     setIncomingProviderInfo(wad, payee, payer) {

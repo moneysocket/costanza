@@ -18,6 +18,8 @@ const ConnectedWalletScreen = require(
 const ConnectAppScreen = require("./screen/connect.js").ConnectAppScreen;
 const ConnectingAppScreen = require(
     "./screen/connecting.js").ConnectingAppScreen;
+const ConnectedAppScreen = require(
+    "./screen/connected-app.js").ConnectedAppScreen;
 const AboutScreen = require("./screen/about.js").AboutScreen;
 
 
@@ -39,6 +41,8 @@ class CostanzaView {
             this.setupConnectAppScreen(this.app_div);
         this.connecting_app_screen =
             this.setupConnectingAppScreen(this.app_div);
+        this.connected_app_screen =
+            this.setupConnectedAppScreen(this.app_div);
         this.about_screen = this.setupAboutScreen(this.app_div);
 
         this.receipt_screen = null;
@@ -142,8 +146,8 @@ class CostanzaView {
         s.onconnectstoredselect = (function() {
             this.onconnectstoredwalletselect();
         }).bind(this);
-        s.onforgetwalletbeaconselect = (function() {
-            this.onforgetappbeaconselect();
+        s.onforgetselect = (function() {
+            this.onforgetwalletbeaconselect();
         }).bind(this);
         return s;
     }
@@ -199,6 +203,17 @@ class CostanzaView {
         return s;
     }
 
+    setupConnectedAppScreen(div) {
+        var s = new ConnectedAppScreen(div, this.model);
+        s.onbackclick = (function() {
+            this.changeToMain();
+        }).bind(this);
+        s.ondisconnectclick = (function() {
+            this.ondisconnectselect();
+        }).bind(this);
+        return s;
+    }
+
     setupAboutScreen(div) {
         var s = new AboutScreen(div);
         s.onbackclick = (function() {
@@ -231,6 +246,7 @@ class CostanzaView {
     redrawDynamicInfo() {
         this.main_screen.redrawInfo();
         this.connected_wallet_screen.redrawInfo();
+        this.connected_app_screen.redrawInfo();
     }
 
     changeToScan() {
@@ -304,7 +320,7 @@ class CostanzaView {
         D.deleteChildren(this.app_div);
         switch (this.model.getProviderConnectState()) {
         case CONNECT_STATE.CONNECTED:
-            // TODO
+            this.connected_app_screen.draw();
             break;
         case CONNECT_STATE.CONNECTING:
             this.connecting_app_screen.draw();

@@ -86,12 +86,21 @@ class MainScreen {
         var border = D.emptyDiv(this.auth_balance_div,
                                 "px-2 bg-yellow-300 hover:bg-yellow-200");
         var icon_span = D.emptySpan(border, "px-2 font-bold");
+        icon_span.onclick = (function() {
+            this.onconnectappclick();
+        }).bind(this);
         I.flyingmoney(icon_span);
-        D.textSpan(border, "App", "px-2 font-bold text-yellow-900");
-        D.textParagraph(border, wad.toString(),
-                        "font-bold text-sm text-yellow-900");
+        var a = D.textSpan(border, "App", "px-2 font-bold text-yellow-900");
+        a.onclick = (function() {
+            this.onconnectappclick();
+        }).bind(this);
+        var p = D.textParagraph(border, wad.toString(),
+                                "font-bold text-sm text-yellow-900");
+        p.onclick = (function() {
+            this.onconnectappclick();
+        }).bind(this);
         border.onclick = (function() {
-            console.log("click");
+            this.onconnectappclick();
         }).bind(this);
         var sats = (wad['msats'] / 1000.0).toFixed(3) + " sats";
         var hoverstring = wad['name'] + "\n" + sats;

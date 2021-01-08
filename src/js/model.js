@@ -182,6 +182,7 @@ class CostanzaModel {
         this.balance.setIncomingProviderInfo(provider_info['wad'],
                                              provider_info['payer'],
                                              provider_info['payee']);
+        this.providerNotifyChange();
         if (this.onconsumerproviderinfochange != null) {
             this.onconsumerproviderinfochange();
         }
@@ -240,6 +241,17 @@ class CostanzaModel {
         var p = this.balance.getOutgoingProviderInfo();
         console.log("p: " + JSON.stringify(p));
         return p;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // provider
+    ///////////////////////////////////////////////////////////////////////////
+
+    providerNotifyChange() {
+        if (this.provider_state != CONNECT_STATE.CONNECTED) {
+            return;
+        }
+        this.provider_stack.sendProviderInfoUpdate();
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -343,6 +355,14 @@ class CostanzaModel {
 
     getProviderBalanceWad() {
         return this.balance.calcOutgoingWad();
+    }
+
+    getProviderIsPayer() {
+        return this.balance.calcOutgoingPayer();
+    }
+
+    getProviderIsPayee() {
+        return this.balance.calcOutgoingPayee();
     }
 
     getProviderConnectState() {
