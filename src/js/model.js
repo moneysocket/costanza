@@ -287,6 +287,11 @@ class CostanzaModel {
         this.consumer_stack.doDisconnect();
     }
 
+    disconnectProvider() {
+        this.provider_state = CONNECT_STATE.DISCONNECTED;
+        this.provider_stack.doDisconnect();
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // get consumer state
     ///////////////////////////////////////////////////////////////////////////

@@ -57,6 +57,7 @@ class CostanzaView {
         this.onforgetwalletbeaconselect = null;
         this.onforgetappbeaconselect = null;
         this.ondisconnectselect = null;
+        this.ondisconnectproviderselect = null;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -209,7 +210,7 @@ class CostanzaView {
             this.changeToMain();
         }).bind(this);
         s.ondisconnectclick = (function() {
-            this.ondisconnectselect();
+            this.ondisconnectproviderselect();
         }).bind(this);
         return s;
     }

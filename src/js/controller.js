@@ -42,6 +42,10 @@ class CostanzaController {
             this.model.disconnectAll();
             this.view.changeToMain();
         }).bind(this);
+        this.view.ondisconnectproviderselect = (function() {
+            this.model.disconnectProvider();
+            this.view.changeToMain();
+        }).bind(this);
 
         this.model.onconsumerstackevent = (function(layer_name, event) {
             this.view.postWalletConnectEvent(layer_name, event);
