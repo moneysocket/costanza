@@ -14,6 +14,10 @@ class ConnectedAppScreen {
         this.balance_div = null;
         this.payer_div = null;
         this.payee_div = null;
+
+        this.set_input = null;
+        this.slider_val = 0;
+        this.slider_input = null;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -33,9 +37,45 @@ class ConnectedAppScreen {
         var flex = D.emptyDiv(b, "flex items-center justify-around");
         var icon_span = D.emptySpan(flex, "px-2");
         var back = I.plug2x(icon_span);
-        var text = D.textSpan(flex, "Disconnect");
+        var text = D.textSpan(flex, "Disconnect App");
     }
 
+    drawSetButton(div, set_func) {
+        var b = D.button(div, set_func, "p-2 main-button");
+        var flex = D.emptyDiv(b, "flex items-center justify-around");
+        D.textSpan(flex, "Set");
+    }
+
+    drawToggleButton(div, toggle_func) {
+        var b = D.button(div, toggle_func,
+                         "bg-yellow-700 hover:bg-yellow-600 text-white " +
+                         "font-bold rounded py-1 px-5");
+        var flex = D.emptyDiv(b, "flex items-center justify-around");
+        D.textSpan(flex, "Toggle");
+    }
+
+    drawPercentButton(div, pct, pct_func) {
+        var b = D.button(div, pct_func,
+                         "bg-yellow-700 hover:bg-yellow-600 text-white " +
+                         "font-bold rounded py-3 px-5");
+        var flex = D.emptyDiv(b, "flex items-center justify-around");
+        D.textSpan(flex, pct.toString() + "%");
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // button actions
+    ///////////////////////////////////////////////////////////////////////////
+
+    setResult() {
+        var set_string = this.set_input.value;
+        console.log("set result: " + set_string);
+    }
+
+    sliderInput() {
+        var i = this.slider_input.firstChild;
+        this.slider_val = i.value;
+        console.log("slider input: " + this.slider_val);
+    }
 
     doDisconnect() {
         if (this.ondisconnectclick != null) {
@@ -43,35 +83,121 @@ class ConnectedAppScreen {
         }
     }
 
+    doPercent(pct) {
+        console.log("percent input: " + pct);
+    }
+
+    doSendToggle() {
+        console.log("send toggle");
+    }
+
+    doReceiveToggle() {
+        console.log("receive toggle");
+    }
 
     ///////////////////////////////////////////////////////////////////////////
-    // Items
+    // Rows
     ///////////////////////////////////////////////////////////////////////////
 
-    drawBalance() {
+    drawBalanceRow(div) {
         var wad = this.model.getProviderBalanceWad();
-        D.deleteChildren(this.balance_div);
-        D.textParagraph(this.balance_div, wad.toString(),
+        D.deleteChildren(div);
+
+        var flex = D.emptyDiv(div, "flex flex-col py-2");
+        D.textParagraph(flex, "Authorized:", "text-yellow-900");
+        D.textParagraph(flex, wad.toString(),
                         "font-bold text-3xl text-yellow-900 ");
         var sats = (wad['msats'] / 1000.0).toFixed(3) + " sats";
         var hoverstring = wad['name'] + "\n" + sats;
-        this.balance_div.setAttribute("title", hoverstring);
+        div.setAttribute("title", hoverstring);
     }
 
-    drawPayer() {
-        var is_payer = this.model.getProviderIsPayer();
-        D.deleteChildren(this.payer_div);
-        D.textSpan(this.payer_div, "Is Payer: ", "text-sm text-yellow-900");
-        D.textSpan(this.payer_div, is_payer ? "True" : "False",
-                   "font-bold text-sm text-yellow-900");
+    drawInputRow(div) {
+        var set = D.emptyDiv(div, "flex justify-center items-center " +
+                                  "bg-yellow-500 py-2 m-2 rounded");
+        this.set_input = D.emptyInput(set,
+            "w-40 appearance-none rounded shadow " +
+            "p-3 text-grey-dark mr-2 focus:outline-none");
+        this.set_input.setAttribute("type", "number");
+        this.set_input.setAttribute("min", "0");
+        this.set_input.setAttribute("placeholder", "amount");
+        this.drawSetButton(set, (function() {this.setResult()}).bind(this));
     }
 
-    drawPayee() {
-        var is_payee = this.model.getProviderIsPayee();
-        D.deleteChildren(this.payee_div);
-        D.textSpan(this.payee_div, "Is Payee: ", "text-sm text-yellow-900");
-        D.textSpan(this.payee_div, is_payee ? "True" : "False",
-                   "font-bold text-sm text-yellow-900");
+    drawSliderRow(div) {
+        this.slider_input = D.emptyDiv(div, "py-2");
+        var i = document.createElement("input");
+        i.setAttribute("type", "range");
+        i.setAttribute("min", "0");
+        i.setAttribute("max", "100");
+        i.setAttribute("value", this.slider_val.toString());
+        i.setAttribute("class", "slider");
+        i.oninput = (function () {
+            this.sliderInput();
+        }.bind(this));
+        this.slider_input.appendChild(i);
+    }
+
+    drawPercentButtonRow(div) {
+        var flex = D.emptyDiv(div, "flex justify-around py-2");
+        this.drawPercentButton(flex, 0,
+                               (function() {this.doPercent(0)}).bind(this));
+        this.drawPercentButton(flex, 25,
+                               (function() {this.doPercent(25)}).bind(this));
+        this.drawPercentButton(flex, 50,
+                               (function() {this.doPercent(50)}).bind(this));
+        this.drawPercentButton(flex, 75,
+                               (function() {this.doPercent(75)}).bind(this));
+        this.drawPercentButton(flex, 100,
+                               (function() {this.doPercent(100)}).bind(this));
+
+    }
+
+    drawSendToggleRow(div) {
+        var toggle = D.emptyDiv(div, "flex justify-center items-center " +
+                                "bg-yellow-500 py-1 m-2 rounded");
+        D.textSpan(toggle, "Allow Send:", "text-yellow-900");
+        D.textSpan(toggle, "True", "px-8 text-2xl font-bold text-yellow-900");
+        this.drawToggleButton(toggle,
+                              (function() {this.doSendToggle()}).bind(this))
+    }
+
+    drawReceiveToggleRow(div) {
+
+        var toggle = D.emptyDiv(div, "flex justify-center items-center " +
+                                "bg-yellow-500 py-1 m-2 rounded");
+        D.textSpan(toggle, "Allow Receive:", "text-yellow-900");
+        D.textSpan(toggle, "True", "px-8 text-2xl font-bold text-yellow-900");
+        this.drawToggleButton(toggle,
+                              (function() {this.doReceiveToggle()}).bind(this))
+    }
+
+    drawAvailableRow(div) {
+        var wad = this.model.getProviderBalanceWad();
+        var payer = this.model.getProviderIsPayer();
+        var payee = this.model.getProviderIsPayee();
+
+        var across = D.emptyDiv(div, "flex justify-around py-4");
+
+        var col1 = D.emptyDiv(across, "flex flex-col");
+        D.textSpan(col1, "Available:", "text-yellow-900");
+        D.textSpan(col1, wad.toString(), "font-bold text-xl text-yellow-900");
+
+        var col2 = D.emptyDiv(across, "flex flex-col items-center");
+        var r1 = D.emptyDiv(col2, "flex justify-center");
+        D.textSpan(r1, "Can Send:", "text-yellow-900");
+        D.textSpan(r1, payer ? "True" : "False",
+                   "font-bold text-xl text-yellow-900 px-2");
+        var r2 = D.emptyDiv(col2, "flex justify-center items-center");
+        D.textSpan(r2, "Can Receive:", "text-yellow-900");
+        D.textSpan(r2, payee ? "True" : "False",
+                   "font-bold text-xl text-yellow-900 px-2");
+    }
+
+    drawDisconnectRow(div) {
+        var buttons = D.emptyDiv(div, "flex justify-around py-4");
+        this.drawDisconnectButton(buttons,
+                             (function() {this.doDisconnect()}).bind(this));
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -80,8 +206,8 @@ class ConnectedAppScreen {
 
     drawTitle(div) {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
-        D.textParagraph(flex, "App Disconnect:",
-                        "font-black text-2xl text-yellow-800");
+        D.textParagraph(flex, "App Connection:",
+                        "font-black text-yellow-800");
     }
 
     drawTitlePanel(div) {
@@ -94,18 +220,18 @@ class ConnectedAppScreen {
     }
 
     drawInterfacePanel(div) {
-        var flex = D.emptyDiv(div,
-                              "flex flex-col section-background");
+        var flex = D.emptyDiv(div, "flex flex-col section-background");
         this.balance_div = D.emptyDiv(flex);
-        this.drawBalance();
-        this.payer_div = D.emptyDiv(flex);
-        this.drawPayer();
-        this.payee_div = D.emptyDiv(flex);
-        this.drawPayee();
+        this.drawBalanceRow(this.balance_div);
+        this.drawInputRow(flex);
 
-        var buttons = D.emptyDiv(flex, "flex justify-around py-4");
-        this.drawDisconnectButton(buttons,
-                             (function() {this.doDisconnect()}).bind(this));
+        this.drawSliderRow(flex);
+        this.drawPercentButtonRow(flex);
+        this.drawSendToggleRow(flex);
+        this.drawReceiveToggleRow(flex);
+        this.drawAvailableRow(flex);
+
+        this.drawDisconnectRow(flex);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -114,13 +240,7 @@ class ConnectedAppScreen {
 
     redrawInfo() {
         if (this.balance_div != null) {
-            this.drawBalance();
-        }
-        if (this.payer_div != null) {
-            this.drawPayer();
-        }
-        if (this.payee_div != null) {
-            this.drawPayee();
+            this.drawBalanceRow(this.balance_div);
         }
     }
 
