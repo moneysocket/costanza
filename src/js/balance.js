@@ -33,6 +33,10 @@ class Balance {
         this.outgoing_payer = payer;
     }
 
+    setOutgoingWad(wad) {
+        this.outgoing_wad = wad;
+    }
+
     calcOutgoingPayee() {
         return this.incoming_payee && this.outgoing_payee;
     }
@@ -42,8 +46,10 @@ class Balance {
     }
 
     calcOutgoingWad() {
-        // TODO
-        return this.incoming_wad;
+        if (this.incoming_wad.msats < this.outgoing_wad.msats) {
+            return this.incoming_wad;
+        }
+        return this.outgoing_wad;
     }
 
     getOutgoingProviderInfo() {

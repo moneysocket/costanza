@@ -180,8 +180,8 @@ class CostanzaModel {
         console.log("consumer provider info: " + JSON.stringify(provider_info));
         this.consumer_reported_info = provider_info;
         this.balance.setIncomingProviderInfo(provider_info['wad'],
-                                             provider_info['payer'],
-                                             provider_info['payee']);
+                                             provider_info['payee'],
+                                             provider_info['payer']);
         this.providerNotifyChange();
         if (this.onconsumerproviderinfochange != null) {
             this.onconsumerproviderinfochange();
@@ -254,6 +254,18 @@ class CostanzaModel {
         this.provider_stack.sendProviderInfoUpdate();
     }
 
+    setNewProviderWad(wad) {
+        this.balance.setOutgoingWad(wad);
+    }
+
+    setNewProviderPayee(payee) {
+        this.balance.setOutgoingPayee(payee);
+    }
+
+    setNewProviderPayer(payer) {
+        this.balance.setOutgoingPayer(payer);
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // call-ins
     ///////////////////////////////////////////////////////////////////////////
@@ -298,6 +310,7 @@ class CostanzaModel {
 
     getConsumerBalanceWad() {
         if (this.consumer_reported_info == null) {
+            console.log("null stuff");
             return Wad.bitcoin(0);
         }
         return this.consumer_reported_info.wad;

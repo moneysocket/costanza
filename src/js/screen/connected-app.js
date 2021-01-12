@@ -5,15 +5,22 @@
 const D = require('../utl/dom.js').DomUtl;
 const I = require('../utl/icon.js').IconUtl;
 
+const Wad = require("moneysocket").Wad;
+
 class ConnectedAppScreen {
     constructor(app_div, model) {
         this.app_div = app_div;
         this.onbackclick = null;
         this.ondisconnectclick = null;
+        this.oninputerror = null;
+        this.onwadchange = null;
+        this.onpayerchange = null;
+        this.onpayeechange = null;
         this.model = model;
         this.balance_div = null;
-        this.payer_div = null;
-        this.payee_div = null;
+        this.available_div = null;
+        this.send_div = null;
+        this.receive_div = null;
 
         this.set_input = null;
         this.slider_val = 0;
@@ -63,18 +70,50 @@ class ConnectedAppScreen {
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    // button actions
+    // input actions
     ///////////////////////////////////////////////////////////////////////////
 
     setResult() {
         var set_string = this.set_input.value;
-        console.log("set result: " + set_string);
+        var set_units = parseFloat(set_string);
+        if (isNaN(set_units)) {
+            if (this.oninputerror != null) {
+                this.oninputerror("must be a numeric value");
+            }
+            return;
+        }
+        if (set_units < 0) {
+            if (this.oninputerror != null) {
+                this.oninputerror("must be positive value");
+            }
+            return;
+        }
+
+        var wad = this.model.getConsumerBalanceWad();
+        var ratio;
+        var new_msats;
+        if (wad.asset_stable) {
+            ratio = set_units / wad.asset_units;
+        } else {
+            var sats = wad.msats / 1000.0;
+            ratio = set_units / sats;
+        }
+        if (ratio > 1.0) {
+            ratio = 1.0;
+        }
+        var new_msats = Math.round(wad.msats * ratio);
+        var new_wad = Wad.clone_msats(wad, new_msats);
+        console.log("new wad: " + new_wad.toString());
+        if (this.onwadchange != null) {
+            this.onwadchange(new_wad);
+        }
     }
 
     sliderInput() {
         var i = this.slider_input.firstChild;
         this.slider_val = i.value;
-        console.log("slider input: " + this.slider_val);
+        //console.log("slider input: " + this.slider_val);
+        this.updateInput(this.slider_val);
     }
 
     doDisconnect() {
@@ -83,16 +122,38 @@ class ConnectedAppScreen {
         }
     }
 
+    updateInput(pct) {
+        var wad = this.model.getConsumerBalanceWad();
+        var input_value;
+        if (wad.asset_stable) {
+            input_value = (wad.asset_units * (pct / 100)).toFixed(3);
+        } else {
+            var sats = wad.msats / 1000.0
+            input_value = (sats * (pct / 100)).toFixed(3);
+        }
+        this.set_input.value = input_value;
+        var i = this.slider_input.firstChild;
+        i.value = pct;
+    }
+
     doPercent(pct) {
-        console.log("percent input: " + pct);
+        this.updateInput(pct);
     }
 
     doSendToggle() {
         console.log("send toggle");
+        var new_payer = ! this.model.getProviderIsPayer();
+        if (this.onpayerchange != null) {
+            this.onpayerchange(new_payer);
+        }
     }
 
     doReceiveToggle() {
         console.log("receive toggle");
+        var new_payee = ! this.model.getProviderIsPayee();
+        if (this.onpayeechange != null) {
+            this.onpayeechange(new_payee);
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -154,35 +215,45 @@ class ConnectedAppScreen {
     }
 
     drawSendToggleRow(div) {
+        D.deleteChildren(div);
         var toggle = D.emptyDiv(div, "flex justify-center items-center " +
                                 "bg-yellow-500 py-1 m-2 rounded");
-        D.textSpan(toggle, "Allow Send:", "text-yellow-900");
-        D.textSpan(toggle, "True", "px-8 text-2xl font-bold text-yellow-900");
+        D.textSpan(toggle, "Authorize Send:", "text-yellow-900");
+        var payer = this.model.getProviderIsPayer();
+        D.textSpan(toggle, payer ? "True" : "False",
+                   "px-8 text-2xl font-bold text-yellow-900");
+        if (! this.model.getConsumerIsPayer()) {
+            return;
+        }
         this.drawToggleButton(toggle,
                               (function() {this.doSendToggle()}).bind(this))
     }
 
     drawReceiveToggleRow(div) {
-
+        D.deleteChildren(div);
         var toggle = D.emptyDiv(div, "flex justify-center items-center " +
                                 "bg-yellow-500 py-1 m-2 rounded");
-        D.textSpan(toggle, "Allow Receive:", "text-yellow-900");
-        D.textSpan(toggle, "True", "px-8 text-2xl font-bold text-yellow-900");
+        D.textSpan(toggle, "Authorize Receive:", "text-yellow-900");
+        var payee = this.model.getProviderIsPayee();
+        D.textSpan(toggle, payee ? "True" : "False",
+                   "px-8 text-2xl font-bold text-yellow-900");
+        if (! this.model.getConsumerIsPayee()) {
+            return;
+        }
         this.drawToggleButton(toggle,
                               (function() {this.doReceiveToggle()}).bind(this))
     }
 
     drawAvailableRow(div) {
-        var wad = this.model.getProviderBalanceWad();
-        var payer = this.model.getProviderIsPayer();
-        var payee = this.model.getProviderIsPayee();
+        var wad = this.model.getConsumerBalanceWad();
+        var payer = this.model.getConsumerIsPayer();
+        var payee = this.model.getConsumerIsPayee();
 
-        var across = D.emptyDiv(div, "flex justify-around py-4");
-
+        D.deleteChildren(div);
+        var across = D.emptyDiv(div, "flex justify-around py-4 bg-yellow-500");
         var col1 = D.emptyDiv(across, "flex flex-col");
         D.textSpan(col1, "Available:", "text-yellow-900");
         D.textSpan(col1, wad.toString(), "font-bold text-xl text-yellow-900");
-
         var col2 = D.emptyDiv(across, "flex flex-col items-center");
         var r1 = D.emptyDiv(col2, "flex justify-center");
         D.textSpan(r1, "Can Send:", "text-yellow-900");
@@ -227,9 +298,13 @@ class ConnectedAppScreen {
 
         this.drawSliderRow(flex);
         this.drawPercentButtonRow(flex);
-        this.drawSendToggleRow(flex);
-        this.drawReceiveToggleRow(flex);
-        this.drawAvailableRow(flex);
+        this.send_div = D.emptyDiv(flex);
+        this.drawSendToggleRow(this.send_div);
+        this.receive_div = D.emptyDiv(flex);
+        this.drawReceiveToggleRow(this.receive_div);
+
+        this.available_div = D.emptyDiv(flex);
+        this.drawAvailableRow(this.available_div);
 
         this.drawDisconnectRow(flex);
     }
@@ -239,8 +314,18 @@ class ConnectedAppScreen {
     ///////////////////////////////////////////////////////////////////////////
 
     redrawInfo() {
+        console.log("redraw");
         if (this.balance_div != null) {
             this.drawBalanceRow(this.balance_div);
+        }
+        if (this.available_div != null) {
+            this.drawAvailableRow(this.available_div);
+        }
+        if (this.send_div != null) {
+            this.drawSendToggleRow(this.send_div);
+        }
+        if (this.receive_div != null) {
+            this.drawReceiveToggleRow(this.receive_div);
         }
     }
 

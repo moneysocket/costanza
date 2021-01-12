@@ -58,6 +58,10 @@ class CostanzaView {
         this.onforgetappbeaconselect = null;
         this.ondisconnectselect = null;
         this.ondisconnectproviderselect = null;
+
+        this.onproviderwadchange = null;
+        this.onproviderpayeechange = null;
+        this.onproviderpayerchange = null;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -211,6 +215,21 @@ class CostanzaView {
         }).bind(this);
         s.ondisconnectclick = (function() {
             this.ondisconnectproviderselect();
+        }).bind(this);
+        s.oninputerror = (function(error_str) {
+            this.changeToError("could not interpet: " + error_str);
+        }).bind(this);
+        s.onwadchange = (function(new_wad) {
+            this.onproviderwadchange(new_wad);
+            this.redrawDynamicInfo();
+        }).bind(this);
+        s.onpayerchange = (function(new_payer) {
+            this.onproviderpayerchange(new_payer);
+            this.redrawDynamicInfo();
+        }).bind(this);
+        s.onpayeechange = (function(new_payee) {
+            this.onproviderpayeechange(new_payee);
+            this.redrawDynamicInfo();
         }).bind(this);
         return s;
     }
