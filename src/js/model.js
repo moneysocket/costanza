@@ -97,6 +97,7 @@ class CostanzaModel {
         if (! this.hasStoredAccountUuid()) {
             this.storeAccountUuid(Uuid.uuidv4());
         }
+        this.requests_from_provider = new Set();
     }
 
     setupProviderStack() {
@@ -195,11 +196,28 @@ class CostanzaModel {
     }
 
     consumerOnInvoice(bolt11, request_reference_uuid) {
-        console.log("consumer announce");
+        console.log("got invoice from consumer: " + request_reference_uuid);
+        // TODO -log receipt
+        if (! this.requests_from_provider.has(request_reference_uuid)) {
+            // TODO - notifiy controller to do something with the UI
+            console.log("not a socket request, must be manual request");
+        } else {
+            this.provider_stack.fulfilRequestInvoice(bolt11,
+                                                     request_reference_uuid);
+            this.requests_from_provider.delete(request_reference_uuid);
+        }
     }
 
     consumerOnPreimage(preimage, request_reference_uuid) {
-        console.log("consumer revoke");
+        // TODO -log receipt
+        // TODO adjust upstream auth
+        if (! this.requests_from_provider.has(request_reference_uuid)) {
+            console.log("got preimage from consumer: " + preimage);
+        } else {
+            this.provider_stack.fulfilRequestPay(preimage,
+                                                 request_reference_uuid);
+            this.requests_from_provider.delete(request_reference_uuid);
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -229,11 +247,17 @@ class CostanzaModel {
     }
 
     providerHandleInvoiceRequest(msats, request_uuid) {
-        console.log("provider invoice request");
+        console.log("got invoice request from provider: " + request_uuid);
+        // TODO log receipt
+        this.consumer_stack.requestInvoice(msats, request_uuid);
+        this.requests_from_provider.add(request_uuid);
     }
 
     providerHandlePayRequest(bolt11, request_uuid) {
-        console.log("provider pay request");
+        console.log("got pay request from provider: " + request_uuid);
+        // TODO log receipt
+        this.consumer_stack.requestPay(bolt11, request_uuid);
+        this.requests_from_provider.add(request_uuid);
     }
 
     handleProviderInfoRequest(shared_seed) {
