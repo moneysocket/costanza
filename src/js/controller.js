@@ -9,7 +9,11 @@ class CostanzaController {
         this.scan_interpret = new ScanInterpret(model);
         this.model = model;
         this.view = view;
+        this.setupView();
+        this.setupModel();
+    }
 
+    setupView() {
         this.view.onscanresult = (function(scan_str) {
             this.postScanResult(scan_str);
         }).bind(this);
@@ -58,7 +62,9 @@ class CostanzaController {
             this.model.setNewProviderPayer(payer);
             this.model.providerNotifyChange();
         }).bind(this);
+    }
 
+    setupModel() {
         this.model.onconsumerstackevent = (function(layer_name, event) {
             this.view.postWalletConnectEvent(layer_name, event);
         }).bind(this);

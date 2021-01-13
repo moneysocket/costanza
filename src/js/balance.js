@@ -10,7 +10,6 @@ class Balance {
         this.incoming_wad = Wad.bitcoin(0);
         this.incoming_payee = false;
         this.incoming_payer = false;
-
         this.outgoing_wad = Wad.bitcoin(0);
         this.outgoing_payee = true;
         this.outgoing_payer = true;
@@ -20,6 +19,7 @@ class Balance {
         this.incoming_wad = wad;
         this.incoming_payee = payee;
         this.incoming_payer = payer;
+
         this.calcOutgoingPayee();
         this.calcOutgoingPayer();
         this.calcOutgoingWad();
