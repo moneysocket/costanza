@@ -3,9 +3,12 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
 
+const b11 = require("bolt11");
+
 const Uuid = require("moneysocket").Uuid;
 const Timestamp = require("moneysocket").Timestamp;
 const Wad = require("moneysocket").Wad;
+const Bolt11 = require("moneysocket").Bolt11;
 
 const MoneysocketBeacon = require('moneysocket').MoneysocketBeacon;
 const WebsocketLocation = require('moneysocket').WebsocketLocation;
@@ -14,7 +17,6 @@ const ProviderStack = require('moneysocket').ProviderStack;
 const ConsumerStack = require('moneysocket').ConsumerStack;
 
 const Balance = require("./balance.js").Balance;
-
 
 var Receipts = [
     {'receipt_id':  Uuid.uuidv4(),
@@ -98,6 +100,8 @@ class CostanzaModel {
             this.storeAccountUuid(Uuid.uuidv4());
         }
         this.requests_from_provider = new Set();
+        this.send_requests = {};
+        this.receive_requests = {};
     }
 
     setupProviderStack() {
@@ -211,12 +215,25 @@ class CostanzaModel {
     consumerOnPreimage(preimage, request_reference_uuid) {
         // TODO -log receipt
         // TODO adjust upstream auth
+        console.log("got preimage from consumer: " + preimage);
         if (! this.requests_from_provider.has(request_reference_uuid)) {
             console.log("got preimage from consumer: " + preimage);
         } else {
             this.provider_stack.fulfilRequestPay(preimage,
                                                  request_reference_uuid);
             this.requests_from_provider.delete(request_reference_uuid);
+            if (request_reference_uuid in this.send_requests) {
+                var msats = this.send_requests[request_reference_uuid];
+                this.send_requests.delete(request_reference_uuid);
+                this.balance.decrementOutgoing(msats);
+                this.provider_stack.sendProviderInfoUpdate();
+            }
+            if (request_reference_uuid in this.receive_requests) {
+                var msats = this.receive_requests[request_reference_uuid];
+                this.receive_requests.delete(request_reference_uuid);
+                this.balance.incrementOutgoing(msats);
+                this.provider_stack.sendProviderInfoUpdate();
+            }
         }
     }
 
@@ -249,6 +266,7 @@ class CostanzaModel {
     providerHandleInvoiceRequest(msats, request_uuid) {
         console.log("got invoice request from provider: " + request_uuid);
         // TODO log receipt
+        this.receive_requests[request_uuid] = msats;
         this.consumer_stack.requestInvoice(msats, request_uuid);
         this.requests_from_provider.add(request_uuid);
     }
@@ -256,6 +274,20 @@ class CostanzaModel {
     providerHandlePayRequest(bolt11, request_uuid) {
         console.log("got pay request from provider: " + request_uuid);
         // TODO log receipt
+
+        var msats = this.getMsats(bolt11);
+        if (msats == null) {
+            console.log("no amount included, dropping");
+            // TODO send error
+            return;
+        }
+        if (! this.balance.hasBalance(msats)) {
+            console.log("insufficent balance, dropping");
+            // TODO account for in flight pays. Time out unresolved somehow?
+            // TODO send error
+            return;
+        }
+        this.send_requests[request_uuid] = msats;
         this.consumer_stack.requestPay(bolt11, request_uuid);
         this.requests_from_provider.add(request_uuid);
     }
@@ -472,6 +504,16 @@ class CostanzaModel {
         return beacon_str;
     }
 
+    getMsats(bolt11) {
+        // TODO move this to library and do fuller validation
+        console.log("bolt11: " + bolt11);
+        var decoded = b11.decode(bolt11);
+        console.log("decoded: " + decoded);
+        if ("millisatoshis" in decoded) {
+            return decoded.millisatoshis;
+        }
+        return null;
+    }
 }
 
 

@@ -52,6 +52,22 @@ class Balance {
         return this.outgoing_wad;
     }
 
+    incrementOutgoing(msats) {
+        var current_msats = this.outgoing_wad.msats;
+        var new_msats = current_msats + msats;
+        this.outgoing_wad = Wad.clone_msats(this.outgoing_wad, new_msats);
+    }
+
+    decrementOutgoing(msats) {
+        var current_msats = this.outgoing_wad.msats;
+        var new_msats = current_msats - msats;
+        this.outgoing_wad = Wad.clone_msats(this.outgoing_wad, new_msats);
+    }
+
+    hasBalance(msats) {
+        return this.outgoing_wad.msats >= msats;
+    }
+
     getOutgoingProviderInfo() {
         return {'ready':        true,
                 'payer':        this.calcOutgoingPayer(),
