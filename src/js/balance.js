@@ -10,9 +10,9 @@ class Balance {
         this.incoming_wad = Wad.bitcoin(0);
         this.incoming_payee = false;
         this.incoming_payer = false;
-        this.outgoing_wad = Wad.bitcoin(0);
-        this.outgoing_payee = true;
-        this.outgoing_payer = true;
+        this.socket_wad = Wad.bitcoin(0);
+        this.socket_payee = true;
+        this.socket_payer = true;
     }
 
     setIncomingProviderInfo(wad, payee, payer) {
@@ -20,63 +20,63 @@ class Balance {
         this.incoming_payee = payee;
         this.incoming_payer = payer;
 
-        this.calcOutgoingPayee();
-        this.calcOutgoingPayer();
-        this.calcOutgoingWad();
+        this.calcSocketPayee();
+        this.calcSocketPayer();
+        this.calcSocketWad();
     }
 
-    setOutgoingPayee(payee) {
-        this.outgoing_payee = payee;
+    setSocketPayee(payee) {
+        this.socket_payee = payee;
     }
 
-    setOutgoingPayer(payer) {
-        this.outgoing_payer = payer;
+    setSocketPayer(payer) {
+        this.socket_payer = payer;
     }
 
-    setOutgoingWad(wad) {
-        this.outgoing_wad = wad;
+    setSocketWad(wad) {
+        this.socket_wad = wad;
     }
 
-    calcOutgoingPayee() {
-        return this.incoming_payee && this.outgoing_payee;
+    calcSocketPayee() {
+        return this.incoming_payee && this.socket_payee;
     }
 
-    calcOutgoingPayer() {
-        return this.incoming_payer && this.outgoing_payer;
+    calcSocketPayer() {
+        return this.incoming_payer && this.socket_payer;
     }
 
-    calcOutgoingWad() {
-        if (this.incoming_wad.msats < this.outgoing_wad.msats) {
+    calcSocketWad() {
+        if (this.incoming_wad.msats < this.socket_wad.msats) {
             return this.incoming_wad;
         }
-        return this.outgoing_wad;
+        return this.socket_wad;
     }
 
-    incrementOutgoing(msats) {
-        var current_msats = this.outgoing_wad.msats;
+    incrementSocketBalance(msats) {
+        var current_msats = this.socket_wad.msats;
         var new_msats = current_msats + msats;
-        this.outgoing_wad = Wad.clone_msats(this.outgoing_wad, new_msats);
+        this.socket_wad = Wad.clone_msats(this.socket_wad, new_msats);
     }
 
-    decrementOutgoing(msats) {
-        var current_msats = this.outgoing_wad.msats;
+    decrementSocketBalance(msats) {
+        var current_msats = this.socket_wad.msats;
         var new_msats = current_msats - msats;
-        this.outgoing_wad = Wad.clone_msats(this.outgoing_wad, new_msats);
+        this.socket_wad = Wad.clone_msats(this.socket_wad, new_msats);
     }
 
     hasSocketBalanceAvailable(msats) {
-        return this.outgoing_wad.msats >= msats;
+        return this.socket_wad.msats >= msats;
     }
 
     hasManualBalanceAvailable(msats) {
         return this.incoming_wad.msats >= msats;
     }
 
-    getOutgoingProviderInfo() {
+    getSocketProviderInfo() {
         return {'ready':        true,
-                'payer':        this.calcOutgoingPayer(),
-                'payee':        this.calcOutgoingPayee(),
-                'wad':          this.calcOutgoingWad(),
+                'payer':        this.calcSocketPayer(),
+                'payee':        this.calcSocketPayee(),
+                'wad':          this.calcSocketWad(),
                 'account_uuid': this.model.getStoredAccountUuid()}
     }
 }

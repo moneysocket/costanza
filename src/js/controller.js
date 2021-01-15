@@ -89,6 +89,9 @@ class CostanzaController {
         this.model.onping = (function() {
             this.view.redrawDynamicInfo();
         }).bind(this);
+        this.model.onmanualinvoice = (function(bolt11) {
+            this.view.changeToAskPay(bolt11);
+        }).bind(this);
     }
 
     connectToAppConsumer(beacon) {

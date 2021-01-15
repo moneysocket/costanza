@@ -189,7 +189,7 @@ class Transact {
     //////////////////////////////////////////////////////////////////////////
 
     checkPayRequestSocket(bolt11) {
-        if (! this.balance.calcOutgoingPayer()) {
+        if (! this.balance.calcSocketPayer()) {
             return "send not authorized";
         }
         var msats = this.getMsats(bolt11);
@@ -203,7 +203,7 @@ class Transact {
         if (payment_hash in this.pays_requested_manual) {
             return "duplicate payment_hash";
         }
-        var wad = this.balance.calcOutgoingWad();
+        var wad = this.balance.calcSocketWad();
         var authorized = wad.msats;
         var pending_out = this.sendAmountsPending();
         if (msats > (authorized - pending_out)) {
@@ -260,7 +260,7 @@ class Transact {
     //////////////////////////////////////////////////////////////////////////
 
     checkInvoiceRequestSocket(msats) {
-        if (! this.balance.calcOutgoingPayee()) {
+        if (! this.balance.calcSocketPayee()) {
             return "receive not authorized";
         }
         return null;
