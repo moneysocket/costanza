@@ -9,7 +9,11 @@ class CostanzaController {
         this.scan_interpret = new ScanInterpret(model);
         this.model = model;
         this.view = view;
+        this.setupView();
+        this.setupModel();
+    }
 
+    setupView() {
         this.view.onscanresult = (function(scan_str) {
             this.postScanResult(scan_str);
         }).bind(this);
@@ -42,7 +46,25 @@ class CostanzaController {
             this.model.disconnectAll();
             this.view.changeToMain();
         }).bind(this);
+        this.view.ondisconnectproviderselect = (function() {
+            this.model.disconnectProvider();
+            this.view.changeToMain();
+        }).bind(this);
+        this.view.onproviderwadchange = (function(new_wad) {
+            this.model.setNewProviderWad(new_wad);
+            this.model.providerNotifyChange();
+        }).bind(this);
+        this.view.onproviderpayeechange = (function(payee) {
+            this.model.setNewProviderPayee(payee);
+            this.model.providerNotifyChange();
+        }).bind(this);
+        this.view.onproviderpayerchange = (function(payer) {
+            this.model.setNewProviderPayer(payer);
+            this.model.providerNotifyChange();
+        }).bind(this);
+    }
 
+    setupModel() {
         this.model.onconsumerstackevent = (function(layer_name, event) {
             this.view.postWalletConnectEvent(layer_name, event);
         }).bind(this);

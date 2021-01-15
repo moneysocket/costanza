@@ -69,22 +69,24 @@ class MainScreen {
     drawBalance() {
         var wad = this.model.getConsumerBalanceWad();
         D.deleteChildren(this.balance_div);
-        D.textParagraph(this.balance_div, wad.toString(),
-                        "font-bold text-3xl text-yellow-900 " +
-                        "hover:text-yellow-700 py-4");
-        this.balance_div.onclick = (function() {
+        var flex = D.emptyDiv(this.balance_div, "flex justify-center py-4");
+        var button = D.emptyDiv(flex,
+            "rounded px-4 py-4 bg-yellow-200 hover:bg-yellow-300");
+        D.textParagraph(button, wad.toString(),
+                        "font-bold text-3xl text-yellow-900");
+        button.onclick = (function() {
             this.onconnectwalletclick();
         }).bind(this);
         var sats = (wad['msats'] / 1000.0).toFixed(3) + " sats";
         var hoverstring = wad['name'] + "\n" + sats;
-        this.balance_div.setAttribute("title", hoverstring);
+        button.setAttribute("title", hoverstring);
     }
 
     drawAuthorizedBalance() {
         var wad = this.model.getProviderBalanceWad();
         D.deleteChildren(this.auth_balance_div);
         var border = D.emptyDiv(this.auth_balance_div,
-                                "px-2 bg-yellow-300 hover:bg-yellow-200");
+                                "px-2 py-2 bg-yellow-200 hover:bg-yellow-300");
         var icon_span = D.emptySpan(border, "px-2 font-bold");
         icon_span.onclick = (function() {
             this.onconnectappclick();

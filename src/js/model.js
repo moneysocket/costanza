@@ -2,19 +2,18 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
-
 const Uuid = require("moneysocket").Uuid;
 const Timestamp = require("moneysocket").Timestamp;
 const Wad = require("moneysocket").Wad;
+const Bolt11 = require("moneysocket").Bolt11;
 
 const MoneysocketBeacon = require('moneysocket').MoneysocketBeacon;
 const WebsocketLocation = require('moneysocket').WebsocketLocation;
 
 const ProviderStack = require('moneysocket').ProviderStack;
 const ConsumerStack = require('moneysocket').ConsumerStack;
-
 const Balance = require("./balance.js").Balance;
-
+const Transact = require("./transact.js").Transact;
 
 var Receipts = [
     {'receipt_id':  Uuid.uuidv4(),
@@ -77,6 +76,7 @@ class CostanzaModel {
         this.consumer_stack = this.setupConsumerStack();
         this.consumer_state = CONNECT_STATE.DISCONNECTED;
         this.balance = new Balance(this);
+        this.transact = new Transact(this);
 
         this.consumer_reported_info = null;
         this.consumer_last_ping = 0;
@@ -97,6 +97,13 @@ class CostanzaModel {
         if (! this.hasStoredAccountUuid()) {
             this.storeAccountUuid(Uuid.uuidv4());
         }
+
+        // blaleet:
+/*
+        this.requests_from_provider = new Set();
+        this.send_requests = {};
+        this.receive_requests = {};
+*/
     }
 
     setupProviderStack() {
@@ -180,8 +187,8 @@ class CostanzaModel {
         console.log("consumer provider info: " + JSON.stringify(provider_info));
         this.consumer_reported_info = provider_info;
         this.balance.setIncomingProviderInfo(provider_info['wad'],
-                                             provider_info['payer'],
-                                             provider_info['payee']);
+                                             provider_info['payee'],
+                                             provider_info['payer']);
         this.providerNotifyChange();
         if (this.onconsumerproviderinfochange != null) {
             this.onconsumerproviderinfochange();
@@ -195,11 +202,57 @@ class CostanzaModel {
     }
 
     consumerOnInvoice(bolt11, request_reference_uuid) {
-        console.log("consumer announce");
+        console.log("got invoice from consumer: " + request_reference_uuid);
+        var [socket, err] = (
+            this.transact.invoiceNotified(bolt11, request_reference_uuid));
+
+        if (err != null) {
+            console.log("invoice error: " + err);
+            if (socket) {
+                // TODO - send error on socket with uuid reference
+                return;
+            }
+            // TODO - present manual invoice error on screen
+            return;
+        }
+
+        if (socket) {
+            this.provider_stack.fulfilRequestInvoice(bolt11,
+                                                     request_reference_uuid);
+            return;
+        }
+        // TODO - present manual invoice on screen
     }
 
     consumerOnPreimage(preimage, request_reference_uuid) {
-        console.log("consumer revoke");
+        console.log("got preimage from consumer: " + preimage);
+        var [socket, increment, msats] = (
+            this.transact.preimageNotified(preimage));
+
+        console.log("socket: " + socket);
+        console.log("increment: " + increment);
+        console.log("msats: " + msats);
+
+        if (socket == null) {
+            console.log("unknown preimage: " + increment);
+            return;
+        }
+        // TODO -log receipt
+
+        if (socket) {
+            if (increment) {
+                this.balance.incrementOutgoing(msats);
+            } else {
+                this.balance.decrementOutgoing(msats);
+                // TODO account for network fee?
+            }
+            this.provider_stack.fulfilRequestPay(preimage,
+                                                 request_reference_uuid);
+            this.provider_stack.sendProviderInfoUpdate();
+        }
+        // TODO - show manul payment success splash herpaderp
+        // for manual, the provider info update will come off the wire
+        // after the preimage. It will allso account for network fees
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -229,11 +282,29 @@ class CostanzaModel {
     }
 
     providerHandleInvoiceRequest(msats, request_uuid) {
-        console.log("provider invoice request");
+        console.log("got invoice request from provider: " + request_uuid);
+        // TODO log receipt
+        var err = this.transact.checkInvoiceRequestSocket();
+        if (err != null) {
+            // TODO send error message
+            console.log("err: " + err);
+            return;
+        }
+        this.consumer_stack.requestInvoice(msats, request_uuid);
+        this.transact.invoiceRequestedSocket(msats, request_uuid);
     }
 
     providerHandlePayRequest(bolt11, request_uuid) {
-        console.log("provider pay request");
+        console.log("got pay request from provider: " + request_uuid);
+        // TODO log receipt
+        var err = this.transact.checkPayRequestSocket(bolt11);
+        if (err != null) {
+            console.log("err: " + err);
+            // TODO send error message
+            return;
+        }
+        this.consumer_stack.requestPay(bolt11, request_uuid);
+        this.transact.payRequestedSocket(bolt11, request_uuid);
     }
 
     handleProviderInfoRequest(shared_seed) {
@@ -252,6 +323,18 @@ class CostanzaModel {
             return;
         }
         this.provider_stack.sendProviderInfoUpdate();
+    }
+
+    setNewProviderWad(wad) {
+        this.balance.setOutgoingWad(wad);
+    }
+
+    setNewProviderPayee(payee) {
+        this.balance.setOutgoingPayee(payee);
+    }
+
+    setNewProviderPayer(payer) {
+        this.balance.setOutgoingPayer(payer);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -287,12 +370,18 @@ class CostanzaModel {
         this.consumer_stack.doDisconnect();
     }
 
+    disconnectProvider() {
+        this.provider_state = CONNECT_STATE.DISCONNECTED;
+        this.provider_stack.doDisconnect();
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // get consumer state
     ///////////////////////////////////////////////////////////////////////////
 
     getConsumerBalanceWad() {
         if (this.consumer_reported_info == null) {
+            console.log("null stuff");
             return Wad.bitcoin(0);
         }
         return this.consumer_reported_info.wad;
@@ -429,7 +518,6 @@ class CostanzaModel {
         var beacon_str = beacon.toBech32Str();
         return beacon_str;
     }
-
 }
 
 

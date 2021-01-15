@@ -10,7 +10,6 @@ class Balance {
         this.incoming_wad = Wad.bitcoin(0);
         this.incoming_payee = false;
         this.incoming_payer = false;
-
         this.outgoing_wad = Wad.bitcoin(0);
         this.outgoing_payee = true;
         this.outgoing_payer = true;
@@ -20,6 +19,7 @@ class Balance {
         this.incoming_wad = wad;
         this.incoming_payee = payee;
         this.incoming_payer = payer;
+
         this.calcOutgoingPayee();
         this.calcOutgoingPayer();
         this.calcOutgoingWad();
@@ -33,6 +33,10 @@ class Balance {
         this.outgoing_payer = payer;
     }
 
+    setOutgoingWad(wad) {
+        this.outgoing_wad = wad;
+    }
+
     calcOutgoingPayee() {
         return this.incoming_payee && this.outgoing_payee;
     }
@@ -42,8 +46,30 @@ class Balance {
     }
 
     calcOutgoingWad() {
-        // TODO
-        return this.incoming_wad;
+        if (this.incoming_wad.msats < this.outgoing_wad.msats) {
+            return this.incoming_wad;
+        }
+        return this.outgoing_wad;
+    }
+
+    incrementOutgoing(msats) {
+        var current_msats = this.outgoing_wad.msats;
+        var new_msats = current_msats + msats;
+        this.outgoing_wad = Wad.clone_msats(this.outgoing_wad, new_msats);
+    }
+
+    decrementOutgoing(msats) {
+        var current_msats = this.outgoing_wad.msats;
+        var new_msats = current_msats - msats;
+        this.outgoing_wad = Wad.clone_msats(this.outgoing_wad, new_msats);
+    }
+
+    hasSocketBalanceAvailable(msats) {
+        return this.outgoing_wad.msats >= msats;
+    }
+
+    hasManualBalanceAvailable(msats) {
+        return this.incoming_wad.msats >= msats;
     }
 
     getOutgoingProviderInfo() {
