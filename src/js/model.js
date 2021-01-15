@@ -2,9 +2,6 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
-
-const b11 = require("bolt11");
-
 const Uuid = require("moneysocket").Uuid;
 const Timestamp = require("moneysocket").Timestamp;
 const Wad = require("moneysocket").Wad;
@@ -15,8 +12,8 @@ const WebsocketLocation = require('moneysocket').WebsocketLocation;
 
 const ProviderStack = require('moneysocket').ProviderStack;
 const ConsumerStack = require('moneysocket').ConsumerStack;
-
 const Balance = require("./balance.js").Balance;
+const Transact = require("./transact.js").Transact;
 
 var Receipts = [
     {'receipt_id':  Uuid.uuidv4(),
@@ -79,6 +76,7 @@ class CostanzaModel {
         this.consumer_stack = this.setupConsumerStack();
         this.consumer_state = CONNECT_STATE.DISCONNECTED;
         this.balance = new Balance(this);
+        this.transact = new Transact(this);
 
         this.consumer_reported_info = null;
         this.consumer_last_ping = 0;
@@ -99,9 +97,13 @@ class CostanzaModel {
         if (! this.hasStoredAccountUuid()) {
             this.storeAccountUuid(Uuid.uuidv4());
         }
+
+        // blaleet:
+/*
         this.requests_from_provider = new Set();
         this.send_requests = {};
         this.receive_requests = {};
+*/
     }
 
     setupProviderStack() {
@@ -201,40 +203,56 @@ class CostanzaModel {
 
     consumerOnInvoice(bolt11, request_reference_uuid) {
         console.log("got invoice from consumer: " + request_reference_uuid);
-        // TODO -log receipt
-        if (! this.requests_from_provider.has(request_reference_uuid)) {
-            // TODO - notifiy controller to do something with the UI
-            console.log("not a socket request, must be manual request");
-        } else {
+        var [socket, err] = (
+            this.transact.invoiceNotified(bolt11, request_reference_uuid));
+
+        if (err != null) {
+            console.log("invoice error: " + err);
+            if (socket) {
+                // TODO - send error on socket with uuid reference
+                return;
+            }
+            // TODO - present manual invoice error on screen
+            return;
+        }
+
+        if (socket) {
             this.provider_stack.fulfilRequestInvoice(bolt11,
                                                      request_reference_uuid);
-            this.requests_from_provider.delete(request_reference_uuid);
+            return;
         }
+        // TODO - present manual invoice on screen
     }
 
     consumerOnPreimage(preimage, request_reference_uuid) {
-        // TODO -log receipt
-        // TODO adjust upstream auth
         console.log("got preimage from consumer: " + preimage);
-        if (! this.requests_from_provider.has(request_reference_uuid)) {
-            console.log("got preimage from consumer: " + preimage);
-        } else {
+        var [socket, increment, msats] = (
+            this.transact.preimageNotified(preimage));
+
+        console.log("socket: " + socket);
+        console.log("increment: " + increment);
+        console.log("msats: " + msats);
+
+        if (socket == null) {
+            console.log("unknown preimage: " + increment);
+            return;
+        }
+        // TODO -log receipt
+
+        if (socket) {
+            if (increment) {
+                this.balance.incrementOutgoing(msats);
+            } else {
+                this.balance.decrementOutgoing(msats);
+                // TODO account for network fee?
+            }
             this.provider_stack.fulfilRequestPay(preimage,
                                                  request_reference_uuid);
-            this.requests_from_provider.delete(request_reference_uuid);
-            if (request_reference_uuid in this.send_requests) {
-                var msats = this.send_requests[request_reference_uuid];
-                this.send_requests.delete(request_reference_uuid);
-                this.balance.decrementOutgoing(msats);
-                this.provider_stack.sendProviderInfoUpdate();
-            }
-            if (request_reference_uuid in this.receive_requests) {
-                var msats = this.receive_requests[request_reference_uuid];
-                this.receive_requests.delete(request_reference_uuid);
-                this.balance.incrementOutgoing(msats);
-                this.provider_stack.sendProviderInfoUpdate();
-            }
+            this.provider_stack.sendProviderInfoUpdate();
         }
+        // TODO - show manul payment success splash herpaderp
+        // for manual, the provider info update will come off the wire
+        // after the preimage. It will allso account for network fees
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -266,30 +284,27 @@ class CostanzaModel {
     providerHandleInvoiceRequest(msats, request_uuid) {
         console.log("got invoice request from provider: " + request_uuid);
         // TODO log receipt
-        this.receive_requests[request_uuid] = msats;
+        var err = this.transact.checkInvoiceRequestSocket();
+        if (err != null) {
+            // TODO send error message
+            console.log("err: " + err);
+            return;
+        }
         this.consumer_stack.requestInvoice(msats, request_uuid);
-        this.requests_from_provider.add(request_uuid);
+        this.transact.invoiceRequestedSocket(msats, request_uuid);
     }
 
     providerHandlePayRequest(bolt11, request_uuid) {
         console.log("got pay request from provider: " + request_uuid);
         // TODO log receipt
-
-        var msats = this.getMsats(bolt11);
-        if (msats == null) {
-            console.log("no amount included, dropping");
-            // TODO send error
+        var err = this.transact.checkPayRequestSocket(bolt11);
+        if (err != null) {
+            console.log("err: " + err);
+            // TODO send error message
             return;
         }
-        if (! this.balance.hasBalance(msats)) {
-            console.log("insufficent balance, dropping");
-            // TODO account for in flight pays. Time out unresolved somehow?
-            // TODO send error
-            return;
-        }
-        this.send_requests[request_uuid] = msats;
         this.consumer_stack.requestPay(bolt11, request_uuid);
-        this.requests_from_provider.add(request_uuid);
+        this.transact.payRequestedSocket(bolt11, request_uuid);
     }
 
     handleProviderInfoRequest(shared_seed) {
@@ -502,17 +517,6 @@ class CostanzaModel {
         beacon.addLocation(location);
         var beacon_str = beacon.toBech32Str();
         return beacon_str;
-    }
-
-    getMsats(bolt11) {
-        // TODO move this to library and do fuller validation
-        console.log("bolt11: " + bolt11);
-        var decoded = b11.decode(bolt11);
-        console.log("decoded: " + decoded);
-        if ("millisatoshis" in decoded) {
-            return decoded.millisatoshis;
-        }
-        return null;
     }
 }
 

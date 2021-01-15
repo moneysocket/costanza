@@ -64,8 +64,12 @@ class Balance {
         this.outgoing_wad = Wad.clone_msats(this.outgoing_wad, new_msats);
     }
 
-    hasBalance(msats) {
+    hasSocketBalanceAvailable(msats) {
         return this.outgoing_wad.msats >= msats;
+    }
+
+    hasManualBalanceAvailable(msats) {
+        return this.incoming_wad.msats >= msats;
     }
 
     getOutgoingProviderInfo() {
