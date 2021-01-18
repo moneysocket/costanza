@@ -14,46 +14,7 @@ const ProviderStack = require('moneysocket').ProviderStack;
 const ConsumerStack = require('moneysocket').ConsumerStack;
 const Balance = require("./balance.js").Balance;
 const Transact = require("./transact.js").Transact;
-
-var Receipts = [
-    {'receipt_id':  Uuid.uuidv4(),
-     'time':        Timestamp.getNowTimestamp(),
-     'type':        'outgoing_bolt11',
-     'bolt11':      'lnbcasdfasdfasd',
-     'description': 'Sparkshot.io 300px: burp!',
-     'value':       Wad.bitcoin(1000000),
-    },
-    {'receipt_id': Uuid.uuidv4(),
-     'time':       Timestamp.getNowTimestamp(),
-     'type':       'socket_session',
-     'txs':        [{'socket_txid': Uuid.uuidv4(),
-                     'direction':  'outgoing',
-                     'status':     'settled',
-                     'bolt11':     'lnbcasdfasdfasdlfajlsd',
-                     'value':      Wad.bitcoin(123000),
-                    },
-                    {'socket_txid': Uuid.uuidv4(),
-                     'direction':  'incoming',
-                     'status':     'settled',
-                     'bolt11':     'lnbc2342334',
-                     'value':      Wad.bitcoin(22000),
-                    },
-                   ],
-    },
-    {'receipt_id':  Uuid.uuidv4(),
-     'time':        Timestamp.getNowTimestamp(),
-     'type':        'incoming_bolt11',
-     'description': null,
-     'value':       Wad.bitcoin(444444),
-    },
-    {'receipt_id':  Uuid.uuidv4(),
-     'time':        Timestamp.getNowTimestamp(),
-     'type':        'outgoing_bolt11',
-     'bolt11':      'lnbcasdfasdfasd',
-     'description': 'Jukebox Play: C.R.E.A.M. - Wu Tang Clan ',
-     'value':       Wad.bitcoin(6150),
-    },
-];
+const Receipts = require("./receipts.js").Receipts;
 
 
 const DEFAULT_HOST = "relay.socket.money";
@@ -70,13 +31,13 @@ const CONNECT_STATE = {
 
 class CostanzaModel {
     constructor() {
-        this.receipts = Receipts;
         this.provider_stack = this.setupProviderStack();
         this.provider_state = CONNECT_STATE.DISCONNECTED;
         this.consumer_stack = this.setupConsumerStack();
         this.consumer_state = CONNECT_STATE.DISCONNECTED;
         this.balance = new Balance(this);
         this.transact = new Transact(this);
+        this.receipts = new Receipts();
 
         this.consumer_reported_info = null;
         this.consumer_last_ping = 0;
@@ -97,13 +58,6 @@ class CostanzaModel {
         if (! this.hasStoredAccountUuid()) {
             this.storeAccountUuid(Uuid.uuidv4());
         }
-
-        // blaleet:
-/*
-        this.requests_from_provider = new Set();
-        this.send_requests = {};
-        this.receive_requests = {};
-*/
     }
 
     setupProviderStack() {

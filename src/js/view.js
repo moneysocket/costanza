@@ -260,7 +260,7 @@ class CostanzaView {
 
     changeToMain() {
         D.deleteChildren(this.app_div);
-        this.main_screen.draw(this.model.receipts);
+        this.main_screen.draw();
     }
 
     redrawDynamicInfo() {

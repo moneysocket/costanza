@@ -235,13 +235,14 @@ class MainScreen {
         this.drawPing();
     }
 
-    drawReceiptPanel(div, receipts, click_func) {
+    drawReceiptPanel(div, click_func) {
         var flex = D.emptyDiv(div,
                               "flex-col justify-evenly section-background");
 
         //console.log(JSON.stringify(receipts));
         //console.log(receipts.length);
 
+        /*
         for (var i = 0; i < receipts.length; i++) {
             var r = receipts[i];
             if (r.type == "outgoing_bolt11") {
@@ -254,6 +255,7 @@ class MainScreen {
                 console.error("unknown receipt type");
             }
         }
+        */
     }
 
     drawActionPanel(div, scan_func, menu_func) {
@@ -278,7 +280,7 @@ class MainScreen {
         }
     }
 
-    draw(receipts) {
+    draw() {
         var flex = D.emptyDiv(this.app_div, "flex flex-col h-screen");
         var flex_top = D.emptyDiv(flex, "flex-none");
         var flex_mid = D.emptyDiv(flex, "flex-grow");
@@ -299,7 +301,7 @@ class MainScreen {
             break;
         }
 
-        this.drawReceiptPanel(flex_mid, receipts, this.onreceiptclick);
+        this.drawReceiptPanel(flex_mid, this.onreceiptclick);
         this.drawActionPanel(flex_bottom, this.onscanclick, this.onmenuclick);
     }
 }
