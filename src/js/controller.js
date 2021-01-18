@@ -78,7 +78,7 @@ class CostanzaController {
             this.view.changeToMain();
         }).bind(this);
         this.model.onprovideronline = (function() {
-            this.view.changeToMain();
+            this.view.changeToAppConsumerSetup()
         }).bind(this);
         this.model.onprovideroffline = (function() {
             this.view.changeToMain();
