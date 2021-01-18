@@ -178,6 +178,11 @@ class CostanzaModel {
     }
 
     consumerOnStackEvent(layer_name, nexus, status) {
+        if ((layer_name == "OUTGOING_WEBSOCKET") &&
+            (status == "NEXUS_DESTROYED"))
+        {
+            this.consumer_state = CONNECT_STATE.DISCONNECTED;
+        }
         if (this.onconsumerstackevent != null) {
             this.onconsumerstackevent(layer_name, status);
         }
@@ -276,6 +281,11 @@ class CostanzaModel {
     }
 
     providerOnStackEvent(layer_name, nexus, status) {
+        if ((layer_name == "OUTGOING_WEBSOCKET") &&
+            (status == "NEXUS_DESTROYED"))
+        {
+            this.provider_state = CONNECT_STATE.DISCONNECTED;
+        }
         if (this.onproviderstackevent != null) {
             this.onproviderstackevent(layer_name, status);
         }
