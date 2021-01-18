@@ -178,6 +178,11 @@ class CostanzaModel {
     }
 
     consumerOnStackEvent(layer_name, nexus, status) {
+        if ((layer_name == "OUTGOING_WEBSOCKET") &&
+            (status == "NEXUS_DESTROYED"))
+        {
+            this.consumer_state = CONNECT_STATE.DISCONNECTED;
+        }
         if (this.onconsumerstackevent != null) {
             this.onconsumerstackevent(layer_name, status);
         }
@@ -241,9 +246,9 @@ class CostanzaModel {
 
         if (socket) {
             if (increment) {
-                this.balance.incrementOutgoing(msats);
+                this.balance.incrementSocketBalance(msats);
             } else {
-                this.balance.decrementOutgoing(msats);
+                this.balance.decrementSocketBalance(msats);
                 // TODO account for network fee?
             }
             this.provider_stack.fulfilRequestPay(preimage,
@@ -276,6 +281,11 @@ class CostanzaModel {
     }
 
     providerOnStackEvent(layer_name, nexus, status) {
+        if ((layer_name == "OUTGOING_WEBSOCKET") &&
+            (status == "NEXUS_DESTROYED"))
+        {
+            this.provider_state = CONNECT_STATE.DISCONNECTED;
+        }
         if (this.onproviderstackevent != null) {
             this.onproviderstackevent(layer_name, status);
         }
@@ -309,7 +319,7 @@ class CostanzaModel {
 
     handleProviderInfoRequest(shared_seed) {
         console.log("provider info request");
-        var p = this.balance.getOutgoingProviderInfo();
+        var p = this.balance.getSocketProviderInfo();
         console.log("p: " + JSON.stringify(p));
         return p;
     }
@@ -326,15 +336,15 @@ class CostanzaModel {
     }
 
     setNewProviderWad(wad) {
-        this.balance.setOutgoingWad(wad);
+        this.balance.setSocketWad(wad);
     }
 
     setNewProviderPayee(payee) {
-        this.balance.setOutgoingPayee(payee);
+        this.balance.setSocketPayee(payee);
     }
 
     setNewProviderPayer(payer) {
-        this.balance.setOutgoingPayer(payer);
+        this.balance.setSocketPayer(payer);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -443,15 +453,15 @@ class CostanzaModel {
     ///////////////////////////////////////////////////////////////////////////
 
     getProviderBalanceWad() {
-        return this.balance.calcOutgoingWad();
+        return this.balance.calcSocketWad();
     }
 
     getProviderIsPayer() {
-        return this.balance.calcOutgoingPayer();
+        return this.balance.calcSocketPayer();
     }
 
     getProviderIsPayee() {
-        return this.balance.calcOutgoingPayee();
+        return this.balance.calcSocketPayee();
     }
 
     getProviderConnectState() {
