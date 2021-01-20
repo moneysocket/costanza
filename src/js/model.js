@@ -37,7 +37,7 @@ class CostanzaModel {
         this.consumer_state = CONNECT_STATE.DISCONNECTED;
         this.balance = new Balance(this);
         this.transact = new Transact(this);
-        this.receipts = new Receipts();
+        this.receipts = new Receipts(this);
 
         this.consumer_reported_info = null;
         this.consumer_last_ping = 0;
@@ -48,7 +48,10 @@ class CostanzaModel {
         this.onconsumerproviderinfochange = null;
         this.onping = null;
 
+        this.onprovideronline = null;
+        this.onprovideroffline = null;
         this.onproviderstackevent = null;
+        this.onreceiptchange = null;
 
         console.log("consumer_beacon: " + this.getStoredConsumerBeacon());
         this.ephemeral_wallet_beacon = this.getStoredConsumerBeacon();
@@ -168,6 +171,7 @@ class CostanzaModel {
         if (err != null) {
             console.log("invoice error: " + err);
             if (socket) {
+                this.receipts.socketSessionErrNotified(err);
                 // TODO - send error on socket with uuid reference
                 return;
             }
@@ -176,6 +180,8 @@ class CostanzaModel {
         }
 
         if (socket) {
+            this.receipts.socketSessionInvoiceNotified(bolt11,
+                request_reference_uuid);
             this.provider_stack.fulfilRequestInvoice(bolt11,
                                                      request_reference_uuid);
             return;
@@ -193,12 +199,15 @@ class CostanzaModel {
         console.log("msats: " + msats);
 
         if (socket == null) {
-            console.log("unknown preimage: " + increment);
+            var err = "unknown preimage: " + preimage;
+            console.log(err);
             return;
         }
         // TODO -log receipt
 
         if (socket) {
+            this.receipts.socketSessionPreimageNotified(preimage, increment,
+                msats, request_reference_uuid);
             if (increment) {
                 this.balance.incrementSocketBalance(msats);
             } else {
@@ -220,6 +229,7 @@ class CostanzaModel {
 
     providerOnAnnounce(nexus) {
         this.provider_state = CONNECT_STATE.CONNECTED;
+        this.receipts.socketSessionStart();
         console.log("provider announce");
         if (this.onprovideronline != null) {
             this.onprovideronline();
@@ -228,9 +238,10 @@ class CostanzaModel {
 
     providerOnRevoke() {
         this.provider_state = CONNECT_STATE.DISCONNECTED;
+        this.receipts.socketSessionEnd();
         console.log("provider revoke");
-        if (this.oncprovideroffline != null) {
-            this.oncprovideroffline();
+        if (this.onprovideroffline != null) {
+            this.onprovideroffline();
         }
     }
 
@@ -248,10 +259,12 @@ class CostanzaModel {
     providerHandleInvoiceRequest(msats, request_uuid) {
         console.log("got invoice request from provider: " + request_uuid);
         // TODO log receipt
+        this.receipts.socketSessionInvoiceRequest(msats, request_uuid);
         var err = this.transact.checkInvoiceRequestSocket();
         if (err != null) {
-            // TODO send error message
+            this.receipts.socketSessionErrNotified(err);
             console.log("err: " + err);
+            // TODO send error message
             return;
         }
         this.consumer_stack.requestInvoice(msats, request_uuid);
@@ -260,9 +273,10 @@ class CostanzaModel {
 
     providerHandlePayRequest(bolt11, request_uuid) {
         console.log("got pay request from provider: " + request_uuid);
-        // TODO log receipt
+        this.receipts.socketSessionPayRequest(bolt11, request_uuid);
         var err = this.transact.checkPayRequestSocket(bolt11);
         if (err != null) {
+            this.receipts.socketSessionErrNotified(err);
             console.log("err: " + err);
             // TODO send error message
             return;
@@ -471,6 +485,20 @@ class CostanzaModel {
     }
 
     ///////////////////////////////////////////////////////////////////////////
+    // receipts
+    ///////////////////////////////////////////////////////////////////////////
+
+    getReceipts() {
+        return this.receipts.getReceiptDict();
+    }
+
+    receiptsUpdated(uuid) {
+        if (this.onreceiptchange != null) {
+            this.onreceiptchange(uuid);
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
     // general beacon
     ///////////////////////////////////////////////////////////////////////////
 
@@ -481,6 +509,16 @@ class CostanzaModel {
         beacon.addLocation(location);
         var beacon_str = beacon.toBech32Str();
         return beacon_str;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // clean up
+    ///////////////////////////////////////////////////////////////////////////
+
+    cleanUp() {
+        if (this.provider_state == CONNECT_STATE.CONNECTED) {
+            this.receipts.socketSessionEnd();
+        }
     }
 }
 

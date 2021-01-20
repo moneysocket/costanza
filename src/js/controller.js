@@ -89,6 +89,9 @@ class CostanzaController {
         this.model.onping = (function() {
             this.view.redrawDynamicInfo();
         }).bind(this);
+        this.model.onreceiptchange = (function(uuid) {
+            this.view.redrawReceiptInfo(uuid);
+        }).bind(this);
         this.model.onmanualinvoice = (function(bolt11) {
             this.view.changeToAskPay(bolt11);
         }).bind(this);
@@ -160,6 +163,10 @@ class CostanzaController {
 
     start() {
         this.view.changeToMain();
+    }
+
+    stop() {
+        this.model.cleanUp();
     }
 }
 

@@ -6,6 +6,9 @@ var D = require('../utl/dom.js').DomUtl;
 var I = require('../utl/icon.js').IconUtl;
 var Wad = require("moneysocket").Wad;
 
+var SocketSessionReceipt = require(
+    '../socket-session-receipt.js').SocketSessionReceipt;
+
 const CONNECT_STATE = require('../model.js').CONNECT_STATE;
 
 
@@ -22,6 +25,7 @@ class MainScreen {
         this.auth_balance_div = null;
         this.balance_div = null;
         this.ping_div = null;
+        this.receipts_div = null;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -155,29 +159,23 @@ class MainScreen {
                    "font-bold text-green-400 px-2");
     }
 
-    drawSocketSessionReceipt(div, receipt, click_func) {
+    drawSocketSessionReceipt(div, session, click_func) {
+        var [total_msats, total_txs] = (
+            SocketSessionReceipt.sessionSettledInfo(session));
+        var ended = SocketSessionReceipt.isSessionEnded(session);
+
         var d = D.emptyDiv(div, "tx-button-socket");
         d.onclick = (function() {
-            click_func(receipt);
+            click_func(session);
         });
         var flex = D.emptyDiv(d, "flex items-center justify-start");
         var icon_span = D.emptySpan(flex, "px-2 font-bold");
         I.flyingmoney(icon_span);
-        D.textSpan(flex, "Socket Session", "flex-grow text-sm");
-        var ntx = receipt.txs.length;
-        D.textSpan(flex, ntx.toString() + "tx", "font-bold px-2");
-        var total_msats = 0;
-        for (var i = 0; i < receipt.txs.length; i++) {
-            if (receipt.txs[i].status != 'settled') {
-                continue;
-            }
-            if (receipt.txs[i].direction == "outgoing") {
-                total_msats = total_msats - receipt.txs[i].value.msats;
-            } else {
-                console.assert(receipt.txs[i].direction == "incoming");
-                total_msats = total_msats + receipt.txs[i].value.msats;
-            }
-        }
+        var label = ended ? "Socket Session" : "In Progress";
+        D.textSpan(flex, label, "flex-grow text-sm");
+
+        D.textSpan(flex, total_txs.toString() + "tx", "font-bold px-2");
+
         console.log(total_msats);
         if (total_msats >= 0) {
             var wad = Wad.bitcoin(total_msats);
@@ -235,27 +233,24 @@ class MainScreen {
         this.drawPing();
     }
 
-    drawReceiptPanel(div, click_func) {
-        var flex = D.emptyDiv(div,
-                              "flex-col justify-evenly section-background");
-
-        //console.log(JSON.stringify(receipts));
-        //console.log(receipts.length);
-
-        /*
-        for (var i = 0; i < receipts.length; i++) {
+    drawReceipts(click_func) {
+        D.deleteChildren(this.receipts_div);
+        var receipts = this.model.getReceipts();
+        for (var i = (receipts.length - 1); i >= 0; i--) {
             var r = receipts[i];
-            if (r.type == "outgoing_bolt11") {
-                this.drawOutgoingBolt11Receipt(flex, r, click_func);
-            } else if (r.type == "incoming_bolt11") {
-                this.drawIncomingBolt11Receipt(flex, r, click_func);
-            } else if (r.type == "socket_session") {
-                this.drawSocketSessionReceipt(flex, r, click_func);
+            if (r.type == "socket_session") {
+                this.drawSocketSessionReceipt(this.receipts_div, r, click_func);
             } else {
                 console.error("unknown receipt type");
             }
         }
-        */
+    }
+
+    drawReceiptPanel(div, click_func) {
+        var flex = D.emptyDiv(div,
+                              "flex-col justify-evenly section-background");
+        this.receipts_div = D.emptyDiv(flex);
+        this.drawReceipts(this.receipts_div, click_func);
     }
 
     drawActionPanel(div, scan_func, menu_func) {
@@ -277,6 +272,13 @@ class MainScreen {
         }
         if (this.ping_div != null) {
             this.drawPing();
+        }
+    }
+
+    redrawReceiptInfo(uuid) {
+        if (this.receipts_div != null) {
+            console.log("redraw receipt");
+            this.drawReceipts(this.onreceiptclick);
         }
     }
 

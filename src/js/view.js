@@ -269,6 +269,10 @@ class CostanzaView {
         this.connected_app_screen.redrawInfo();
     }
 
+    redrawReceiptInfo(uuid) {
+        this.main_screen.redrawReceiptInfo(uuid);
+    }
+
     changeToScan() {
         D.deleteChildren(this.app_div);
         this.scan_screen.draw();
