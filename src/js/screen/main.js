@@ -124,6 +124,8 @@ class MainScreen {
     // Receipt
     ///////////////////////////////////////////////////////////////////////////
 
+/*
+
     drawOutgoingBolt11Receipt(div, receipt, click_func) {
         var d = D.emptyDiv(div, "tx-button-qr");
         d.onclick = (function() {
@@ -158,6 +160,7 @@ class MainScreen {
         D.textSpan(flex, "+ " + receipt.value.toString(),
                    "font-bold text-green-400 px-2");
     }
+*/
 
     drawSocketSessionReceipt(div, session, click_func) {
         var [total_msats, total_txs] = (

@@ -62,6 +62,14 @@ class CostanzaController {
             this.model.setNewProviderPayer(payer);
             this.model.providerNotifyChange();
         }).bind(this);
+        this.view.oninvoicerequest = (function(msats) {
+            this.model.manualInvoiceRequest(msats);
+            this.view.changeToMain();
+        }).bind(this);
+        this.view.onpayrequest = (function(bolt11) {
+            this.model.manualPayRequest(bolt11);
+            this.view.changeToMain();
+        }).bind(this);
     }
 
     setupModel() {
@@ -93,7 +101,10 @@ class CostanzaController {
             this.view.redrawReceiptInfo(uuid);
         }).bind(this);
         this.model.onmanualinvoice = (function(bolt11) {
-            this.view.changeToAskPay(bolt11);
+            this.view.changeToManualProvideInvoice(bolt11);
+        }).bind(this);
+        this.model.onmanualpreimage = (function() {
+            this.view.changeToMain();
         }).bind(this);
     }
 

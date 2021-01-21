@@ -53,6 +53,9 @@ class CostanzaModel {
         this.onproviderstackevent = null;
         this.onreceiptchange = null;
 
+        this.onmanualinvoice = null;
+        this.onmanualpreimage = null;
+
         console.log("consumer_beacon: " + this.getStoredConsumerBeacon());
         this.ephemeral_wallet_beacon = this.getStoredConsumerBeacon();
         console.log("provider_beacon: " + this.getStoredProviderBeacon());
@@ -112,6 +115,26 @@ class CostanzaModel {
         }).bind(this);
         return s;
     }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Manual requests
+    ///////////////////////////////////////////////////////////////////////////
+
+    manualInvoiceRequest(msats) {
+        var request_uuid = Uuid.uuidv4();
+        this.consumer_stack.requestInvoice(msats, request_uuid);
+        this.transact.invoiceRequestedManual(msats, request_uuid);
+        //this.receipts.manualPayRequested();
+    }
+
+    manualPayRequest(bolt11) {
+        var request_uuid = Uuid.uuidv4();
+        this.consumer_stack.requestPay(bolt11, request_uuid);
+        this.transact.payRequestedManual(bolt11, request_uuid);
+
+        //this.receipts.manualPayRequested();
+    }
+
 
     ///////////////////////////////////////////////////////////////////////////
     // Consumer Stack Callbacks
@@ -186,7 +209,10 @@ class CostanzaModel {
                                                      request_reference_uuid);
             return;
         }
-        // TODO - present manual invoice on screen
+        console.log("got manual invoice: " + bolt11);
+        if (this.onmanualinvoice != null) {
+            this.onmanualinvoice(bolt11);
+        }
     }
 
     consumerOnPreimage(preimage, request_reference_uuid) {
