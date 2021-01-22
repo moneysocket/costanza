@@ -8,6 +8,8 @@ var Wad = require("moneysocket").Wad;
 
 var SocketSessionReceipt = require(
     '../socket-session-receipt.js').SocketSessionReceipt;
+var ManualReceiveReceipt = require(
+    '../manual-receive-receipt.js').ManualReceiveReceipt;
 
 const CONNECT_STATE = require('../model.js').CONNECT_STATE;
 
@@ -124,43 +126,34 @@ class MainScreen {
     // Receipt
     ///////////////////////////////////////////////////////////////////////////
 
-/*
+    drawManualReceiveReceipt(div, manual_receive, click_func) {
+        var [got_invoice, completed, msats, expired] = (
+            ManualReceiveReceipt.manualReceiveInfo(manual_receive));
 
-    drawOutgoingBolt11Receipt(div, receipt, click_func) {
+        //console.log(got_invoice + " " + completed + " " +
+        //            msats + " " + expired);;
+
         var d = D.emptyDiv(div, "tx-button-qr");
         d.onclick = (function() {
-            click_func(receipt);
-        });
-        var flex = D.emptyDiv(d, "flex items-center justify-start");
-        // use span?
-        var icon_span = D.emptySpan(flex, "px-2 font-bold");
-        I.qrcode1x(icon_span);
-        if (receipt.description == null) {
-            D.textSpan(flex, "(no description)", "flex-grow text-sm");
-        } else {
-            D.textSpan(flex, receipt.description, "flex-grow text-sm");
-        }
-        D.textSpan(flex, "- " + receipt.value.toString(),
-                   "font-bold text-red-400 px-2");
-    }
-
-    drawIncomingBolt11Receipt(div, receipt, click_func) {
-        var d = D.emptyDiv(div, "tx-button-qr");
-        d.onclick = (function() {
-            click_func(receipt);
+            click_func(manual_receive);
         });
         var flex = D.emptyDiv(d, "flex items-center justify-start");
         var icon_span = D.emptySpan(flex, "px-2 font-bold");
         I.qrcode1x(icon_span);
-        if (receipt.description == null) {
-            D.textSpan(flex, "(no description)", "flex-grow text-sm");
+
+        var wad = Wad.bitcoin(msats);
+        if (! got_invoice) {
+            D.textSpan(flex, "Waiting for invoice " + wad.toString(),
+                       "flex-grow text-sm");
+        } else if (completed) {
+            D.textSpan(flex, "Manual Receive", "flex-grow text-sm");
+            D.textSpan(flex, "+ " + wad.toString(),
+                       "font-bold text-green-400 px-2");
         } else {
-            D.textSpan(flex, receipt.description, "flex-grow text-sm");
+            D.textSpan(flex, "Manual receive in progress " + wad.toString(),
+                       "flex-grow text-sm");
         }
-        D.textSpan(flex, "+ " + receipt.value.toString(),
-                   "font-bold text-green-400 px-2");
     }
-*/
 
     drawSocketSessionReceipt(div, session, click_func) {
         var [total_msats, total_txs] = (
@@ -243,6 +236,8 @@ class MainScreen {
             var r = receipts[i];
             if (r.type == "socket_session") {
                 this.drawSocketSessionReceipt(this.receipts_div, r, click_func);
+            } else if (r.type == "manual_receive") {
+                this.drawManualReceiveReceipt(this.receipts_div, r, click_func);
             } else {
                 console.error("unknown receipt type");
             }

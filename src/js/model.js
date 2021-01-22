@@ -124,7 +124,7 @@ class CostanzaModel {
         var request_uuid = Uuid.uuidv4();
         this.consumer_stack.requestInvoice(msats, request_uuid);
         this.transact.invoiceRequestedManual(msats, request_uuid);
-        //this.receipts.manualPayRequested();
+        this.receipts.manualReceiveStart(msats, request_uuid);
     }
 
     manualPayRequest(bolt11) {
@@ -209,6 +209,7 @@ class CostanzaModel {
                                                      request_reference_uuid);
             return;
         }
+        this.receipts.manualReceiveGotInvoice(bolt11, request_reference_uuid);
         console.log("got manual invoice: " + bolt11);
         if (this.onmanualinvoice != null) {
             this.onmanualinvoice(bolt11);
@@ -243,6 +244,12 @@ class CostanzaModel {
             this.provider_stack.fulfilRequestPay(preimage,
                                                  request_reference_uuid);
             this.provider_stack.sendProviderInfoUpdate();
+        }
+        if (increment) {
+            this.receipts.manualReceivePaid(preimage);
+            if (this.onmanualpreimage != null) {
+                this.onmanualpreimage();
+            }
         }
         // TODO - show manul payment success splash herpaderp
         // for manual, the provider info update will come off the wire

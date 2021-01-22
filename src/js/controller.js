@@ -53,6 +53,7 @@ class CostanzaController {
         this.view.onproviderwadchange = (function(new_wad) {
             this.model.setNewProviderWad(new_wad);
             this.model.providerNotifyChange();
+            this.view.changeToMain();
         }).bind(this);
         this.view.onproviderpayeechange = (function(payee) {
             this.model.setNewProviderPayee(payee);
