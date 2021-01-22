@@ -20,6 +20,10 @@ const ConnectingAppScreen = require(
     "./screen/connecting.js").ConnectingAppScreen;
 const ConnectedAppScreen = require(
     "./screen/connected-app.js").ConnectedAppScreen;
+const ManualReceiveScreen = require(
+    "./screen/manual-receive.js").ManualReceiveScreen;
+const ManualProvideInvoiceScreen = require(
+    "./screen/manual-provide-invoice.js").ManualProvideInvoiceScreen;
 const AboutScreen = require("./screen/about.js").AboutScreen;
 
 
@@ -43,6 +47,10 @@ class CostanzaView {
             this.setupConnectingAppScreen(this.app_div);
         this.connected_app_screen =
             this.setupConnectedAppScreen(this.app_div);
+        this.manual_receive_screen =
+            this.setupManualReceiveScreen(this.app_div);
+        this.manual_provide_invoice_screen =
+            this.setupManualProvideInvoiceScreen(this.app_div);
         this.about_screen = this.setupAboutScreen(this.app_div);
 
         this.receipt_screen = null;
@@ -62,6 +70,9 @@ class CostanzaView {
         this.onproviderwadchange = null;
         this.onproviderpayeechange = null;
         this.onproviderpayerchange = null;
+
+        this.oninvoicerequest = null;
+        this.onpayrequest = null;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -234,6 +245,28 @@ class CostanzaView {
         return s;
     }
 
+    setupManualReceiveScreen(div) {
+        var s = new ManualReceiveScreen(div, this.model);
+        s.onbackclick = (function() {
+            this.changeToMenu();
+        }).bind(this);
+        s.oninputerror = (function(error_str) {
+            this.changeToError("could not interpet: " + error_str);
+        }).bind(this);
+        s.oninvoicerequest = (function(msats) {
+            this.oninvoicerequest(msats);
+        }).bind(this);
+        return s;
+    }
+
+    setupManualProvideInvoiceScreen(div) {
+        var s = new ManualProvideInvoiceScreen(div, this.model);
+        s.onbackclick = (function() {
+            this.changeToMenu();
+        }).bind(this);
+        return s;
+    }
+
     setupAboutScreen(div) {
         var s = new AboutScreen(div);
         s.onbackclick = (function() {
@@ -260,13 +293,17 @@ class CostanzaView {
 
     changeToMain() {
         D.deleteChildren(this.app_div);
-        this.main_screen.draw(this.model.receipts);
+        this.main_screen.draw();
     }
 
     redrawDynamicInfo() {
         this.main_screen.redrawInfo();
         this.connected_wallet_screen.redrawInfo();
         this.connected_app_screen.redrawInfo();
+    }
+
+    redrawReceiptInfo(uuid) {
+        this.main_screen.redrawReceiptInfo(uuid);
     }
 
     changeToScan() {
@@ -318,6 +355,11 @@ class CostanzaView {
         this.about_screen.draw();
     }
 
+    changeToManualProvideInvoice(bolt11) {
+        D.deleteChildren(this.app_div);
+        this.manual_provide_invoice_screen.draw(bolt11);
+    }
+
     changeToWalletProviderSetup() {
         D.deleteChildren(this.app_div);
         switch (this.model.getConsumerConnectState()) {
@@ -355,7 +397,19 @@ class CostanzaView {
     }
 
     changeToBolt11Receive() {
-        console.log("receive bolt11 stub");
+        D.deleteChildren(this.app_div);
+        switch (this.model.getConsumerConnectState()) {
+        case CONNECT_STATE.CONNECTED:
+            this.manual_receive_screen.draw();
+            break;
+        case CONNECT_STATE.CONNECTING:
+        case CONNECT_STATE.DISCONNECTED:
+            this.error_screen.draw("must be connected to wallet provider");
+            break;
+        default:
+            console.error("unknown state");
+            break;
+        }
     }
 
     changeToStorageSettings() {

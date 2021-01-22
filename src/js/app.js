@@ -17,10 +17,20 @@ class CostanzaApp {
     start() {
         this.controller.start();
     }
+
+    stop() {
+        this.controller.stop();
+    }
 }
 
 window.app = new CostanzaApp();
 function drawFirstUi() {
     window.app.start()
 }
+
+function cleanUp() {
+    window.app.stop()
+}
 window.addEventListener("load", drawFirstUi());
+window.addEventListener("beforeunload", cleanUp());
+

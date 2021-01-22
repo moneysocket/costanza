@@ -53,6 +53,7 @@ class CostanzaController {
         this.view.onproviderwadchange = (function(new_wad) {
             this.model.setNewProviderWad(new_wad);
             this.model.providerNotifyChange();
+            this.view.changeToMain();
         }).bind(this);
         this.view.onproviderpayeechange = (function(payee) {
             this.model.setNewProviderPayee(payee);
@@ -61,6 +62,14 @@ class CostanzaController {
         this.view.onproviderpayerchange = (function(payer) {
             this.model.setNewProviderPayer(payer);
             this.model.providerNotifyChange();
+        }).bind(this);
+        this.view.oninvoicerequest = (function(msats) {
+            this.model.manualInvoiceRequest(msats);
+            this.view.changeToMain();
+        }).bind(this);
+        this.view.onpayrequest = (function(bolt11) {
+            this.model.manualPayRequest(bolt11);
+            this.view.changeToMain();
         }).bind(this);
     }
 
@@ -89,8 +98,14 @@ class CostanzaController {
         this.model.onping = (function() {
             this.view.redrawDynamicInfo();
         }).bind(this);
+        this.model.onreceiptchange = (function(uuid) {
+            this.view.redrawReceiptInfo(uuid);
+        }).bind(this);
         this.model.onmanualinvoice = (function(bolt11) {
-            this.view.changeToAskPay(bolt11);
+            this.view.changeToManualProvideInvoice(bolt11);
+        }).bind(this);
+        this.model.onmanualpreimage = (function() {
+            this.view.changeToMain();
         }).bind(this);
     }
 
@@ -160,6 +175,10 @@ class CostanzaController {
 
     start() {
         this.view.changeToMain();
+    }
+
+    stop() {
+        this.model.cleanUp();
     }
 }
 

@@ -6,6 +6,11 @@ var D = require('../utl/dom.js').DomUtl;
 var I = require('../utl/icon.js').IconUtl;
 var Wad = require("moneysocket").Wad;
 
+var SocketSessionReceipt = require(
+    '../socket-session-receipt.js').SocketSessionReceipt;
+var ManualReceiveReceipt = require(
+    '../manual-receive-receipt.js').ManualReceiveReceipt;
+
 const CONNECT_STATE = require('../model.js').CONNECT_STATE;
 
 
@@ -22,6 +27,7 @@ class MainScreen {
         this.auth_balance_div = null;
         this.balance_div = null;
         this.ping_div = null;
+        this.receipts_div = null;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -120,64 +126,52 @@ class MainScreen {
     // Receipt
     ///////////////////////////////////////////////////////////////////////////
 
-    drawOutgoingBolt11Receipt(div, receipt, click_func) {
-        var d = D.emptyDiv(div, "tx-button-qr");
-        d.onclick = (function() {
-            click_func(receipt);
-        });
-        var flex = D.emptyDiv(d, "flex items-center justify-start");
-        // use span?
-        var icon_span = D.emptySpan(flex, "px-2 font-bold");
-        I.qrcode1x(icon_span);
-        if (receipt.description == null) {
-            D.textSpan(flex, "(no description)", "flex-grow text-sm");
-        } else {
-            D.textSpan(flex, receipt.description, "flex-grow text-sm");
-        }
-        D.textSpan(flex, "- " + receipt.value.toString(),
-                   "font-bold text-red-400 px-2");
-    }
+    drawManualReceiveReceipt(div, manual_receive, click_func) {
+        var [got_invoice, completed, msats, expired] = (
+            ManualReceiveReceipt.manualReceiveInfo(manual_receive));
 
-    drawIncomingBolt11Receipt(div, receipt, click_func) {
+        //console.log(got_invoice + " " + completed + " " +
+        //            msats + " " + expired);;
+
         var d = D.emptyDiv(div, "tx-button-qr");
         d.onclick = (function() {
-            click_func(receipt);
+            click_func(manual_receive);
         });
         var flex = D.emptyDiv(d, "flex items-center justify-start");
         var icon_span = D.emptySpan(flex, "px-2 font-bold");
         I.qrcode1x(icon_span);
-        if (receipt.description == null) {
-            D.textSpan(flex, "(no description)", "flex-grow text-sm");
+
+        var wad = Wad.bitcoin(msats);
+        if (! got_invoice) {
+            D.textSpan(flex, "Waiting for invoice " + wad.toString(),
+                       "flex-grow text-sm");
+        } else if (completed) {
+            D.textSpan(flex, "Manual Receive", "flex-grow text-sm");
+            D.textSpan(flex, "+ " + wad.toString(),
+                       "font-bold text-green-400 px-2");
         } else {
-            D.textSpan(flex, receipt.description, "flex-grow text-sm");
+            D.textSpan(flex, "Manual receive in progress " + wad.toString(),
+                       "flex-grow text-sm");
         }
-        D.textSpan(flex, "+ " + receipt.value.toString(),
-                   "font-bold text-green-400 px-2");
     }
 
-    drawSocketSessionReceipt(div, receipt, click_func) {
+    drawSocketSessionReceipt(div, session, click_func) {
+        var [total_msats, total_txs] = (
+            SocketSessionReceipt.sessionSettledInfo(session));
+        var ended = SocketSessionReceipt.isSessionEnded(session);
+
         var d = D.emptyDiv(div, "tx-button-socket");
         d.onclick = (function() {
-            click_func(receipt);
+            click_func(session);
         });
         var flex = D.emptyDiv(d, "flex items-center justify-start");
         var icon_span = D.emptySpan(flex, "px-2 font-bold");
         I.flyingmoney(icon_span);
-        D.textSpan(flex, "Socket Session", "flex-grow text-sm");
-        var ntx = receipt.txs.length;
-        D.textSpan(flex, ntx.toString() + "tx", "font-bold px-2");
-        var total_msats = 0;
-        for (var i = 0; i < receipt.txs.length; i++) {
-            if (receipt.txs[i].status != 'settled') {
-                continue;
-            }
-            if (receipt.txs[i].direction == "outgoing") {
-                total_msats = total_msats - receipt.txs[i].value.msats;
-            } else {
-                console.assert(receipt.txs[i].direction == "incoming");
-                total_msats = total_msats + receipt.txs[i].value.msats;
-            }
-        }
+        var label = ended ? "Socket Session" : "In Progress";
+        D.textSpan(flex, label, "flex-grow text-sm");
+
+        D.textSpan(flex, total_txs.toString() + "tx", "font-bold px-2");
+
         console.log(total_msats);
         if (total_msats >= 0) {
             var wad = Wad.bitcoin(total_msats);
@@ -235,25 +229,26 @@ class MainScreen {
         this.drawPing();
     }
 
-    drawReceiptPanel(div, receipts, click_func) {
-        var flex = D.emptyDiv(div,
-                              "flex-col justify-evenly section-background");
-
-        //console.log(JSON.stringify(receipts));
-        //console.log(receipts.length);
-
-        for (var i = 0; i < receipts.length; i++) {
+    drawReceipts(click_func) {
+        D.deleteChildren(this.receipts_div);
+        var receipts = this.model.getReceipts();
+        for (var i = (receipts.length - 1); i >= 0; i--) {
             var r = receipts[i];
-            if (r.type == "outgoing_bolt11") {
-                this.drawOutgoingBolt11Receipt(flex, r, click_func);
-            } else if (r.type == "incoming_bolt11") {
-                this.drawIncomingBolt11Receipt(flex, r, click_func);
-            } else if (r.type == "socket_session") {
-                this.drawSocketSessionReceipt(flex, r, click_func);
+            if (r.type == "socket_session") {
+                this.drawSocketSessionReceipt(this.receipts_div, r, click_func);
+            } else if (r.type == "manual_receive") {
+                this.drawManualReceiveReceipt(this.receipts_div, r, click_func);
             } else {
                 console.error("unknown receipt type");
             }
         }
+    }
+
+    drawReceiptPanel(div, click_func) {
+        var flex = D.emptyDiv(div,
+                              "flex-col justify-evenly section-background");
+        this.receipts_div = D.emptyDiv(flex);
+        this.drawReceipts(this.receipts_div, click_func);
     }
 
     drawActionPanel(div, scan_func, menu_func) {
@@ -278,7 +273,14 @@ class MainScreen {
         }
     }
 
-    draw(receipts) {
+    redrawReceiptInfo(uuid) {
+        if (this.receipts_div != null) {
+            console.log("redraw receipt");
+            this.drawReceipts(this.onreceiptclick);
+        }
+    }
+
+    draw() {
         var flex = D.emptyDiv(this.app_div, "flex flex-col h-screen");
         var flex_top = D.emptyDiv(flex, "flex-none");
         var flex_mid = D.emptyDiv(flex, "flex-grow");
@@ -299,7 +301,7 @@ class MainScreen {
             break;
         }
 
-        this.drawReceiptPanel(flex_mid, receipts, this.onreceiptclick);
+        this.drawReceiptPanel(flex_mid, this.onreceiptclick);
         this.drawActionPanel(flex_bottom, this.onscanclick, this.onmenuclick);
     }
 }

@@ -14,46 +14,7 @@ const ProviderStack = require('moneysocket').ProviderStack;
 const ConsumerStack = require('moneysocket').ConsumerStack;
 const Balance = require("./balance.js").Balance;
 const Transact = require("./transact.js").Transact;
-
-var Receipts = [
-    {'receipt_id':  Uuid.uuidv4(),
-     'time':        Timestamp.getNowTimestamp(),
-     'type':        'outgoing_bolt11',
-     'bolt11':      'lnbcasdfasdfasd',
-     'description': 'Sparkshot.io 300px: burp!',
-     'value':       Wad.bitcoin(1000000),
-    },
-    {'receipt_id': Uuid.uuidv4(),
-     'time':       Timestamp.getNowTimestamp(),
-     'type':       'socket_session',
-     'txs':        [{'socket_txid': Uuid.uuidv4(),
-                     'direction':  'outgoing',
-                     'status':     'settled',
-                     'bolt11':     'lnbcasdfasdfasdlfajlsd',
-                     'value':      Wad.bitcoin(123000),
-                    },
-                    {'socket_txid': Uuid.uuidv4(),
-                     'direction':  'incoming',
-                     'status':     'settled',
-                     'bolt11':     'lnbc2342334',
-                     'value':      Wad.bitcoin(22000),
-                    },
-                   ],
-    },
-    {'receipt_id':  Uuid.uuidv4(),
-     'time':        Timestamp.getNowTimestamp(),
-     'type':        'incoming_bolt11',
-     'description': null,
-     'value':       Wad.bitcoin(444444),
-    },
-    {'receipt_id':  Uuid.uuidv4(),
-     'time':        Timestamp.getNowTimestamp(),
-     'type':        'outgoing_bolt11',
-     'bolt11':      'lnbcasdfasdfasd',
-     'description': 'Jukebox Play: C.R.E.A.M. - Wu Tang Clan ',
-     'value':       Wad.bitcoin(6150),
-    },
-];
+const Receipts = require("./receipts.js").Receipts;
 
 
 const DEFAULT_HOST = "relay.socket.money";
@@ -70,13 +31,13 @@ const CONNECT_STATE = {
 
 class CostanzaModel {
     constructor() {
-        this.receipts = Receipts;
         this.provider_stack = this.setupProviderStack();
         this.provider_state = CONNECT_STATE.DISCONNECTED;
         this.consumer_stack = this.setupConsumerStack();
         this.consumer_state = CONNECT_STATE.DISCONNECTED;
         this.balance = new Balance(this);
         this.transact = new Transact(this);
+        this.receipts = new Receipts(this);
 
         this.consumer_reported_info = null;
         this.consumer_last_ping = 0;
@@ -87,7 +48,13 @@ class CostanzaModel {
         this.onconsumerproviderinfochange = null;
         this.onping = null;
 
+        this.onprovideronline = null;
+        this.onprovideroffline = null;
         this.onproviderstackevent = null;
+        this.onreceiptchange = null;
+
+        this.onmanualinvoice = null;
+        this.onmanualpreimage = null;
 
         console.log("consumer_beacon: " + this.getStoredConsumerBeacon());
         this.ephemeral_wallet_beacon = this.getStoredConsumerBeacon();
@@ -97,13 +64,6 @@ class CostanzaModel {
         if (! this.hasStoredAccountUuid()) {
             this.storeAccountUuid(Uuid.uuidv4());
         }
-
-        // blaleet:
-/*
-        this.requests_from_provider = new Set();
-        this.send_requests = {};
-        this.receive_requests = {};
-*/
     }
 
     setupProviderStack() {
@@ -155,6 +115,26 @@ class CostanzaModel {
         }).bind(this);
         return s;
     }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Manual requests
+    ///////////////////////////////////////////////////////////////////////////
+
+    manualInvoiceRequest(msats) {
+        var request_uuid = Uuid.uuidv4();
+        this.consumer_stack.requestInvoice(msats, request_uuid);
+        this.transact.invoiceRequestedManual(msats, request_uuid);
+        this.receipts.manualReceiveStart(msats, request_uuid);
+    }
+
+    manualPayRequest(bolt11) {
+        var request_uuid = Uuid.uuidv4();
+        this.consumer_stack.requestPay(bolt11, request_uuid);
+        this.transact.payRequestedManual(bolt11, request_uuid);
+
+        //this.receipts.manualPayRequested();
+    }
+
 
     ///////////////////////////////////////////////////////////////////////////
     // Consumer Stack Callbacks
@@ -214,6 +194,7 @@ class CostanzaModel {
         if (err != null) {
             console.log("invoice error: " + err);
             if (socket) {
+                this.receipts.socketSessionErrNotified(err);
                 // TODO - send error on socket with uuid reference
                 return;
             }
@@ -222,11 +203,17 @@ class CostanzaModel {
         }
 
         if (socket) {
+            this.receipts.socketSessionInvoiceNotified(bolt11,
+                request_reference_uuid);
             this.provider_stack.fulfilRequestInvoice(bolt11,
                                                      request_reference_uuid);
             return;
         }
-        // TODO - present manual invoice on screen
+        this.receipts.manualReceiveGotInvoice(bolt11, request_reference_uuid);
+        console.log("got manual invoice: " + bolt11);
+        if (this.onmanualinvoice != null) {
+            this.onmanualinvoice(bolt11);
+        }
     }
 
     consumerOnPreimage(preimage, request_reference_uuid) {
@@ -239,12 +226,15 @@ class CostanzaModel {
         console.log("msats: " + msats);
 
         if (socket == null) {
-            console.log("unknown preimage: " + increment);
+            var err = "unknown preimage: " + preimage;
+            console.log(err);
             return;
         }
         // TODO -log receipt
 
         if (socket) {
+            this.receipts.socketSessionPreimageNotified(preimage, increment,
+                msats, request_reference_uuid);
             if (increment) {
                 this.balance.incrementSocketBalance(msats);
             } else {
@@ -254,6 +244,12 @@ class CostanzaModel {
             this.provider_stack.fulfilRequestPay(preimage,
                                                  request_reference_uuid);
             this.provider_stack.sendProviderInfoUpdate();
+        }
+        if (increment) {
+            this.receipts.manualReceivePaid(preimage);
+            if (this.onmanualpreimage != null) {
+                this.onmanualpreimage();
+            }
         }
         // TODO - show manul payment success splash herpaderp
         // for manual, the provider info update will come off the wire
@@ -266,6 +262,7 @@ class CostanzaModel {
 
     providerOnAnnounce(nexus) {
         this.provider_state = CONNECT_STATE.CONNECTED;
+        this.receipts.socketSessionStart();
         console.log("provider announce");
         if (this.onprovideronline != null) {
             this.onprovideronline();
@@ -274,9 +271,10 @@ class CostanzaModel {
 
     providerOnRevoke() {
         this.provider_state = CONNECT_STATE.DISCONNECTED;
+        this.receipts.socketSessionEnd();
         console.log("provider revoke");
-        if (this.oncprovideroffline != null) {
-            this.oncprovideroffline();
+        if (this.onprovideroffline != null) {
+            this.onprovideroffline();
         }
     }
 
@@ -294,10 +292,12 @@ class CostanzaModel {
     providerHandleInvoiceRequest(msats, request_uuid) {
         console.log("got invoice request from provider: " + request_uuid);
         // TODO log receipt
+        this.receipts.socketSessionInvoiceRequest(msats, request_uuid);
         var err = this.transact.checkInvoiceRequestSocket();
         if (err != null) {
-            // TODO send error message
+            this.receipts.socketSessionErrNotified(err);
             console.log("err: " + err);
+            // TODO send error message
             return;
         }
         this.consumer_stack.requestInvoice(msats, request_uuid);
@@ -306,9 +306,10 @@ class CostanzaModel {
 
     providerHandlePayRequest(bolt11, request_uuid) {
         console.log("got pay request from provider: " + request_uuid);
-        // TODO log receipt
+        this.receipts.socketSessionPayRequest(bolt11, request_uuid);
         var err = this.transact.checkPayRequestSocket(bolt11);
         if (err != null) {
+            this.receipts.socketSessionErrNotified(err);
             console.log("err: " + err);
             // TODO send error message
             return;
@@ -517,6 +518,20 @@ class CostanzaModel {
     }
 
     ///////////////////////////////////////////////////////////////////////////
+    // receipts
+    ///////////////////////////////////////////////////////////////////////////
+
+    getReceipts() {
+        return this.receipts.getReceiptDict();
+    }
+
+    receiptsUpdated(uuid) {
+        if (this.onreceiptchange != null) {
+            this.onreceiptchange(uuid);
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
     // general beacon
     ///////////////////////////////////////////////////////////////////////////
 
@@ -527,6 +542,16 @@ class CostanzaModel {
         beacon.addLocation(location);
         var beacon_str = beacon.toBech32Str();
         return beacon_str;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // clean up
+    ///////////////////////////////////////////////////////////////////////////
+
+    cleanUp() {
+        if (this.provider_state == CONNECT_STATE.CONNECTED) {
+            this.receipts.socketSessionEnd();
+        }
     }
 }
 
