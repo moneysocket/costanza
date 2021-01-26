@@ -31,6 +31,26 @@ class ScanInterpret {
         }
     }
 
+    getMsats(bolt11) {
+        // TODO move this to library and do fuller validation
+        var decoded = b11.decode(bolt11);
+        if ("millisatoshis" in decoded) {
+            return decoded.millisatoshis;
+        }
+        return null;
+    }
+
+    checkForAmount(bolt11) {
+        var msats = this.getMsats(bolt11);
+        if (msats == null) {
+            return false;
+        }
+        if (msats == 0) {
+            return false;
+        }
+        return true;
+    }
+
     isBeacon(scan_str) {
         var [beacon, err] = MoneysocketBeacon.fromBech32Str(scan_str);
         if (beacon == null) {
@@ -47,10 +67,13 @@ class ScanInterpret {
             return "PARSE_ERROR";
         }
         if (is_bolt11 && this.isWalletOnline()) {
-            return "PAY_BOLT11_MANUALLY";
+            if (this.checkForAmount(scan_str)) {
+                return "PAY_BOLT11_MANUALLY";
+            }
+            return "PAY_BOLT11_MANUALLY_ERROR_NO_AMOUNT";
         }
         if (is_bolt11 && ! this.isWalletOnline()) {
-            return "PAY_BOLT11_MANUALLY_ERROR";
+            return "PAY_BOLT11_MANUALLY_ERROR_CONNECTION";
         }
         if (is_beacon && ! this.isWalletOnline()) {
             return "CONNECT_WALLET_BEACON";

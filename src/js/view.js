@@ -24,6 +24,7 @@ const ManualReceiveScreen = require(
     "./screen/manual-receive.js").ManualReceiveScreen;
 const ManualProvideInvoiceScreen = require(
     "./screen/manual-provide-invoice.js").ManualProvideInvoiceScreen;
+const ManualSendScreen = require("./screen/manual-send.js").ManualSendScreen;
 const AboutScreen = require("./screen/about.js").AboutScreen;
 
 
@@ -51,6 +52,8 @@ class CostanzaView {
             this.setupManualReceiveScreen(this.app_div);
         this.manual_provide_invoice_screen =
             this.setupManualProvideInvoiceScreen(this.app_div);
+        this.manual_send_screen =
+            this.setupManualSendScreen(this.app_div);
         this.about_screen = this.setupAboutScreen(this.app_div);
 
         this.receipt_screen = null;
@@ -267,6 +270,20 @@ class CostanzaView {
         return s;
     }
 
+    setupManualSendScreen(div) {
+        var s = new ManualSendScreen(div, this.model);
+        s.onbackclick = (function() {
+            this.changeToMenu();
+        }).bind(this);
+        s.onpayerror = (function(error_str) {
+            this.changeToError("could not pay: " + error_str);
+        }).bind(this);
+        s.onpayrequest = (function(bolt11) {
+            this.onpayrequest(bolt11);
+        }).bind(this);
+        return s;
+    }
+
     setupAboutScreen(div) {
         var s = new AboutScreen(div);
         s.onbackclick = (function() {
@@ -326,8 +343,9 @@ class CostanzaView {
         console.log("receipt: " + JSON.stringify(receipt));
     }
 
-    changeToPayBolt11(bolt11) {
+    changeToManualSend(bolt11) {
         D.deleteChildren(this.app_div);
+        this.manual_send_screen.draw(bolt11);
     }
 
     changeToConnectWallet(beacon) {

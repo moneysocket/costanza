@@ -131,8 +131,7 @@ class CostanzaModel {
         var request_uuid = Uuid.uuidv4();
         this.consumer_stack.requestPay(bolt11, request_uuid);
         this.transact.payRequestedManual(bolt11, request_uuid);
-
-        //this.receipts.manualPayRequested();
+        this.receipts.manualSendStart(bolt11, request_uuid);
     }
 
 
@@ -244,16 +243,17 @@ class CostanzaModel {
             this.provider_stack.fulfilRequestPay(preimage,
                                                  request_reference_uuid);
             this.provider_stack.sendProviderInfoUpdate();
+            return;
         }
+        // TODO account for network fee?
         if (increment) {
             this.receipts.manualReceivePaid(preimage);
-            if (this.onmanualpreimage != null) {
-                this.onmanualpreimage();
-            }
+        } else {
+            this.receipts.manualSendGotPreimage(preimage);
         }
-        // TODO - show manul payment success splash herpaderp
-        // for manual, the provider info update will come off the wire
-        // after the preimage. It will allso account for network fees
+        if (this.onmanualpreimage != null) {
+            this.onmanualpreimage();
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////

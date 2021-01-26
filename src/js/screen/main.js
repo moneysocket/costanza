@@ -10,6 +10,8 @@ var SocketSessionReceipt = require(
     '../socket-session-receipt.js').SocketSessionReceipt;
 var ManualReceiveReceipt = require(
     '../manual-receive-receipt.js').ManualReceiveReceipt;
+var ManualSendReceipt = require(
+    '../manual-send-receipt.js').ManualSendReceipt;
 
 const CONNECT_STATE = require('../model.js').CONNECT_STATE;
 
@@ -130,9 +132,6 @@ class MainScreen {
         var [got_invoice, completed, msats, expired] = (
             ManualReceiveReceipt.manualReceiveInfo(manual_receive));
 
-        //console.log(got_invoice + " " + completed + " " +
-        //            msats + " " + expired);;
-
         var d = D.emptyDiv(div, "tx-button-qr");
         d.onclick = (function() {
             click_func(manual_receive);
@@ -152,6 +151,32 @@ class MainScreen {
         } else {
             D.textSpan(flex, "Manual receive in progress " + wad.toString(),
                        "flex-grow text-sm");
+        }
+    }
+
+    drawManualSendReceipt(div, manual_send, click_func) {
+        var [completed, bolt11, msats, description] = (
+            ManualSendReceipt.manualSendInfo(manual_send));
+
+        var d = D.emptyDiv(div, "tx-button-qr");
+        d.onclick = (function() {
+            click_func(manual_receive);
+        });
+        var flex = D.emptyDiv(d, "flex items-center justify-start");
+        var icon_span = D.emptySpan(flex, "px-2 font-bold");
+        I.qrcode1x(icon_span);
+
+        description = (description == null) ? "(no description)" : description;
+
+        var wad = Wad.bitcoin(msats);
+        if (! completed) {
+            D.textSpan(flex, "Paying", "flex-grow font-bold");
+            D.textSpan(flex, description, "flex-grow text sm");
+        } else {
+            D.textSpan(flex, "Paid", "flex-grow font-bold");
+            D.textSpan(flex, description, "flex-grow text-sm");
+            D.textSpan(flex, "+ " + wad.toString(),
+                       "font-bold text-green-400 px-2");
         }
     }
 
@@ -238,6 +263,8 @@ class MainScreen {
                 this.drawSocketSessionReceipt(this.receipts_div, r, click_func);
             } else if (r.type == "manual_receive") {
                 this.drawManualReceiveReceipt(this.receipts_div, r, click_func);
+            } else if (r.type == "manual_send") {
+                this.drawManualSendReceipt(this.receipts_div, r, click_func);
             } else {
                 console.error("unknown receipt type");
             }

@@ -136,18 +136,25 @@ class CostanzaController {
     }
 
 
+    checkBolt11(bolt11) {
+    }
+
     postScanResult(scan_str) {
         var action = this.scan_interpret.interpret_action(scan_str);
         console.log("interpeted action: " + action);
         switch (action) {
         case "PAY_BOLT11_MANUALLY":
             // TODO
-            this.view.changeToPayBolt11(scan_str);
+            this.view.changeToManualSend(scan_str);
             break;
-        case "PAY_BOLT11_MANUALLY_ERROR":
+        case "PAY_BOLT11_MANUALLY_ERROR_CONNECTION":
             this.view.changeToError(
                 "Cannot pay Bolt11. Wallet is not currenlty connected to " +
                 "wallet provider");
+            break;
+        case "PAY_BOLT11_MANUALLY_ERROR_NO_AMOUNT":
+            this.view.changeToError(
+                "Cannot pay Bolt11. Does not contain specified amount.");
             break;
         case "CONNECT_WALLET_BEACON":
             // TODO
