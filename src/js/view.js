@@ -25,6 +25,8 @@ const ManualReceiveScreen = require(
 const ManualProvideInvoiceScreen = require(
     "./screen/manual-provide-invoice.js").ManualProvideInvoiceScreen;
 const ManualSendScreen = require("./screen/manual-send.js").ManualSendScreen;
+const StorageSettingsScreen = require(
+    "./screen/storage-settings.js").StorageSettingsScreen;
 const AboutScreen = require("./screen/about.js").AboutScreen;
 
 
@@ -54,6 +56,8 @@ class CostanzaView {
             this.setupManualProvideInvoiceScreen(this.app_div);
         this.manual_send_screen =
             this.setupManualSendScreen(this.app_div);
+        this.storage_settings_screen =
+            this.setupStorageSettingsScreen(this.app_div);
         this.about_screen = this.setupAboutScreen(this.app_div);
 
         this.receipt_screen = null;
@@ -76,6 +80,8 @@ class CostanzaView {
 
         this.oninvoicerequest = null;
         this.onpayrequest = null;
+
+        this.onpersistprofilechange = null;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -284,6 +290,17 @@ class CostanzaView {
         return s;
     }
 
+    setupStorageSettingsScreen(div) {
+        var s = new StorageSettingsScreen(div, this.model);
+        s.onbackclick = (function() {
+            this.changeToMenu();
+        }).bind(this);
+        s.onprofilechange = (function(profile) {
+            this.onpersistprofilechange(profile);
+        }).bind(this);
+        return s;
+    }
+
     setupAboutScreen(div) {
         var s = new AboutScreen(div);
         s.onbackclick = (function() {
@@ -432,6 +449,8 @@ class CostanzaView {
 
     changeToStorageSettings() {
         console.log("storage settings stub");
+        D.deleteChildren(this.app_div);
+        this.storage_settings_screen.draw();
     }
 }
 

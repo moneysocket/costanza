@@ -15,11 +15,12 @@ const Bolt11 = require("moneysocket").Bolt11;
 class Receipts {
     constructor(model) {
         this.model = model;
-        if (! this.hasStoredReceipts()) {
+        if (! this.model.hasStoredReceipts()) {
+            console.log("initializing receipts");
             this.store = {'receipts': []};
             this.storeReceipts();
         } else {
-            this.store = this.getStoredReceipts();
+            this.store = this.model.getStoredReceipts();
         }
 
         console.log("receipts: " + JSON.stringify(this.store));
@@ -171,33 +172,27 @@ class Receipts {
         // TODO
     }
 
-
     ///////////////////////////////////////////////////////////////////////////
-    // localStorage
+    // receipt data
     ///////////////////////////////////////////////////////////////////////////
-
-    hasStoredReceipts() {
-        return window.localStorage.getItem("receipts") ? true: false;
-    }
-
-    getStoredReceipts() {
-        return JSON.parse(window.localStorage.getItem("receipts"));
-    }
 
     storeReceipts() {
-        window.localStorage.setItem("receipts", JSON.stringify(this.store));
+        console.log("storing: " + JSON.stringify(this.store));
+        this.model.storeReceipts(this.store);
     }
 
-    clearStoredReceipts() {
-        window.localStorage.removeItem("receipts");
-    }
 
-    ///////////////////////////////////////////////////////////////////////////
-    // accessors
-    ///////////////////////////////////////////////////////////////////////////
-
-    getReceiptDict() {
+    getCachedReceiptDict() {
         return this.store.receipts;
+    }
+
+    reloadCache() {
+        if (! this.model.hasStoredReceipts()) {
+            this.store = {'receipts': []};
+            this.storeReceipts();
+        } else {
+            this.store = this.model.getStoredReceipts();
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////

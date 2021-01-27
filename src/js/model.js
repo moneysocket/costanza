@@ -15,6 +15,7 @@ const ConsumerStack = require('moneysocket').ConsumerStack;
 const Balance = require("./balance.js").Balance;
 const Transact = require("./transact.js").Transact;
 const Receipts = require("./receipts.js").Receipts;
+const Persist = require("./persist.js").Persist;
 
 
 const DEFAULT_HOST = "relay.socket.money";
@@ -35,6 +36,7 @@ class CostanzaModel {
         this.provider_state = CONNECT_STATE.DISCONNECTED;
         this.consumer_stack = this.setupConsumerStack();
         this.consumer_state = CONNECT_STATE.DISCONNECTED;
+        this.persist = new Persist();
         this.balance = new Balance(this);
         this.transact = new Transact(this);
         this.receipts = new Receipts(this);
@@ -433,19 +435,19 @@ class CostanzaModel {
     }
 
     hasStoredConsumerBeacon() {
-        return window.localStorage.getItem("consumer_beacon") ? true: false;
+        return this.persist.hasStoredConsumerBeacon();
     }
 
     getStoredConsumerBeacon() {
-        return window.localStorage.getItem("consumer_beacon");
+        return this.persist.getStoredConsumerBeacon();
     }
 
     storeConsumerBeacon(beacon) {
-        window.localStorage.setItem("consumer_beacon", beacon);
+        this.persist.storeConsumerBeacon(beacon);
     }
 
     clearStoredConsumerBeacon() {
-        window.localStorage.removeItem("consumer_beacon");
+        this.persist.clearStoredConsumerBeacon();
     }
 
 
@@ -482,19 +484,19 @@ class CostanzaModel {
     }
 
     hasStoredProviderBeacon() {
-        return window.localStorage.getItem("provider_beacon") ? true: false;
+        return this.persist.hasStoredProviderBeacon();
     }
 
     getStoredProviderBeacon() {
-        return window.localStorage.getItem("provider_beacon");
+        return this.persist.getStoredProviderBeacon();
     }
 
     storeProviderBeacon(beacon) {
-        window.localStorage.setItem("provider_beacon", beacon);
+        this.persist.storeProviderBeacon(beacon);
     }
 
     clearStoredProviderBeacon() {
-        window.localStorage.removeItem("provider_beacon");
+        this.persist.clearStoredProviderBeacon();
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -502,33 +504,63 @@ class CostanzaModel {
     ///////////////////////////////////////////////////////////////////////////
 
     hasStoredAccountUuid() {
-        return window.localStorage.getItem("account_uuid") ? true: false;
+        return this.persist.hasStoredAccountUuid();
     }
 
     getStoredAccountUuid() {
-        return window.localStorage.getItem("account_uuid");
+        return this.persist.getStoredAccountUuid();
     }
 
     storeAccountUuid(uuid) {
-        window.localStorage.setItem("account_uuid", uuid);
+        return this.persist.storeAccountUuid(uuid);
     }
 
     clearStoredAccountUuid() {
-        window.localStorage.removeItem("account_uuid");
+        return this.persist.clearStoredAccountUuid();
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // receipts
     ///////////////////////////////////////////////////////////////////////////
 
+    hasStoredReceipts() {
+        return this.persist.hasStoredReceipts();
+    }
+
+    getStoredReceipts() {
+        return this.persist.getStoredReceipts();
+    }
+
+    storeReceipts(receipts) {
+        this.persist.storeReceipts(receipts);
+    }
+
+    clearStoredReceipts() {
+        this.persist.clearStoredReceipts();
+    }
+
     getReceipts() {
-        return this.receipts.getReceiptDict();
+        return this.receipts.getCachedReceiptDict();
     }
 
     receiptsUpdated(uuid) {
         if (this.onreceiptchange != null) {
             this.onreceiptchange(uuid);
         }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // storage settings info
+    ///////////////////////////////////////////////////////////////////////////
+
+    getStorageSettings() {
+        var [profile, checkout_record] = this.persist.getStorageSettings();
+        return [profile, checkout_record];
+    }
+
+    switchToProfile(profile) {
+        this.persist.switchToProfile(profile);
+        this.receipts.reloadCache();
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -552,6 +584,7 @@ class CostanzaModel {
         if (this.provider_state == CONNECT_STATE.CONNECTED) {
             this.receipts.socketSessionEnd();
         }
+        this.persist.yieldCheckedOutProfile();
     }
 }
 

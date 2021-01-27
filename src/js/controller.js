@@ -71,6 +71,11 @@ class CostanzaController {
             this.model.manualPayRequest(bolt11);
             this.view.changeToMain();
         }).bind(this);
+        this.view.onpersistprofilechange = (function(profile) {
+            this.model.switchToProfile(profile);
+            this.view.redrawDynamicInfo();
+            this.view.changeToMain();
+        }).bind(this);
     }
 
     setupModel() {
@@ -133,10 +138,6 @@ class CostanzaController {
             return;
         }
         this.model.storeProviderBeacon(beacon);
-    }
-
-
-    checkBolt11(bolt11) {
     }
 
     postScanResult(scan_str) {

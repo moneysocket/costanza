@@ -31,6 +31,6 @@ function drawFirstUi() {
 function cleanUp() {
     window.app.stop()
 }
-window.addEventListener("load", drawFirstUi());
-window.addEventListener("beforeunload", cleanUp());
+window.addEventListener("load", drawFirstUi);
+window.addEventListener("unload", cleanUp);
 
