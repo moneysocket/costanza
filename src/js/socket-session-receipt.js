@@ -38,7 +38,7 @@ class SocketSessionReceipt {
     }
 
     static payRequestEntry(bolt11, request_uuid) {
-        var entry = {'type':         'invoice_request',
+        var entry = {'type':         'pay_request',
                      'time':         Timestamp.getNowTimestamp(),
                      'bolt11':       bolt11,
                      'request_uuid': request_uuid,

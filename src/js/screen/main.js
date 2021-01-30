@@ -160,7 +160,7 @@ class MainScreen {
 
         var d = D.emptyDiv(div, "tx-button-qr");
         d.onclick = (function() {
-            click_func(manual_receive);
+            click_func(manual_send);
         });
         var flex = D.emptyDiv(d, "flex items-center justify-start");
         var icon_span = D.emptySpan(flex, "px-2 font-bold");
@@ -171,7 +171,7 @@ class MainScreen {
         var wad = Wad.bitcoin(msats);
         if (! completed) {
             D.textSpan(flex, "Paying", "flex-grow font-bold");
-            D.textSpan(flex, description, "flex-grow text sm");
+            D.textSpan(flex, description, "flex-grow text-sm");
         } else {
             D.textSpan(flex, "Paid", "flex-grow font-bold");
             D.textSpan(flex, description, "flex-grow text-sm");
@@ -275,7 +275,7 @@ class MainScreen {
         var flex = D.emptyDiv(div,
                               "flex-col justify-evenly section-background");
         this.receipts_div = D.emptyDiv(flex);
-        this.drawReceipts(this.receipts_div, click_func);
+        this.drawReceipts(click_func);
     }
 
     drawActionPanel(div, scan_func, menu_func) {

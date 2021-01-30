@@ -28,6 +28,8 @@ const ManualSendScreen = require("./screen/manual-send.js").ManualSendScreen;
 const StorageSettingsScreen = require(
     "./screen/storage-settings.js").StorageSettingsScreen;
 const AboutScreen = require("./screen/about.js").AboutScreen;
+const DrillLevelOneScreen = require(
+    "./screen/drill-level-one.js").DrillLevelOneScreen;
 
 
 class CostanzaView {
@@ -59,6 +61,8 @@ class CostanzaView {
         this.storage_settings_screen =
             this.setupStorageSettingsScreen(this.app_div);
         this.about_screen = this.setupAboutScreen(this.app_div);
+        this.drill_level_one_screen =
+            this.setupDrillLevelOneScreen(this.app_div);
 
         this.receipt_screen = null;
         this.bolt11_screen = null;
@@ -309,6 +313,14 @@ class CostanzaView {
         return s;
     }
 
+    setupDrillLevelOneScreen(div) {
+        var s = new DrillLevelOneScreen(div, this.model);
+        s.onbackclick = (function() {
+            this.changeToMain();
+        }).bind(this);
+        return s;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // model events
     ///////////////////////////////////////////////////////////////////////////
@@ -338,6 +350,7 @@ class CostanzaView {
 
     redrawReceiptInfo(uuid) {
         this.main_screen.redrawReceiptInfo(uuid);
+        this.drill_level_one_screen.redrawUuid(uuid);
     }
 
     changeToScan() {
@@ -357,7 +370,8 @@ class CostanzaView {
     }
 
     changeToReceipt(receipt) {
-        console.log("receipt: " + JSON.stringify(receipt));
+        D.deleteChildren(this.app_div);
+        this.drill_level_one_screen.draw(receipt);
     }
 
     changeToManualSend(bolt11) {
