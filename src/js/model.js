@@ -563,6 +563,12 @@ class CostanzaModel {
         this.receipts.reloadCache();
     }
 
+    clearProfile(profile) {
+        this.persist.clearProfile(profile);
+        this.receipts.reloadCache();
+        this.storeAccountUuid(Uuid.uuidv4());
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // general beacon
     ///////////////////////////////////////////////////////////////////////////

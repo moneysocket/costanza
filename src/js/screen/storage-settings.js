@@ -15,6 +15,7 @@ class StorageSettingsScreen {
         this.app_div = app_div;
         this.onbackclick = null;
         this.onprofilechange = null;
+        this.onclearclick = null;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -37,10 +38,24 @@ class StorageSettingsScreen {
         D.textSpan(flex, "Use");
     }
 
+    drawClearButton(div, clear_func) {
+        var b = D.button(div, clear_func,
+                         "bg-yellow-700 hover:bg-yellow-600 text-white " +
+                         "font-bold rounded py-1 px-5");
+        var flex = D.emptyDiv(b, "flex items-center justify-around");
+        D.textSpan(flex, "Clear");
+    }
+
 
     doSelect(profile) {
         if (this.onprofilechange != null) {
             this.onprofilechange(profile);
+        }
+    }
+
+    doClear(profile) {
+        if (this.onclearclick != null) {
+            this.onclearclick(profile);
         }
     }
 
@@ -83,7 +98,7 @@ class StorageSettingsScreen {
         }
         D.textParagraph(flex, p, "font-bold text-yellow-900");
 
-        var profile1 = D.emptyDiv(flex, "flex justify-center items-center " +
+        var profile1 = D.emptyDiv(flex, "flex justify-around items-center " +
                                 "bg-yellow-500 py-1 m-2 rounded");
         D.textSpan(profile1, "Profile 1 In Use: ", "text-yellow-900");
         D.textSpan(profile1,
@@ -92,8 +107,11 @@ class StorageSettingsScreen {
         this.drawSelectButton(profile1,
                               (function() {
             this.doSelect(PERSIST_PROFILE.ONE)}).bind(this));
+        this.drawClearButton(profile1,
+                              (function() {
+            this.doClear(PERSIST_PROFILE.ONE)}).bind(this));
 
-        var profile2 = D.emptyDiv(flex, "flex justify-center items-center " +
+        var profile2 = D.emptyDiv(flex, "flex justify-around items-center " +
                                 "bg-yellow-500 py-1 m-2 rounded");
         D.textSpan(profile2, "Profile 2 In Use: ", "text-yellow-900");
         D.textSpan(profile2,
@@ -102,8 +120,11 @@ class StorageSettingsScreen {
         this.drawSelectButton(profile2,
                               (function() {
             this.doSelect(PERSIST_PROFILE.TWO)}).bind(this));
+        this.drawClearButton(profile2,
+                             (function() {
+            this.doClear(PERSIST_PROFILE.TWO)}).bind(this));
 
-        var profile3 = D.emptyDiv(flex, "flex justify-center items-center " +
+        var profile3 = D.emptyDiv(flex, "flex justify-around items-center " +
                                 "bg-yellow-500 py-1 m-2 rounded");
         D.textSpan(profile3, "Profile 3 In Use: ", "text-yellow-900");
         D.textSpan(profile3,
@@ -112,6 +133,9 @@ class StorageSettingsScreen {
         this.drawSelectButton(profile3,
                               (function() {
             this.doSelect(PERSIST_PROFILE.THREE)}).bind(this));
+        this.drawClearButton(profile3,
+                              (function() {
+            this.doClear(PERSIST_PROFILE.THREE)}).bind(this));
     }
 
     ///////////////////////////////////////////////////////////////////////////

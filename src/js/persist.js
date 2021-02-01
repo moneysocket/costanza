@@ -34,6 +34,14 @@ class Persist {
         this.setProfileCheckoutRecord(record);
     }
 
+    clearProfile(profile) {
+        console.log("clearing: " + profile);
+        this.removeProfileItem("consumer_beacon", profile);
+        this.removeProfileItem("provider_beacon", profile);
+        this.removeProfileItem("account_uuid", profile);
+        this.removeProfileItem("receipts", profile);
+    }
+
     chooseProfile() {
         var record = this.getProfileCheckoutRecord();
         if (! record[PERSIST_PROFILE.ONE]) {
@@ -116,6 +124,10 @@ class Persist {
 
     removeItem(tag) {
         window.localStorage.removeItem(this.profile + "_" + tag);
+    }
+
+    removeProfileItem(tag, profile) {
+        window.localStorage.removeItem(profile + "_" + tag);
     }
 
     ///////////////////////////////////////////////////////////////////////////

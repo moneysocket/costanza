@@ -76,6 +76,11 @@ class CostanzaController {
             this.view.redrawDynamicInfo();
             this.view.changeToMain();
         }).bind(this);
+        this.view.onpersistprofileclear = (function(profile) {
+            this.model.clearProfile(profile);
+            this.view.redrawDynamicInfo();
+            this.view.changeToMain();
+        }).bind(this);
     }
 
     setupModel() {
