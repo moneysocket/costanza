@@ -30,6 +30,8 @@ const StorageSettingsScreen = require(
 const AboutScreen = require("./screen/about.js").AboutScreen;
 const DrillLevelOneScreen = require(
     "./screen/drill-level-one.js").DrillLevelOneScreen;
+const DrillLevelTwoScreen = require(
+    "./screen/drill-level-two.js").DrillLevelTwoScreen;
 
 
 class CostanzaView {
@@ -63,6 +65,8 @@ class CostanzaView {
         this.about_screen = this.setupAboutScreen(this.app_div);
         this.drill_level_one_screen =
             this.setupDrillLevelOneScreen(this.app_div);
+        this.drill_level_two_screen =
+            this.setupDrillLevelTwoScreen(this.app_div);
 
         this.receipt_screen = null;
         this.bolt11_screen = null;
@@ -86,6 +90,7 @@ class CostanzaView {
         this.onpayrequest = null;
 
         this.onpersistprofilechange = null;
+        this.onpersistprofileclear = null;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -302,6 +307,9 @@ class CostanzaView {
         s.onprofilechange = (function(profile) {
             this.onpersistprofilechange(profile);
         }).bind(this);
+        s.onclearclick = (function(profile) {
+            this.onpersistprofileclear(profile);
+        }).bind(this);
         return s;
     }
 
@@ -317,6 +325,17 @@ class CostanzaView {
         var s = new DrillLevelOneScreen(div, this.model);
         s.onbackclick = (function() {
             this.changeToMain();
+        }).bind(this);
+        s.onentryclick = (function(receipt, entry) {
+            this.changeToReceiptEntry(receipt, entry);
+        }).bind(this);
+        return s;
+    }
+
+    setupDrillLevelTwoScreen(div) {
+        var s = new DrillLevelTwoScreen(div, this.model);
+        s.onbackclick = (function(receipt) {
+            this.changeToReceipt(receipt);
         }).bind(this);
         return s;
     }
@@ -372,6 +391,11 @@ class CostanzaView {
     changeToReceipt(receipt) {
         D.deleteChildren(this.app_div);
         this.drill_level_one_screen.draw(receipt);
+    }
+
+    changeToReceiptEntry(receipt, entry) {
+        D.deleteChildren(this.app_div);
+        this.drill_level_two_screen.draw(receipt, entry);
     }
 
     changeToManualSend(bolt11) {

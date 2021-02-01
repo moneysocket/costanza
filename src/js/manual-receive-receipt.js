@@ -53,7 +53,7 @@ class ManualReceiveReceipt {
     }
 
     static manualReceiveInfo(manual_receive) {
-        console.log("manual_receive: " + JSON.stringify(manual_receive));
+        //console.log("manual_receive: " + JSON.stringify(manual_receive));
         var entries = manual_receive['entries']
         var completed = ((entries.length == 3) &&
                          entries[2]['type'] == 'got_preimage');

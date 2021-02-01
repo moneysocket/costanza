@@ -45,7 +45,7 @@ class ManualSendReceipt {
     }
 
     static manualSendInfo(manual_send) {
-        console.log("manual_send: " + JSON.stringify(manual_send));
+        //console.log("manual_send: " + JSON.stringify(manual_send));
         var entries = manual_send['entries']
         var completed = ((entries.length == 2) &&
                          entries[1]['type'] == 'got_preimage');

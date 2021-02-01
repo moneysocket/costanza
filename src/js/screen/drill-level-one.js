@@ -12,7 +12,7 @@ class DrillLevelOneScreen {
     constructor(app_div) {
         this.app_div = app_div;
         this.onbackclick = null;
-
+        this.onentryclick = null;
         this.receipt = null;
     }
 
@@ -81,7 +81,7 @@ class DrillLevelOneScreen {
     }
 
     getValueString(entry) {
-        console.log(JSON.stringify(entry));
+        //console.log(JSON.stringify(entry));
         switch (this.receipt['type']) {
         case "socket_session":
             if (entry['type'] == 'invoice_request') {
@@ -132,6 +132,11 @@ class DrillLevelOneScreen {
         var e = D.emptyDiv(div,
                            "bg-gray-600 hover:bg-gray-400 text-gray-300 py-2");
         // TODO - on click
+        e.onclick = (function() {
+            if (this.onentryclick != null) {
+                this.onentryclick(this.receipt, entry);
+            }
+        }).bind(this);
         var flex = D.emptyDiv(e, "flex items-center justify-start");
         D.textSpan(flex, this.timestampToNiceString(entry['time']),
                    "text-xs w-1/3");
@@ -161,7 +166,7 @@ class DrillLevelOneScreen {
         if (receipt_uuid != this.receipt['receipt_uuid']) {
             return;
         }
-        console.log("drill level one redraw");
+        //console.log("drill level one redraw");
         D.deleteChildren(this.app_div);
         this.draw(this.receipt);
     }
