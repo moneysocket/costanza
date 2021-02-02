@@ -53,7 +53,9 @@ class Receipts {
     }
 
     socketSessionPayRequest(bolt11, request_uuid) {
-        var entry = SocketSessionReceipt.payRequestEntry(bolt11, request_uuid);
+        var msats = this.getMsats(bolt11);
+        var entry = SocketSessionReceipt.payRequestEntry(bolt11, msats,
+                                                         request_uuid);
         this.socket_session.entries.push(entry);
         this.storeReceipts();
         this.model.receiptsUpdated(this.socket_session.receipt_uuid);
@@ -98,7 +100,7 @@ class Receipts {
 
     manualReceiveStart(msats, request_uuid) {
         var receive = ManualReceiveReceipt.newManualReceive();
-        var entry = ManualReceiveReceipt.manualReceiveRequestInvoiceEntry(
+        var entry = ManualReceiveReceipt.manualReceiveInvoiceRequestEntry(
             msats, request_uuid);
         receive.entries.push(entry);
         this.receive_requests[request_uuid] = receive;
@@ -111,7 +113,7 @@ class Receipts {
         var payment_hash = Bolt11.getPaymentHash(bolt11);
         var expiry_timestamp = this.getExpiryTimestamp(bolt11);
         this.uuid_by_payment_hash[payment_hash] = request_reference_uuid;
-        var entry = ManualReceiveReceipt.manualReceiveGotInvoiceEntry(
+        var entry = ManualReceiveReceipt.manualReceiveInvoiceNotifiedEntry(
             bolt11, request_reference_uuid, expiry_timestamp, payment_hash);
         var receive = this.receive_requests[request_reference_uuid];
         receive.entries.push(entry);
@@ -123,7 +125,7 @@ class Receipts {
         var payment_hash = Bolt11.preimageToPaymentHash(preimage);
         var request_reference_uuid = this.uuid_by_payment_hash[payment_hash];
         delete this.uuid_by_payment_hash[payment_hash];
-        var entry = ManualReceiveReceipt.manualReceiveGotPreimageEntry(
+        var entry = ManualReceiveReceipt.manualReceivePreimageNotifiedEntry(
             preimage, payment_hash, request_reference_uuid);
         var receive = this.receive_requests[request_reference_uuid];
         delete this.receive_requests[request_reference_uuid];
@@ -161,7 +163,7 @@ class Receipts {
         delete this.uuid_by_payment_hash[payment_hash];
         var send = this.send_requests[request_reference_uuid];
         delete this.send_requests[request_reference_uuid];
-        var entry = ManualSendReceipt.manualSendGotPreimageEntry(
+        var entry = ManualSendReceipt.manualSendPreimageNotifiedEntry(
             preimage, payment_hash, request_reference_uuid);
         send.entries.push(entry);
         this.storeReceipts();

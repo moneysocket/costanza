@@ -18,8 +18,8 @@ class ManualReceiveReceipt {
         return req;
     }
 
-    static manualReceiveRequestInvoiceEntry(msats, request_uuid) {
-        var entry = {'type':         'request_invoice',
+    static manualReceiveInvoiceRequestEntry(msats, request_uuid) {
+        var entry = {'type':         'invoice_request',
                      'time':         Timestamp.getNowTimestamp(),
                      'msats':        msats,
                      'request_uuid': request_uuid,
@@ -27,10 +27,10 @@ class ManualReceiveReceipt {
         return entry;
     }
 
-    static manualReceiveGotInvoiceEntry(bolt11, request_reference_uuid, timeout,
-                                        payment_hash)
+    static manualReceiveInvoiceNotifiedEntry(bolt11, request_reference_uuid,
+                                             timeout, payment_hash)
     {
-        var entry = {'type':                   'got_invoice',
+        var entry = {'type':                   'invoice_notified',
                      'time':                   Timestamp.getNowTimestamp(),
                      'bolt11':                 bolt11,
                      'timeout':                timeout,
@@ -40,10 +40,10 @@ class ManualReceiveReceipt {
         return entry;
     }
 
-    static manualReceiveGotPreimageEntry(preimage, payment_hash,
-                                         request_reference_uuid)
+    static manualReceivePreimageNotifiedEntry(preimage, payment_hash,
+                                              request_reference_uuid)
     {
-        var entry = {'type':                   'got_preimage',
+        var entry = {'type':                   'preimage_notified',
                      'time':                   Timestamp.getNowTimestamp(),
                      'preimage':               preimage,
                      'payment_hash':           payment_hash,

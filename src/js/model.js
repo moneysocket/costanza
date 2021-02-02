@@ -311,7 +311,7 @@ class CostanzaModel {
         this.receipts.socketSessionPayRequest(bolt11, request_uuid);
         var err = this.transact.checkPayRequestSocket(bolt11);
         if (err != null) {
-            this.receipts.socketSessionErrNotified(err);
+            this.receipts.socketSessionErrorNotified(err);
             console.log("err: " + err);
             // TODO send error message
             return;
@@ -323,7 +323,7 @@ class CostanzaModel {
     handleProviderInfoRequest(shared_seed) {
         console.log("provider info request");
         var p = this.balance.getSocketProviderInfo();
-        console.log("p: " + JSON.stringify(p));
+        //console.log("p: " + JSON.stringify(p));
         return p;
     }
 

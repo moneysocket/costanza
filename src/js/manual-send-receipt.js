@@ -31,11 +31,11 @@ class ManualSendReceipt {
         return entry;
     }
 
-    static manualSendGotPreimageEntry(preimage, payment_hash,
-                                      request_reference_uuid)
+    static manualSendPreimageNotifiedEntry(preimage, payment_hash,
+                                           request_reference_uuid)
     {
         // TODO routing fee
-        var entry = {'type':                   'got_preimage',
+        var entry = {'type':                   'preimage_notified',
                      'time':                   Timestamp.getNowTimestamp(),
                      'preimage':               preimage,
                      'payment_hash':           payment_hash,

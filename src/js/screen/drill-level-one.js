@@ -88,8 +88,7 @@ class DrillLevelOneScreen {
                 var w = Wad.bitcoin(entry['msats']);
                 return [w.toString(), ""];
             } else if (entry['type'] == 'pay_request') {
-                var msats = this.getMsats(entry['bolt11']);
-                var w = Wad.bitcoin(msats);
+                var w = Wad.bitcoin(entry['msats']);
                 return [w.toString(), ""];
             } else if (entry['type'] == "preimage_notified") {
                 if (entry['increment']) {
@@ -116,7 +115,7 @@ class DrillLevelOneScreen {
             if (entry['type'] == 'request_invoice') {
                 var w = Wad.bitcoin(entry['msats']);
                 return [w.toString(), ""];
-            } else if (entry['type'] == 'got_preimage') {
+            } else if (entry['type'] == 'preimage_notified') {
                 var msats = this.receipt['entries'][0]['msats'];
                 var w = Wad.bitcoin(msats);
                 return [ "+" + w.toString(), "font-bold text-green-400"];
