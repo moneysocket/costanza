@@ -2,6 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
+const Wad = require("moneysocket").Wad;
+
 const PERSIST_PROFILE = {
     ONE:   'PROFILE_ONE',
     TWO:   'PROFILE_TWO',
@@ -199,8 +201,18 @@ class Persist {
     }
 
     getStoredReceipts() {
-        console.log("r: " + this.getItem("receipts"));
-        return JSON.parse(this.getItem("receipts"));
+        var receipts = JSON.parse(this.getItem("receipts"));
+        // now, instantiate the embedded Wad objects from the dictionary data:
+        for (var i = 0; i < receipts['receipts'].length; i++) {
+            var receipt = receipts['receipts'][i];
+            for (var j = 0; j < receipt['entries'].length; j++) {
+                var entry = receipt['entries'][j];
+                if ('wad' in entry) {
+                    entry['wad'] = Wad.fromDict(entry['wad']);
+                }
+            }
+        }
+        return receipts;
     }
 
     storeReceipts(receipts) {

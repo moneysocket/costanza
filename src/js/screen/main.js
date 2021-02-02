@@ -129,7 +129,7 @@ class MainScreen {
     ///////////////////////////////////////////////////////////////////////////
 
     drawManualReceiveReceipt(div, manual_receive, click_func) {
-        var [got_invoice, completed, msats, expired] = (
+        var [got_invoice, completed, wad, expired] = (
             ManualReceiveReceipt.manualReceiveInfo(manual_receive));
 
         var d = D.emptyDiv(div, "tx-button-qr");
@@ -140,7 +140,6 @@ class MainScreen {
         var icon_span = D.emptySpan(flex, "px-2 font-bold");
         I.qrcode1x(icon_span);
 
-        var wad = Wad.bitcoin(msats);
         if (! got_invoice) {
             D.textSpan(flex, "Waiting for invoice " + wad.toString(),
                        "flex-grow text-sm");
@@ -155,7 +154,7 @@ class MainScreen {
     }
 
     drawManualSendReceipt(div, manual_send, click_func) {
-        var [completed, bolt11, msats, description] = (
+        var [completed, bolt11, wad, description] = (
             ManualSendReceipt.manualSendInfo(manual_send));
 
         var d = D.emptyDiv(div, "tx-button-qr");
@@ -168,7 +167,6 @@ class MainScreen {
 
         description = (description == null) ? "(no description)" : description;
 
-        var wad = Wad.bitcoin(msats);
         if (! completed) {
             D.textSpan(flex, "Paying", "flex-grow font-bold");
             D.textSpan(flex, description, "flex-grow text-sm");
@@ -181,7 +179,7 @@ class MainScreen {
     }
 
     drawSocketSessionReceipt(div, session, click_func) {
-        var [total_msats, total_txs] = (
+        var [total_wad, increment, total_txs] = (
             SocketSessionReceipt.sessionSettledInfo(session));
         var ended = SocketSessionReceipt.isSessionEnded(session);
 
@@ -197,14 +195,11 @@ class MainScreen {
 
         D.textSpan(flex, total_txs.toString() + "tx", "font-bold px-2");
 
-        console.log(total_msats);
-        if (total_msats >= 0) {
-            var wad = Wad.bitcoin(total_msats);
-            D.textSpan(flex, "+ " + wad.toString(),
+        if (increment) {
+            D.textSpan(flex, "+ " + total_wad.toString(),
                        "font-bold text-green-400 px-2");
         } else {
-            var wad = Wad.bitcoin(0 - total_msats);
-            D.textSpan(flex, "- " + wad.toString(),
+            D.textSpan(flex, "- " + total_wad.toString(),
                        "font-bold text-red-400 px-2");
         }
     }

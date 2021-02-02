@@ -75,6 +75,18 @@ class DrillLevelTwoScreen {
         D.textSpan(v, value, "break-words w-3/4");
     }
 
+    drawWad(div, key, wad) {
+        var v = D.emptyDiv(div,
+                           "flex justify-start text-yellow-800 px-4");
+        D.textSpan(v, this.typeToTitle(key), "text-xs font-bold w-1/4");
+        D.textSpan(v, wad.toString(), "break-words w-3/4");
+        var msats = wad.msats;
+        var v = D.emptyDiv(div,
+                           "flex justify-start text-yellow-800 px-4");
+        D.textSpan(v, "msats", "text-xs font-bold w-1/4");
+        D.textSpan(v, msats + " msats", "break-words w-3/4");
+    }
+
     drawInfoPanel(div) {
         var flex = D.emptyDiv(div, "flex flex-col section-background");
         for (var key in this.entry) {
@@ -85,7 +97,11 @@ class DrillLevelTwoScreen {
             if (key == 'time') {
                 value = (new Date(value)).toString();
             }
-            this.drawValue(flex, key, value);
+            if (key == 'wad') {
+                this.drawWad(flex, key, value);
+            } else {
+                this.drawValue(flex, key, value);
+            }
         }
     }
 

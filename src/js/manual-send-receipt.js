@@ -18,13 +18,13 @@ class ManualSendReceipt {
         return send;
     }
 
-    static manualSendRequestSendEntry(bolt11, msats, description,
+    static manualSendRequestSendEntry(bolt11, wad, description,
                                       request_uuid)
     {
         var entry = {'type':         'request_pay',
                      'time':         Timestamp.getNowTimestamp(),
                      'bolt11':       bolt11,
-                     'msats':        msats,
+                     'wad':          wad,
                      'description':  description,
                      'request_uuid': request_uuid,
                     };
@@ -51,9 +51,9 @@ class ManualSendReceipt {
                          entries[1]['type'] == 'got_preimage');
 
         var bolt11 = entries[0]['bolt11'];
-        var msats = entries[0]['msats'];
+        var wad = entries[0]['wad'];
         var description = entries[0]['description'];
-        return [completed, bolt11, msats, description];
+        return [completed, bolt11, wad, description];
     }
 }
 

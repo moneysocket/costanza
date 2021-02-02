@@ -85,39 +85,34 @@ class DrillLevelOneScreen {
         switch (this.receipt['type']) {
         case "socket_session":
             if (entry['type'] == 'invoice_request') {
-                var w = Wad.bitcoin(entry['msats']);
-                return [w.toString(), ""];
+                return [entry['wad'].toString(), ""];
             } else if (entry['type'] == 'pay_request') {
-                var w = Wad.bitcoin(entry['msats']);
-                return [w.toString(), ""];
+                return [entry['wad'].toString(), ""];
             } else if (entry['type'] == "preimage_notified") {
                 if (entry['increment']) {
-                    var w = Wad.bitcoin(entry['msats']);
-                    return [ "+" + w.toString(), "font-bold text-green-400"];
+                    return ["+" + entry['wad'].toString(),
+                            "font-bold text-green-400"];
                 } else {
-                    var w = Wad.bitcoin(entry['msats']);
-                    return [ "-" + w.toString(), "font-bold text-red-400"];
+                    return ["-" + entry['wad'].toString(),
+                            "font-bold text-red-400"];
                 }
             }
             return ["-", ""];
         case "manual_send":
             if (entry['type'] == 'request_pay') {
-                var w = Wad.bitcoin(entry['msats']);
-                return [w.toString(), ""];
+                return [entry['wad'].toString(), ""];
             } else {
-                var msats = this.receipt['entries'][0]['msats'];
-                var w = Wad.bitcoin(msats);
-                return [ "-" + w.toString(), "font-bold text-red-400"];
+                var w = this.receipt['entries'][0]['wad'];
+                return [ "-" + entry['wad'].toString(),
+                        "font-bold text-red-400"];
             }
             return ["-", ""];
             break;
         case "manual_receive":
             if (entry['type'] == 'request_invoice') {
-                var w = Wad.bitcoin(entry['msats']);
-                return [w.toString(), ""];
+                return [entry['wad'].toString(), ""];
             } else if (entry['type'] == 'preimage_notified') {
-                var msats = this.receipt['entries'][0]['msats'];
-                var w = Wad.bitcoin(msats);
+                var w = this.receipt['entries'][0]['wad'];
                 return [ "+" + w.toString(), "font-bold text-green-400"];
             }
             return ["-", ""];

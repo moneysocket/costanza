@@ -18,10 +18,10 @@ class ManualReceiveReceipt {
         return req;
     }
 
-    static manualReceiveInvoiceRequestEntry(msats, request_uuid) {
+    static manualReceiveInvoiceRequestEntry(wad, request_uuid) {
         var entry = {'type':         'invoice_request',
                      'time':         Timestamp.getNowTimestamp(),
-                     'msats':        msats,
+                     'wad':          wad,
                      'request_uuid': request_uuid,
                     };
         return entry;
@@ -60,10 +60,10 @@ class ManualReceiveReceipt {
         var got_invoice = ((entries.length >= 2) &&
                            entries[1]['type'] == 'got_invoice');
 
-        var msats = entries[0]['msats'];
+        var wad = entries[0]['wad'];
         var now = Timestamp.getNowTimestamp();
         var expired = got_invoice ? (now > entries[1]['timeout']) : false;
-        return [got_invoice, completed, msats, expired];
+        return [got_invoice, completed, wad, expired];
     }
 }
 

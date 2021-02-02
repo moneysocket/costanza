@@ -45,7 +45,8 @@ class Receipts {
     }
 
     socketSessionInvoiceRequest(msats, request_uuid) {
-        var entry = SocketSessionReceipt.invoiceRequestEntry(msats,
+        var wad = this.model.msatsToWalletCurrencyWad(msats);
+        var entry = SocketSessionReceipt.invoiceRequestEntry(wad,
                                                              request_uuid);
         this.socket_session.entries.push(entry);
         this.storeReceipts();
@@ -54,7 +55,8 @@ class Receipts {
 
     socketSessionPayRequest(bolt11, request_uuid) {
         var msats = this.getMsats(bolt11);
-        var entry = SocketSessionReceipt.payRequestEntry(bolt11, msats,
+        var wad = this.model.msatsToWalletCurrencyWad(msats);
+        var entry = SocketSessionReceipt.payRequestEntry(bolt11, wad,
                                                          request_uuid);
         this.socket_session.entries.push(entry);
         this.storeReceipts();
@@ -64,8 +66,9 @@ class Receipts {
     socketSessionPreimageNotified(preimage, increment, msats,
                                   request_reference_uuid)
     {
+        var wad = this.model.msatsToWalletCurrencyWad(msats);
         var entry = SocketSessionReceipt.preimageNotifiedEntry(preimage,
-            increment, msats, request_reference_uuid);
+            increment, wad, request_reference_uuid);
         this.socket_session.entries.push(entry);
         this.storeReceipts();
         this.model.receiptsUpdated(this.socket_session.receipt_uuid);
@@ -100,8 +103,9 @@ class Receipts {
 
     manualReceiveStart(msats, request_uuid) {
         var receive = ManualReceiveReceipt.newManualReceive();
+        var wad = this.model.msatsToWalletCurrencyWad(msats);
         var entry = ManualReceiveReceipt.manualReceiveInvoiceRequestEntry(
-            msats, request_uuid);
+            wad, request_uuid);
         receive.entries.push(entry);
         this.receive_requests[request_uuid] = receive;
         this.store['receipts'].push(receive);
@@ -146,10 +150,11 @@ class Receipts {
         var send = ManualSendReceipt.newManualSend();
         var payment_hash = Bolt11.getPaymentHash(bolt11);
         var msats = this.getMsats(bolt11);
+        var wad = this.model.msatsToWalletCurrencyWad(msats);
         var description = this.getDescription(bolt11);
         this.uuid_by_payment_hash[payment_hash] = request_uuid;
         var entry = ManualSendReceipt.manualSendRequestSendEntry(
-            bolt11, msats, description, request_uuid);
+            bolt11, wad, description, request_uuid);
         send.entries.push(entry);
         this.send_requests[request_uuid] = send;
         this.store['receipts'].push(send);
