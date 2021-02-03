@@ -48,7 +48,7 @@ class ManualSendReceipt {
         //console.log("manual_send: " + JSON.stringify(manual_send));
         var entries = manual_send['entries']
         var completed = ((entries.length == 2) &&
-                         entries[1]['type'] == 'got_preimage');
+                         entries[1]['type'] == 'preimage_notified');
 
         var bolt11 = entries[0]['bolt11'];
         var wad = entries[0]['wad'];

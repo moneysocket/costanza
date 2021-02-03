@@ -56,9 +56,9 @@ class ManualReceiveReceipt {
         //console.log("manual_receive: " + JSON.stringify(manual_receive));
         var entries = manual_receive['entries']
         var completed = ((entries.length == 3) &&
-                         entries[2]['type'] == 'got_preimage');
+                         entries[2]['type'] == 'preimage_notified');
         var got_invoice = ((entries.length >= 2) &&
-                           entries[1]['type'] == 'got_invoice');
+                           entries[1]['type'] == 'invoice_notified');
 
         var wad = entries[0]['wad'];
         var now = Timestamp.getNowTimestamp();
