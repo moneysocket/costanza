@@ -192,14 +192,14 @@ class MainScreen {
         I.flyingmoney(icon_span);
         var label = ended ? "Socket Session" : "In Progress";
         D.textSpan(flex, label, "flex-grow text-sm");
-
         D.textSpan(flex, total_txs.toString() + "tx", "font-bold px-2");
-
+        var wad = (total_txs == 0) ?
+            this.model.msatsToWalletCurrencyWad(0) : total_wad;
         if (increment) {
-            D.textSpan(flex, "+ " + total_wad.toString(),
+            D.textSpan(flex, "+ " + wad.toString(),
                        "font-bold text-green-400 px-2");
         } else {
-            D.textSpan(flex, "- " + total_wad.toString(),
+            D.textSpan(flex, "- " + wad.toString(),
                        "font-bold text-red-400 px-2");
         }
     }
