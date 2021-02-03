@@ -428,6 +428,11 @@ class CostanzaModel {
 
     msatsToWalletCurrencyWad(msats) {
         var wad = this.getConsumerBalanceWad();
+        if (msats == 0) {
+            return new Wad(0, wad['asset_stable'], 0,
+                           wad['code'], wad['countries'], wad['decimals'],
+                           wad['name'], wad['symbol']);
+        }
         var clone = Wad.clone_msats(wad, msats);
         //console.log("cloned: " + clone.toString());
         return clone;
