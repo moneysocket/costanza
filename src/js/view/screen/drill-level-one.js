@@ -103,8 +103,7 @@ class DrillLevelOneScreen {
                 return [entry['wad'].toString(), ""];
             } else {
                 var w = this.receipt['entries'][0]['wad'];
-                return [ "-" + entry['wad'].toString(),
-                        "font-bold text-red-400"];
+                return [ "-" + w.toString(), "font-bold text-red-400"];
             }
             return ["-", ""];
             break;

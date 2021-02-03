@@ -174,7 +174,7 @@ class MainScreen {
             D.textSpan(flex, "Paid", "flex-grow font-bold");
             D.textSpan(flex, description, "flex-grow text-sm");
             D.textSpan(flex, "+ " + wad.toString(),
-                       "font-bold text-green-400 px-2");
+                       "font-bold text-red-400 px-2");
         }
     }
 
