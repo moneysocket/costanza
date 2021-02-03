@@ -48,7 +48,7 @@ gulp.task('copyMisc', function copyMisc(cb) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-gulp.task('walletQuick', function () {
+gulp.task('wallet', function () {
     var b = browserify({
       entries: './src/js/app.js',
       debug: true
@@ -62,33 +62,40 @@ gulp.task('walletQuick', function () {
       .pipe(gulp.dest('./htdocs/js/'));
 });
 
-gulp.task('quick', gulp.series([
+/* takes a few seconds, so only run this when there are changes to the tailwind
+ * source files */
+gulp.task('css', gulp.series([
                                'clean',
                                'style',
                                'copyMisc',
                                'copyHtml',
-                               'walletQuick',
+                               'wallet',
                                ]));
-
-gulp.task('quick_watch', function () {
-    gulp.watch("src/**/*" , { ignoreInitial: false },
-               gulp.series(['clean',
-                            'style',
-                            'copyMisc',
-                            'copyHtml',
-                            'walletQuick',
-                            ]));
-});
 
 gulp.task('js', gulp.series(['copyHtml',
                              'copyMisc',
-                             'walletQuick']));
+                             'wallet']));
 
+/* fastest for dev loop */
 gulp.task('js_watch', function () {
     gulp.watch("src/**/*" , { ignoreInitial: false },
-               gulp.series([
-                            'copyHtml',
-                             'copyMisc',
-                            'walletQuick',
-                            ]));
+        gulp.series('clean', gulp.parallel('copyHtml',
+                                           'copyMisc',
+                                           'wallet')));
+});
+
+
+/* just do everything */
+gulp.task('all', gulp.series('clean', gulp.parallel('copyHtml',
+                                                    'copyMisc',
+                                                    'wallet',
+                                                    'style')));
+
+/* just do everything */
+gulp.task('all_watch', function () {
+    gulp.watch("src/**/*" , { ignoreInitial: false },
+        gulp.series('clean', gulp.parallel('copyHtml',
+                                           'copyMisc',
+                                           'wallet',
+                                           'style')));
 });
