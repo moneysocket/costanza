@@ -5,7 +5,7 @@
 const b11 = require("bolt11");
 const MoneysocketBeacon = require("moneysocket").MoneysocketBeacon;
 
-const CONNECT_STATE = require("./model.js").CONNECT_STATE;
+const CONNECT_STATE = require("../model/model.js").CONNECT_STATE;
 
 class ScanInterpret {
     constructor(model) {

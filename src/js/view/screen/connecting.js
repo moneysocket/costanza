@@ -5,8 +5,8 @@
 
 const Kjua = require('kjua');
 
-const D = require('../utl/dom.js').DomUtl;
-const I = require('../utl/icon.js').IconUtl;
+const D = require('../../utl/dom.js').DomUtl;
+const I = require('../../utl/icon.js').IconUtl;
 
 const ConnectProgress = require("./connect-progress.js").ConnectProgress;
 const Copy = require('clipboard-copy');

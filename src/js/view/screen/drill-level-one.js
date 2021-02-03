@@ -2,8 +2,8 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
-var D = require('../utl/dom.js').DomUtl;
-var I = require('../utl/icon.js').IconUtl;
+var D = require('../../utl/dom.js').DomUtl;
+var I = require('../../utl/icon.js').IconUtl;
 var Wad = require("moneysocket").Wad;
 const Bolt11 = require("moneysocket").Bolt11;
 const b11 = require("bolt11");

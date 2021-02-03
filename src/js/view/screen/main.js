@@ -2,18 +2,18 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
-var D = require('../utl/dom.js').DomUtl;
-var I = require('../utl/icon.js').IconUtl;
+var D = require('../../utl/dom.js').DomUtl;
+var I = require('../../utl/icon.js').IconUtl;
 var Wad = require("moneysocket").Wad;
 
 var SocketSessionReceipt = require(
-    '../socket-session-receipt.js').SocketSessionReceipt;
+    '../../model/socket-session-receipt.js').SocketSessionReceipt;
 var ManualReceiveReceipt = require(
-    '../manual-receive-receipt.js').ManualReceiveReceipt;
+    '../../model/manual-receive-receipt.js').ManualReceiveReceipt;
 var ManualSendReceipt = require(
-    '../manual-send-receipt.js').ManualSendReceipt;
+    '../../model/manual-send-receipt.js').ManualSendReceipt;
 
-const CONNECT_STATE = require('../model.js').CONNECT_STATE;
+const CONNECT_STATE = require('../../model/model.js').CONNECT_STATE;
 
 
 class MainScreen {

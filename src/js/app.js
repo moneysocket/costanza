@@ -2,9 +2,10 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
-var CostanzaView = require("./view.js").CostanzaView;
-var CostanzaModel = require("./model.js").CostanzaModel;
-var CostanzaController = require("./controller.js").CostanzaController;
+var CostanzaView = require("./view/view.js").CostanzaView;
+var CostanzaModel = require("./model/model.js").CostanzaModel;
+var CostanzaController = require(
+    "./controller/controller.js").CostanzaController;
 
 class CostanzaApp {
     constructor() {

@@ -2,9 +2,9 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
-const D = require('./utl/dom.js').DomUtl;
+const D = require('../utl/dom.js').DomUtl;
 
-const CONNECT_STATE = require('./model.js').CONNECT_STATE;
+const CONNECT_STATE = require('../model/model.js').CONNECT_STATE;
 
 const MainScreen = require("./screen/main.js").MainScreen;
 const MenuScreen = require("./screen/menu.js").MenuScreen;

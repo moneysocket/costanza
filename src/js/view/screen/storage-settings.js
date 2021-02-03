@@ -3,10 +3,10 @@
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
 
-const D = require('../utl/dom.js').DomUtl;
-const I = require('../utl/icon.js').IconUtl;
+const D = require('../../utl/dom.js').DomUtl;
+const I = require('../../utl/icon.js').IconUtl;
 
-const PERSIST_PROFILE = require("../persist.js").PERSIST_PROFILE;
+const PERSIST_PROFILE = require("../../model/persist.js").PERSIST_PROFILE;
 
 
 class StorageSettingsScreen {
