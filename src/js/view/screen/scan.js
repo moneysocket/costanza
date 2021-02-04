@@ -1,9 +1,9 @@
-// Copyright (c) 2020 Jarret Dyrbye
+// Copyright (c) 2021 Jarret Dyrbye
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
-var D = require('../utl/dom.js').DomUtl;
-var I = require('../utl/icon.js').IconUtl;
+var D = require('../../utl/dom.js').DomUtl;
+var I = require('../../utl/icon.js').IconUtl;
 
 var QrScanner = require('qr-scanner');
 QrScanner.WORKER_PATH = "js/qr-scanner-worker.min.js";

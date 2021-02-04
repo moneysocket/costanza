@@ -18,19 +18,19 @@ class ManualReceiveReceipt {
         return req;
     }
 
-    static manualReceiveRequestInvoiceEntry(msats, request_uuid) {
-        var entry = {'type':         'request_invoice',
+    static manualReceiveInvoiceRequestEntry(wad, request_uuid) {
+        var entry = {'type':         'invoice_request',
                      'time':         Timestamp.getNowTimestamp(),
-                     'msats':        msats,
+                     'wad':          wad,
                      'request_uuid': request_uuid,
                     };
         return entry;
     }
 
-    static manualReceiveGotInvoiceEntry(bolt11, request_reference_uuid, timeout,
-                                        payment_hash)
+    static manualReceiveInvoiceNotifiedEntry(bolt11, request_reference_uuid,
+                                             timeout, payment_hash)
     {
-        var entry = {'type':                   'got_invoice',
+        var entry = {'type':                   'invoice_notified',
                      'time':                   Timestamp.getNowTimestamp(),
                      'bolt11':                 bolt11,
                      'timeout':                timeout,
@@ -40,10 +40,10 @@ class ManualReceiveReceipt {
         return entry;
     }
 
-    static manualReceiveGotPreimageEntry(preimage, payment_hash,
-                                         request_reference_uuid)
+    static manualReceivePreimageNotifiedEntry(preimage, payment_hash,
+                                              request_reference_uuid)
     {
-        var entry = {'type':                   'got_preimage',
+        var entry = {'type':                   'preimage_notified',
                      'time':                   Timestamp.getNowTimestamp(),
                      'preimage':               preimage,
                      'payment_hash':           payment_hash,
@@ -53,17 +53,17 @@ class ManualReceiveReceipt {
     }
 
     static manualReceiveInfo(manual_receive) {
-        console.log("manual_receive: " + JSON.stringify(manual_receive));
+        //console.log("manual_receive: " + JSON.stringify(manual_receive));
         var entries = manual_receive['entries']
         var completed = ((entries.length == 3) &&
-                         entries[2]['type'] == 'got_preimage');
+                         entries[2]['type'] == 'preimage_notified');
         var got_invoice = ((entries.length >= 2) &&
-                           entries[1]['type'] == 'got_invoice');
+                           entries[1]['type'] == 'invoice_notified');
 
-        var msats = entries[0]['msats'];
+        var wad = entries[0]['wad'];
         var now = Timestamp.getNowTimestamp();
         var expired = got_invoice ? (now > entries[1]['timeout']) : false;
-        return [got_invoice, completed, msats, expired];
+        return [got_invoice, completed, wad, expired];
     }
 }
 

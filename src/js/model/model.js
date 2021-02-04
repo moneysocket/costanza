@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Jarret Dyrbye
+// Copyright (c) 2021 Jarret Dyrbye
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
@@ -15,6 +15,7 @@ const ConsumerStack = require('moneysocket').ConsumerStack;
 const Balance = require("./balance.js").Balance;
 const Transact = require("./transact.js").Transact;
 const Receipts = require("./receipts.js").Receipts;
+const Persist = require("./persist.js").Persist;
 
 
 const DEFAULT_HOST = "relay.socket.money";
@@ -35,6 +36,7 @@ class CostanzaModel {
         this.provider_state = CONNECT_STATE.DISCONNECTED;
         this.consumer_stack = this.setupConsumerStack();
         this.consumer_state = CONNECT_STATE.DISCONNECTED;
+        this.persist = new Persist();
         this.balance = new Balance(this);
         this.transact = new Transact(this);
         this.receipts = new Receipts(this);
@@ -131,8 +133,7 @@ class CostanzaModel {
         var request_uuid = Uuid.uuidv4();
         this.consumer_stack.requestPay(bolt11, request_uuid);
         this.transact.payRequestedManual(bolt11, request_uuid);
-
-        //this.receipts.manualPayRequested();
+        this.receipts.manualSendStart(bolt11, request_uuid);
     }
 
 
@@ -244,16 +245,17 @@ class CostanzaModel {
             this.provider_stack.fulfilRequestPay(preimage,
                                                  request_reference_uuid);
             this.provider_stack.sendProviderInfoUpdate();
+            return;
         }
+        // TODO account for network fee?
         if (increment) {
             this.receipts.manualReceivePaid(preimage);
-            if (this.onmanualpreimage != null) {
-                this.onmanualpreimage();
-            }
+        } else {
+            this.receipts.manualSendGotPreimage(preimage);
         }
-        // TODO - show manul payment success splash herpaderp
-        // for manual, the provider info update will come off the wire
-        // after the preimage. It will allso account for network fees
+        if (this.onmanualpreimage != null) {
+            this.onmanualpreimage();
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -309,7 +311,7 @@ class CostanzaModel {
         this.receipts.socketSessionPayRequest(bolt11, request_uuid);
         var err = this.transact.checkPayRequestSocket(bolt11);
         if (err != null) {
-            this.receipts.socketSessionErrNotified(err);
+            this.receipts.socketSessionErrorNotified(err);
             console.log("err: " + err);
             // TODO send error message
             return;
@@ -321,7 +323,7 @@ class CostanzaModel {
     handleProviderInfoRequest(shared_seed) {
         console.log("provider info request");
         var p = this.balance.getSocketProviderInfo();
-        console.log("p: " + JSON.stringify(p));
+        //console.log("p: " + JSON.stringify(p));
         return p;
     }
 
@@ -421,6 +423,22 @@ class CostanzaModel {
     }
 
     ///////////////////////////////////////////////////////////////////////////
+    // consumer helpers
+    ///////////////////////////////////////////////////////////////////////////
+
+    msatsToWalletCurrencyWad(msats) {
+        var wad = this.getConsumerBalanceWad();
+        if (msats == 0) {
+            return new Wad(0, wad['asset_stable'], 0,
+                           wad['code'], wad['countries'], wad['decimals'],
+                           wad['name'], wad['symbol']);
+        }
+        var clone = Wad.clone_msats(wad, msats);
+        //console.log("cloned: " + clone.toString());
+        return clone;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
     // consumer beacon
     ///////////////////////////////////////////////////////////////////////////
 
@@ -433,19 +451,19 @@ class CostanzaModel {
     }
 
     hasStoredConsumerBeacon() {
-        return window.localStorage.getItem("consumer_beacon") ? true: false;
+        return this.persist.hasStoredConsumerBeacon();
     }
 
     getStoredConsumerBeacon() {
-        return window.localStorage.getItem("consumer_beacon");
+        return this.persist.getStoredConsumerBeacon();
     }
 
     storeConsumerBeacon(beacon) {
-        window.localStorage.setItem("consumer_beacon", beacon);
+        this.persist.storeConsumerBeacon(beacon);
     }
 
     clearStoredConsumerBeacon() {
-        window.localStorage.removeItem("consumer_beacon");
+        this.persist.clearStoredConsumerBeacon();
     }
 
 
@@ -482,19 +500,19 @@ class CostanzaModel {
     }
 
     hasStoredProviderBeacon() {
-        return window.localStorage.getItem("provider_beacon") ? true: false;
+        return this.persist.hasStoredProviderBeacon();
     }
 
     getStoredProviderBeacon() {
-        return window.localStorage.getItem("provider_beacon");
+        return this.persist.getStoredProviderBeacon();
     }
 
     storeProviderBeacon(beacon) {
-        window.localStorage.setItem("provider_beacon", beacon);
+        this.persist.storeProviderBeacon(beacon);
     }
 
     clearStoredProviderBeacon() {
-        window.localStorage.removeItem("provider_beacon");
+        this.persist.clearStoredProviderBeacon();
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -502,33 +520,69 @@ class CostanzaModel {
     ///////////////////////////////////////////////////////////////////////////
 
     hasStoredAccountUuid() {
-        return window.localStorage.getItem("account_uuid") ? true: false;
+        return this.persist.hasStoredAccountUuid();
     }
 
     getStoredAccountUuid() {
-        return window.localStorage.getItem("account_uuid");
+        return this.persist.getStoredAccountUuid();
     }
 
     storeAccountUuid(uuid) {
-        window.localStorage.setItem("account_uuid", uuid);
+        return this.persist.storeAccountUuid(uuid);
     }
 
     clearStoredAccountUuid() {
-        window.localStorage.removeItem("account_uuid");
+        return this.persist.clearStoredAccountUuid();
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // receipts
     ///////////////////////////////////////////////////////////////////////////
 
+    hasStoredReceipts() {
+        return this.persist.hasStoredReceipts();
+    }
+
+    getStoredReceipts() {
+        return this.persist.getStoredReceipts();
+    }
+
+    storeReceipts(receipts) {
+        this.persist.storeReceipts(receipts);
+    }
+
+    clearStoredReceipts() {
+        this.persist.clearStoredReceipts();
+    }
+
     getReceipts() {
-        return this.receipts.getReceiptDict();
+        return this.receipts.getCachedReceiptDict();
     }
 
     receiptsUpdated(uuid) {
         if (this.onreceiptchange != null) {
             this.onreceiptchange(uuid);
         }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // storage settings info
+    ///////////////////////////////////////////////////////////////////////////
+
+    getStorageSettings() {
+        var [profile, checkout_record] = this.persist.getStorageSettings();
+        return [profile, checkout_record];
+    }
+
+    switchToProfile(profile) {
+        this.persist.switchToProfile(profile);
+        this.receipts.reloadCache();
+    }
+
+    clearProfile(profile) {
+        this.persist.clearProfile(profile);
+        this.receipts.reloadCache();
+        this.storeAccountUuid(Uuid.uuidv4());
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -552,6 +606,7 @@ class CostanzaModel {
         if (this.provider_state == CONNECT_STATE.CONNECTED) {
             this.receipts.socketSessionEnd();
         }
+        this.persist.yieldCheckedOutProfile();
     }
 }
 

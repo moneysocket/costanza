@@ -1,8 +1,8 @@
-// Copyright (c) 2020 Jarret Dyrbye
+// Copyright (c) 2021 Jarret Dyrbye
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
-const D = require('../utl/dom.js').DomUtl;
+const D = require('../../utl/dom.js').DomUtl;
 
 const CROSS_MARK = "❌";
 const MONEY_WING = "💸";

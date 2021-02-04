@@ -1,11 +1,11 @@
-// Copyright (c) 2020 Jarret Dyrbye
+// Copyright (c) 2021 Jarret Dyrbye
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
 const Kjua = require('kjua');
 
-const D = require('../utl/dom.js').DomUtl;
-const I = require('../utl/icon.js').IconUtl;
+const D = require('../../utl/dom.js').DomUtl;
+const I = require('../../utl/icon.js').IconUtl;
 const Copy = require('clipboard-copy');
 
 

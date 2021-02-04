@@ -1,10 +1,10 @@
-// Copyright (c) 2020 Jarret Dyrbye
+// Copyright (c) 2021 Jarret Dyrbye
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
-const D = require('./utl/dom.js').DomUtl;
+const D = require('../utl/dom.js').DomUtl;
 
-const CONNECT_STATE = require('./model.js').CONNECT_STATE;
+const CONNECT_STATE = require('../model/model.js').CONNECT_STATE;
 
 const MainScreen = require("./screen/main.js").MainScreen;
 const MenuScreen = require("./screen/menu.js").MenuScreen;
@@ -24,7 +24,14 @@ const ManualReceiveScreen = require(
     "./screen/manual-receive.js").ManualReceiveScreen;
 const ManualProvideInvoiceScreen = require(
     "./screen/manual-provide-invoice.js").ManualProvideInvoiceScreen;
+const ManualSendScreen = require("./screen/manual-send.js").ManualSendScreen;
+const StorageSettingsScreen = require(
+    "./screen/storage-settings.js").StorageSettingsScreen;
 const AboutScreen = require("./screen/about.js").AboutScreen;
+const DrillLevelOneScreen = require(
+    "./screen/drill-level-one.js").DrillLevelOneScreen;
+const DrillLevelTwoScreen = require(
+    "./screen/drill-level-two.js").DrillLevelTwoScreen;
 
 
 class CostanzaView {
@@ -51,7 +58,15 @@ class CostanzaView {
             this.setupManualReceiveScreen(this.app_div);
         this.manual_provide_invoice_screen =
             this.setupManualProvideInvoiceScreen(this.app_div);
+        this.manual_send_screen =
+            this.setupManualSendScreen(this.app_div);
+        this.storage_settings_screen =
+            this.setupStorageSettingsScreen(this.app_div);
         this.about_screen = this.setupAboutScreen(this.app_div);
+        this.drill_level_one_screen =
+            this.setupDrillLevelOneScreen(this.app_div);
+        this.drill_level_two_screen =
+            this.setupDrillLevelTwoScreen(this.app_div);
 
         this.receipt_screen = null;
         this.bolt11_screen = null;
@@ -73,6 +88,9 @@ class CostanzaView {
 
         this.oninvoicerequest = null;
         this.onpayrequest = null;
+
+        this.onpersistprofilechange = null;
+        this.onpersistprofileclear = null;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -267,10 +285,57 @@ class CostanzaView {
         return s;
     }
 
+    setupManualSendScreen(div) {
+        var s = new ManualSendScreen(div, this.model);
+        s.onbackclick = (function() {
+            this.changeToMenu();
+        }).bind(this);
+        s.onpayerror = (function(error_str) {
+            this.changeToError("could not pay: " + error_str);
+        }).bind(this);
+        s.onpayrequest = (function(bolt11) {
+            this.onpayrequest(bolt11);
+        }).bind(this);
+        return s;
+    }
+
+    setupStorageSettingsScreen(div) {
+        var s = new StorageSettingsScreen(div, this.model);
+        s.onbackclick = (function() {
+            this.changeToMenu();
+        }).bind(this);
+        s.onprofilechange = (function(profile) {
+            this.onpersistprofilechange(profile);
+        }).bind(this);
+        s.onclearclick = (function(profile) {
+            this.onpersistprofileclear(profile);
+        }).bind(this);
+        return s;
+    }
+
     setupAboutScreen(div) {
         var s = new AboutScreen(div);
         s.onbackclick = (function() {
             this.changeToMenu();
+        }).bind(this);
+        return s;
+    }
+
+    setupDrillLevelOneScreen(div) {
+        var s = new DrillLevelOneScreen(div, this.model);
+        s.onbackclick = (function() {
+            this.changeToMain();
+        }).bind(this);
+        s.onentryclick = (function(receipt, entry) {
+            this.changeToReceiptEntry(receipt, entry);
+        }).bind(this);
+        return s;
+    }
+
+    setupDrillLevelTwoScreen(div) {
+        var s = new DrillLevelTwoScreen(div, this.model);
+        s.onbackclick = (function(receipt) {
+            this.changeToReceipt(receipt);
         }).bind(this);
         return s;
     }
@@ -304,6 +369,7 @@ class CostanzaView {
 
     redrawReceiptInfo(uuid) {
         this.main_screen.redrawReceiptInfo(uuid);
+        this.drill_level_one_screen.redrawUuid(uuid);
     }
 
     changeToScan() {
@@ -323,11 +389,18 @@ class CostanzaView {
     }
 
     changeToReceipt(receipt) {
-        console.log("receipt: " + JSON.stringify(receipt));
+        D.deleteChildren(this.app_div);
+        this.drill_level_one_screen.draw(receipt);
     }
 
-    changeToPayBolt11(bolt11) {
+    changeToReceiptEntry(receipt, entry) {
         D.deleteChildren(this.app_div);
+        this.drill_level_two_screen.draw(receipt, entry);
+    }
+
+    changeToManualSend(bolt11) {
+        D.deleteChildren(this.app_div);
+        this.manual_send_screen.draw(bolt11);
     }
 
     changeToConnectWallet(beacon) {
@@ -414,6 +487,8 @@ class CostanzaView {
 
     changeToStorageSettings() {
         console.log("storage settings stub");
+        D.deleteChildren(this.app_div);
+        this.storage_settings_screen.draw();
     }
 }
 

@@ -1,17 +1,19 @@
-// Copyright (c) 2020 Jarret Dyrbye
+// Copyright (c) 2021 Jarret Dyrbye
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
-var D = require('../utl/dom.js').DomUtl;
-var I = require('../utl/icon.js').IconUtl;
+var D = require('../../utl/dom.js').DomUtl;
+var I = require('../../utl/icon.js').IconUtl;
 var Wad = require("moneysocket").Wad;
 
 var SocketSessionReceipt = require(
-    '../socket-session-receipt.js').SocketSessionReceipt;
+    '../../model/socket-session-receipt.js').SocketSessionReceipt;
 var ManualReceiveReceipt = require(
-    '../manual-receive-receipt.js').ManualReceiveReceipt;
+    '../../model/manual-receive-receipt.js').ManualReceiveReceipt;
+var ManualSendReceipt = require(
+    '../../model/manual-send-receipt.js').ManualSendReceipt;
 
-const CONNECT_STATE = require('../model.js').CONNECT_STATE;
+const CONNECT_STATE = require('../../model/model.js').CONNECT_STATE;
 
 
 class MainScreen {
@@ -127,11 +129,8 @@ class MainScreen {
     ///////////////////////////////////////////////////////////////////////////
 
     drawManualReceiveReceipt(div, manual_receive, click_func) {
-        var [got_invoice, completed, msats, expired] = (
+        var [got_invoice, completed, wad, expired] = (
             ManualReceiveReceipt.manualReceiveInfo(manual_receive));
-
-        //console.log(got_invoice + " " + completed + " " +
-        //            msats + " " + expired);;
 
         var d = D.emptyDiv(div, "tx-button-qr");
         d.onclick = (function() {
@@ -141,7 +140,6 @@ class MainScreen {
         var icon_span = D.emptySpan(flex, "px-2 font-bold");
         I.qrcode1x(icon_span);
 
-        var wad = Wad.bitcoin(msats);
         if (! got_invoice) {
             D.textSpan(flex, "Waiting for invoice " + wad.toString(),
                        "flex-grow text-sm");
@@ -155,8 +153,33 @@ class MainScreen {
         }
     }
 
+    drawManualSendReceipt(div, manual_send, click_func) {
+        var [completed, bolt11, wad, description] = (
+            ManualSendReceipt.manualSendInfo(manual_send));
+
+        var d = D.emptyDiv(div, "tx-button-qr");
+        d.onclick = (function() {
+            click_func(manual_send);
+        });
+        var flex = D.emptyDiv(d, "flex items-center justify-start");
+        var icon_span = D.emptySpan(flex, "px-2 font-bold");
+        I.qrcode1x(icon_span);
+
+        description = (description == null) ? "(no description)" : description;
+
+        if (! completed) {
+            D.textSpan(flex, "Paying", "flex-grow font-bold");
+            D.textSpan(flex, description, "flex-grow text-sm");
+        } else {
+            D.textSpan(flex, "Paid", "flex-grow font-bold");
+            D.textSpan(flex, description, "flex-grow text-sm");
+            D.textSpan(flex, "+ " + wad.toString(),
+                       "font-bold text-red-400 px-2");
+        }
+    }
+
     drawSocketSessionReceipt(div, session, click_func) {
-        var [total_msats, total_txs] = (
+        var [total_wad, increment, total_txs] = (
             SocketSessionReceipt.sessionSettledInfo(session));
         var ended = SocketSessionReceipt.isSessionEnded(session);
 
@@ -169,16 +192,13 @@ class MainScreen {
         I.flyingmoney(icon_span);
         var label = ended ? "Socket Session" : "In Progress";
         D.textSpan(flex, label, "flex-grow text-sm");
-
         D.textSpan(flex, total_txs.toString() + "tx", "font-bold px-2");
-
-        console.log(total_msats);
-        if (total_msats >= 0) {
-            var wad = Wad.bitcoin(total_msats);
+        var wad = (total_txs == 0) ?
+            this.model.msatsToWalletCurrencyWad(0) : total_wad;
+        if (increment) {
             D.textSpan(flex, "+ " + wad.toString(),
                        "font-bold text-green-400 px-2");
         } else {
-            var wad = Wad.bitcoin(0 - total_msats);
             D.textSpan(flex, "- " + wad.toString(),
                        "font-bold text-red-400 px-2");
         }
@@ -238,6 +258,8 @@ class MainScreen {
                 this.drawSocketSessionReceipt(this.receipts_div, r, click_func);
             } else if (r.type == "manual_receive") {
                 this.drawManualReceiveReceipt(this.receipts_div, r, click_func);
+            } else if (r.type == "manual_send") {
+                this.drawManualSendReceipt(this.receipts_div, r, click_func);
             } else {
                 console.error("unknown receipt type");
             }
@@ -248,7 +270,7 @@ class MainScreen {
         var flex = D.emptyDiv(div,
                               "flex-col justify-evenly section-background");
         this.receipts_div = D.emptyDiv(flex);
-        this.drawReceipts(this.receipts_div, click_func);
+        this.drawReceipts(click_func);
     }
 
     drawActionPanel(div, scan_func, menu_func) {

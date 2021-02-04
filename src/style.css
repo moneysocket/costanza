@@ -7,11 +7,11 @@
 }
 
 .tx-button-qr {
-    @apply bg-gray-600 hover:bg-gray-300 text-gray-300 py-2;
+    @apply bg-gray-600 hover:bg-gray-400 text-gray-300 py-2;
 }
 
 .tx-button-socket {
-    @apply bg-gray-500 hover:bg-gray-300 text-gray-300 py-2;
+    @apply bg-gray-600 hover:bg-gray-400 text-gray-300 py-2;
 }
 
 .section-background {

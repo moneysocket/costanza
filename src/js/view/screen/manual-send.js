@@ -2,20 +2,23 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
-const D = require('../utl/dom.js').DomUtl;
-const I = require('../utl/icon.js').IconUtl;
+const b11 = require("bolt11");
+const Wad = require("moneysocket").Wad;
+
+const D = require('../../utl/dom.js').DomUtl;
+const I = require('../../utl/icon.js').IconUtl;
 
 const MSATS_PER_SAT = 1000.0;
 const SATS_PER_BTC = 100000000.0;
 const MSATS_PER_BTC = SATS_PER_BTC * MSATS_PER_SAT;
 
-class ManualReceiveScreen {
+class ManualSendScreen {
     constructor(app_div, model) {
         this.app_div = app_div;
         this.model = model;
         this.onbackclick = null;
-        this.oninputerror = null;
-        this.oninvoicerequest = null;
+        this.onpayerror = null;
+        this.onpayrequest = null;
 
         this.val_input = null;
     }
@@ -32,51 +35,28 @@ class ManualReceiveScreen {
         var text = D.textSpan(flex, "Back");
     }
 
-    drawRequestButton(div, set_func) {
+    drawPayButton(div, set_func) {
         var b = D.button(div, set_func, "p-2 main-button");
         var flex = D.emptyDiv(b, "flex items-center justify-around");
-        D.textSpan(flex, "Request Invoice");
+        D.textSpan(flex, "Pay Invoice");
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // do request
     ///////////////////////////////////////////////////////////////////////////
 
-    doRequest() {
-        var val_string = this.val_input.value;
-        var val_units = parseFloat(val_string);
-        if (isNaN(val_units)) {
-            if (this.oninputerror != null) {
-                this.oninputerror("must be a numeric value");
+    doPayRequest() {
+        var payer = this.model.getConsumerIsPayer();
+        if (! payer) {
+            if (this.onpayrror != null) {
+                this.onpayerror("wallet provider can't send");
             }
             return;
         }
-        if (val_units < 0) {
-            if (this.oninputerror != null) {
-                this.oninputerror("must be positive value");
-            }
-            return;
-        }
-        var payee = this.model.getConsumerIsPayee();
-        if (! payee) {
-            if (this.oninputerror != null) {
-                this.oninputerror("wallet provider can't receive");
-            }
-            return;
-        }
-
         var wad = this.model.getConsumerBalanceWad();
-        var rate = wad.getDefactoRate();
-        var msats;
-        if (wad['asset_stable']) {
-            var [amount, code] = rate.convert(val_units, wad['code']);
-            console.assert(code == "BTC");
-            msats = Math.round(amount * MSATS_PER_BTC);
-        } else {
-            msats = Math.round(val_units * 1000.0);
-        }
-        if (this.oninvoicerequest != null) {
-            this.oninvoicerequest(msats);
+        // TODO = check available balnace
+        if (this.onpayrequest != null) {
+            this.onpayrequest(this.bolt11);
         }
     }
 
@@ -84,29 +64,29 @@ class ManualReceiveScreen {
     // input actions
     ///////////////////////////////////////////////////////////////////////////
 
-    drawInputRow(div) {
+    drawInvoiceDetailsRow(div) {
         var wad = this.model.getConsumerBalanceWad();
-        var background = D.emptyDiv(div, "flex justify-center items-center " +
-                                  "bg-yellow-500 py-2 m-2 rounded");
-        var val = D.emptyDiv(background, "flex flex-col");
+        var msats = this.getMsats(this.bolt11);
+        var expiry = this.getExpiryTimestamp(this.bolt11);
+        var description = this.getDescription(this.bolt11);
+        var expiryfmt = new Date(expiry);
+        var send_wad = Wad.clone_msats(wad, msats);
 
-        var input_div = D.emptyDiv(val, "flex justify-center items-center");
-        var symb = D.textSpan(input_div, wad['symbol'],
-                              "px-2 font-black text-yellow-800");
-        this.val_input = D.emptyInput(input_div,
-            "w-40 appearance-none rounded shadow " +
-            "p-3 text-grey-dark mr-2 focus:outline-none");
-        this.val_input.setAttribute("type", "number");
-        this.val_input.setAttribute("min", "0");
-        this.val_input.setAttribute("placeholder", "value");
-        this.val_input.value = 1.0;
+        description = (description == null) ? "(no description)" : description;
 
-        var code = wad.asset_stable ? wad['code'] : "sats";
-        var curr = D.textSpan(input_div, code, "font-black text-yellow-800");
+        var val = D.emptyDiv(div, "flex flex-col");
+        D.textParagraph(val, this.bolt11,
+                   "font-black break-words text-yellow-800 py-5");
+        D.textParagraph(val, "Description: " + description,
+                        "font-black text-yellow-800 py-5");
+        D.textParagraph(val, "Requested: " + send_wad.toString(),
+                   "font-black text-yellow-800 py-5");
+        D.textParagraph(val, "Expires: " + expiryfmt.toString(),
+                   "font-black break-words text-yellow-800 py-5");
 
         var button_div = D.emptyDiv(val, "flex justify-center py-2");
-        this.drawRequestButton(button_div,
-                               (function() {this.doRequest()}).bind(this));
+        this.drawPayButton(button_div,
+                           (function() {this.doPayRequest()}).bind(this));
     }
 
     drawAvailableRow(div) {
@@ -151,14 +131,15 @@ class ManualReceiveScreen {
 
     drawInterfacePanel(div) {
         var flex = D.emptyDiv(div, "flex flex-col section-background");
-        this.drawInputRow(flex);
+        this.drawInvoiceDetailsRow(flex);
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Screens
     ///////////////////////////////////////////////////////////////////////////
 
-    draw() {
+    draw(bolt11) {
+        this.bolt11 = bolt11;
         var flex = D.emptyDiv(this.app_div, "flex flex-col h-screen");
         var flex_top = D.emptyDiv(flex, "flex-none");
         this.drawTitlePanel(flex_top);
@@ -168,6 +149,50 @@ class ManualReceiveScreen {
         this.drawInterfacePanel(flex_mid);
         var flex_bottom = D.emptyDiv(flex, "flex-none");
     }
+
+
+    //////////////////////////////////////////////////////////////////////////
+    // misc
+    //////////////////////////////////////////////////////////////////////////
+
+    getExpiryTimestampFmt(bolt11) {
+        var decoded = b11.decode(bolt11);
+        return decoded.timeExpireDateString;
+    }
+
+    getExpiryTimestamp(bolt11) {
+        // TODO - move this to library
+        var decoded = b11.decode(bolt11);
+        var timestamp = decoded.timestamp;
+        var expire_time = decoded.timeExpireDate;
+        console.log("get expiry timestamp: " + JSON.stringify(decoded));
+        console.log("get expiry timestamp: " + decoded + " " +
+                    timestamp + " " + expire_time);
+        return expire_time;
+    }
+
+    getMsats(bolt11) {
+        // TODO move this to library and do fuller validation
+        var decoded = b11.decode(bolt11);
+        if ("millisatoshis" in decoded) {
+            if (decoded.millisatoshis == null) {
+                return null;
+            }
+            return decoded.millisatoshis;
+        }
+        return null;
+    }
+
+    getDescription(bolt11) {
+        // TODO - move this to library
+        var decoded = b11.decode(bolt11);
+        for (var i = 0; i < decoded.tags.length; i++) {
+            if (decoded.tags[i]["tagName"] == "description") {
+                return decoded.tags[i]["data"];
+            }
+        }
+        return null;
+    }
 }
 
-exports.ManualReceiveScreen = ManualReceiveScreen;
+exports.ManualSendScreen = ManualSendScreen;

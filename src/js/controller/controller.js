@@ -1,4 +1,4 @@
-// Copyright (c) 2020 Jarret Dyrbye
+// Copyright (c) 2021 Jarret Dyrbye
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
@@ -71,6 +71,16 @@ class CostanzaController {
             this.model.manualPayRequest(bolt11);
             this.view.changeToMain();
         }).bind(this);
+        this.view.onpersistprofilechange = (function(profile) {
+            this.model.switchToProfile(profile);
+            this.view.redrawDynamicInfo();
+            this.view.changeToMain();
+        }).bind(this);
+        this.view.onpersistprofileclear = (function(profile) {
+            this.model.clearProfile(profile);
+            this.view.redrawDynamicInfo();
+            this.view.changeToMain();
+        }).bind(this);
     }
 
     setupModel() {
@@ -135,19 +145,22 @@ class CostanzaController {
         this.model.storeProviderBeacon(beacon);
     }
 
-
     postScanResult(scan_str) {
         var action = this.scan_interpret.interpret_action(scan_str);
         console.log("interpeted action: " + action);
         switch (action) {
         case "PAY_BOLT11_MANUALLY":
             // TODO
-            this.view.changeToPayBolt11(scan_str);
+            this.view.changeToManualSend(scan_str);
             break;
-        case "PAY_BOLT11_MANUALLY_ERROR":
+        case "PAY_BOLT11_MANUALLY_ERROR_CONNECTION":
             this.view.changeToError(
                 "Cannot pay Bolt11. Wallet is not currenlty connected to " +
                 "wallet provider");
+            break;
+        case "PAY_BOLT11_MANUALLY_ERROR_NO_AMOUNT":
+            this.view.changeToError(
+                "Cannot pay Bolt11. Does not contain specified amount.");
             break;
         case "CONNECT_WALLET_BEACON":
             // TODO
