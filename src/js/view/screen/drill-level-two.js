@@ -95,7 +95,7 @@ class DrillLevelTwoScreen {
                 continue;
             }
             if (key == 'time') {
-                value = (new Date(value)).toString();
+                value = (new Date(Math.round(value * 1000))).toString();
             }
             if (key == 'wad') {
                 this.drawWad(flex, key, value);

@@ -32,13 +32,26 @@ Dependencies
 
 This depends on [js-moneysocket](https://github.com/moneysocket/js-moneysocket) which will need to be installed into `node_modules` prior to building this project.
 
-Also, additional dependencies referenced are package.json
+Also, additional dependencies referenced are [package.json](package.json).
+
+Build
+------------------------------------------------------------------------
+
+Building is done with gulp, the details of which are detailed in [gulplfile.js](gulpfile.js).
+
+After the dependencies are installed, the `htdocs/` web root directory can be built by running:
+
+```
+$ gulp all
+```
+
+Also, `gulp css`, `gulp js`, and the `js_watch` and `all_watch` varients might be useful for development workflows.
 
 
 Dev webserver
 ------------------------------------------------------------------------
 
-To access a camera from the browser for scanning QR, it needs to be served from a `https` server, or else the browser will be unhappy.
+To access a camera from the browser for scanning QR, it needs to be served from a `https` server during development, or else the browser will be unhappy.
 
 [server.py](server.py) is provided with some certs that can be given exceptions for `localhost` from your browser while developing.
 

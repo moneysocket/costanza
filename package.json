@@ -4,8 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build:css": "tailwind build src/style.css -o dist/style.css",
-    "build:js": "browserify src/app.js > dist/app.js"
   },
   "keywords": [],
   "author": "",
