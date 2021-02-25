@@ -12,6 +12,8 @@ class ConnectedWalletScreen {
         this.app_div = app_div;
         this.onbackclick = null;
         this.ondisconnectclick = null;
+        this.onmanualsendclick = null;
+        this.onmanualreceiveclick = null;
         this.model = model;
         this.balance_div = null;
         this.payer_div = null;
@@ -39,10 +41,37 @@ class ConnectedWalletScreen {
         var text = D.textSpan(flex, "Disconnect");
     }
 
+    drawSendButton(div, send_func) {
+        var b = D.button(div, send_func, "main-button");
+        var flex = D.emptyDiv(b, "flex items-center justify-around");
+        var icon_span = D.emptySpan(flex, "px-2");
+        var qr = I.qrcode2x(icon_span);
+        var text = D.textSpan(flex, "Manual Send");
+    }
+
+    drawReceiveButton(div, recv_func) {
+        var b = D.button(div, recv_func, "main-button");
+        var flex = D.emptyDiv(b, "flex items-center justify-around");
+        var icon_span = D.emptySpan(flex, "px-2");
+        var qr = I.qrcode2x(icon_span);
+        var text = D.textSpan(flex, "Manual Receive");
+    }
 
     doDisconnect() {
         if (this.ondisconnectclick != null) {
             this.ondisconnectclick();
+        }
+    }
+
+    doSend() {
+        if (this.onmanualsendclick != null) {
+            this.onmanualsendclick();
+        }
+    }
+
+    doReceive() {
+        if (this.onmanualreceiveclick != null) {
+            this.onmanualreceiveclick();
         }
     }
 
@@ -116,7 +145,12 @@ class ConnectedWalletScreen {
 
         var buttons = D.emptyDiv(flex, "flex justify-around py-4");
         this.drawDisconnectButton(buttons,
-                             (function() {this.doDisconnect()}).bind(this));
+                                 (function() {this.doDisconnect()}).bind(this));
+        var send = D.emptyDiv(flex, "flex justify-around py-4");
+        this.drawSendButton(send, (function() {this.doSend()}).bind(this));
+        var recv = D.emptyDiv(flex, "flex justify-around py-4");
+        this.drawReceiveButton(recv,
+                               (function() {this.doReceive()}).bind(this));
     }
 
     ///////////////////////////////////////////////////////////////////////////

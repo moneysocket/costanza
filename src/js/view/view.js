@@ -202,6 +202,13 @@ class CostanzaView {
         s.ondisconnectclick = (function() {
             this.ondisconnectselect();
         }).bind(this);
+        s.onmanualsendclick = (function() {
+            this.changeToScan();
+            this.scan_screen.startScanning();
+        }).bind(this);
+        s.onmanualreceiveclick = (function() {
+            this.changeToBolt11Receive();
+        }).bind(this);
         return s;
     }
 
