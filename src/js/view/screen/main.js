@@ -15,11 +15,34 @@ var ManualSendReceipt = require(
 
 const CONNECT_STATE = require('../../model/model.js').CONNECT_STATE;
 
-
-class MainScreen {
+class Screen {
     constructor(app_div, model) {
         this.app_div = app_div;
         this.model = model;
+    }
+    
+    drawButton(div, icon_func, button_text, click_func) {
+        var b = D.button(div, click_func, "main-button");
+        var flex = D.emptyDiv(b, "flex items-center justify-around");
+        var icon_span = D.emptySpan(flex, "px-2");
+        var qr = icon_func(icon_span);
+        var text = D.textSpan(flex, button_text);
+    }
+    drawSpecialButton(div, icon_func, button_text, click_func) {
+        var b = D.button(div, click_func,
+            "bg-gray-800 hover:bg-gray-900 text-gray-300 " +
+            "rounded px-2 py-1 border border-gray-600");
+        var flex = D.emptyDiv(b, "flex items-center justify-around");
+        var bars_span = D.emptySpan(flex, "");
+        var bars = icon_func(bars_span);
+        var text = D.textSpan(flex, button_text);
+    }
+}
+
+class MainScreen extends Screen {
+    constructor(app_div, model) {
+        super(app_div, model);
+
         this.onconnectwalletclick = null;
         this.onconnectappclick = null;
         this.onscanclick = null;
@@ -37,37 +60,20 @@ class MainScreen {
     ///////////////////////////////////////////////////////////////////////////
 
     drawScanButton(div, scan_func) {
-        var b = D.button(div, scan_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var qr = I.qrcode2x(icon_span);
-        var text = D.textSpan(flex, "Scan");
+        this.drawButton(div, I.qrcode2x, "Scan", scan_func);
     }
 
     drawMenuButton(div, menu_func) {
-        var b = D.button(div, menu_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var bars_span = D.emptySpan(flex, "px-2");
-        var bars = I.bars2x(bars_span);
-        var text = D.textSpan(flex, "Menu");
+        this.drawButton(div, I.bars2x, "Menu", menu_func);
     }
 
     drawConnectWalletButton(div, connect_func) {
-        var b = D.button(div, connect_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var bars_span = D.emptySpan(flex, "px-2");
-        var bars = I.plug2x(bars_span);
-        var text = D.textSpan(flex, "Connect Wallet Provider");
+        this.drawButton(div, I.plug2x, "Connect Wallet Provider", connect_func);
+ 
     }
 
     drawConnectAppButton(div, connect_func) {
-        var b = D.button(div, connect_func,
-                         "bg-gray-800 hover:bg-gray-900 text-gray-300 " +
-                         "rounded px-2 py-1 border border-gray-600");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var bars_span = D.emptySpan(flex, "");
-        var bars = I.flyingmoney(bars_span);
-        var text = D.textSpan(flex, "App");
+        this.drawSpecialButton(div, I.flyingmoney, "App", connect_func);
     }
 
     ///////////////////////////////////////////////////////////////////////////
