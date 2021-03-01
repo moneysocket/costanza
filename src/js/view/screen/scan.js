@@ -81,7 +81,7 @@ class ScanScreen {
     drawTitle(div) {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
         D.textParagraph(flex, "SCAN QR:",
-                        "font-black text-2xl text-yellow-800");
+                        "font-black text-2xl text-gray-600");
     }
 
     drawTitlePanel(div) {
@@ -99,10 +99,10 @@ class ScanScreen {
                               "flex flex-col section-background");
         var paste = D.emptyDiv(flex,
                                "flex justify-center items-center " +
-                               "bg-yellow-500 px-2 py-2 m-2 rounded");
+                               "bg-gray-800 px-2 py-2 m-2 rounded");
         this.paste_input = D.emptyInput(paste,
             "flex-initial w-auto appearance-none rounded shadow " +
-            "p-3 text-grey-dark mr-2 focus:outline-none");
+            "p-3 text-white bg-gray-700 mr-2 focus:outline-none");
         this.paste_input.setAttribute("placeholder", "beacon or bolt11");
         var button_flex = D.emptyDiv(paste, "flex-initial");
         this.drawPasteButton(button_flex,
@@ -115,7 +115,7 @@ class ScanScreen {
             "Ensure that a) the browser has permission from the OS to " +
             "access the camera and b) the page has permission from the " +
             "browser.");
-        D.textParagraph(div, text, "font-black text-2xl text-yellow-800");
+        D.textParagraph(div, text, "font-black text-2xl text-gray-600");
     }
 
     drawScanVideo(div) {

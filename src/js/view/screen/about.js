@@ -32,7 +32,7 @@ class AboutScreen {
     drawTitle(div) {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
         D.textParagraph(flex, "About:",
-                        "font-black text-2xl text-yellow-800");
+                        "font-black text-2xl text-gray-500");
     }
 
     drawTitlePanel(div) {
@@ -48,18 +48,18 @@ class AboutScreen {
         var flex = D.emptyDiv(div,
                               "flex flex-col section-background");
         D.textParagraph(flex, "Costanza Wallet for Moneysocket v0.0.0",
-                        "font-black text-2xl text-yellow-800");
+                        "font-black text-2xl text-gray-500");
         D.textParagraph(flex, "Reckless! Use at your own risk!",
-                        "font-black text-2xl text-yellow-800");
+                        "font-black text-2xl text-gray-500");
         D.hyperlinkTabOpen(flex, "Wallet Source",
                            "https://github.com/moneysocket/costanza",
-                           "font-black text-2xl text-blue-800");
+                           "font-black text-2xl text-gray-300 hover:bg-gray-900");
         D.hyperlinkTabOpen(flex, "Moneysocket Homepage", "https://socket.money",
-                           "font-black text-2xl text-blue-800");
+                           "font-black text-2xl text-gray-300 hover:bg-gray-900");
         D.hyperlinkTabOpen(flex, "Telegram Chat", "https://t.me/moneysocket",
-                           "font-black text-2xl text-blue-800");
+                           "font-black text-2xl text-gray-300 hover:bg-gray-900");
         D.hyperlinkTabOpen(flex, "Donate", "https://socket.money/#donate",
-                           "font-black text-2xl text-blue-800");
+                           "font-black text-2xl text-gray-300 hover:bg-gray-900");
     }
 
     ///////////////////////////////////////////////////////////////////////////

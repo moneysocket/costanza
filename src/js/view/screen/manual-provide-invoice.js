@@ -52,7 +52,7 @@ class ManualProvideInvoiceScreen {
     drawTitle(div) {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
         D.textParagraph(flex, "Pay This:",
-                        "font-black text-2xl text-yellow-800");
+                        "font-black text-2xl text-gray-600");
     }
 
     drawTitlePanel(div) {

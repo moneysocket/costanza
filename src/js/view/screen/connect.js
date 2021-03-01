@@ -111,13 +111,13 @@ class ConnectScreen {
     drawTitle(div) {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
         D.textParagraph(flex, this.title_string,
-                        "font-black text-xl text-yellow-800");
+                        "font-black text-xl text-gray-600");
     }
 
     drawDisconnected(div) {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
         D.textParagraph(flex, "(disconnected)",
-                        "font-black text-yellow-800 py-5");
+                        "font-black text-gray-600 py-5");
     }
 
     drawTitlePanel(div) {
@@ -143,15 +143,15 @@ class ConnectScreen {
     drawStored(div) {
         var flex = D.emptyDiv(div, "flex flex-col");
         D.textParagraph(flex, this.stored_string,
-                        "font-black text-yellow-800 py-5");
+                        "font-black text-gray-600 py-5");
         if (! this.hasBeacon()) {
             D.textParagraph(flex, "(none)",
-                            "font-black text-yellow-800 py-5");
+                            "font-black text-gray-600 py-5");
             return;
         }
         var beacon = this.getBeacon();
         D.textParagraph(flex, beacon,
-                        "font-black break-words text-yellow-800 py-5");
+                        "font-black break-words text-gray-500 py-5");
 
         var buttons = D.emptyDiv(flex, "flex justify-around py-4");
         this.drawConnectStoredButton(buttons,
@@ -169,11 +169,11 @@ class ConnectScreen {
 
         var paste = D.emptyDiv(flex,
                                "flex justify-center items-center " +
-                               "bg-yellow-500 py-2 m-2 rounded");
+                               "border border-gray-800 py-2 m-2 rounded-2xl");
         this.paste_input = D.emptyInput(paste,
             "w-auto appearance-none rounded shadow " +
-            "p-3 text-grey-dark mr-2 focus:outline-none");
-        this.paste_input.setAttribute("placeholder", "paste beacon");
+            "p-3 text-white bg-gray-700 mr-2 focus:outline-none");
+        this.paste_input.setAttribute("placeholder", "Paste Beacon Here");
         this.drawPasteButton(paste,
                              (function() {this.pasteResult()}).bind(this));
         var buttons = D.emptyDiv(flex, "flex justify-around py-4");

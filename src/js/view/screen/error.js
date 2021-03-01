@@ -30,9 +30,9 @@ class ErrorScreen {
 
     drawErrorPanel(div, err_str) {
         var flex = D.emptyDiv(div, "flex-col section-background");
-        var icon_flex = D.emptyDiv(flex, "text-yellow-700 py-4");
+        var icon_flex = D.emptyDiv(flex, "text-gray-300 py-4");
         I.exclaimcircle2x(icon_flex);
-        var text_flex = D.emptyDiv(flex, "text-yellow-800");
+        var text_flex = D.emptyDiv(flex, "text-gray-300");
         D.textParagraph(text_flex, "Error: " + err_str, "text-center py-10");
         var button_flex = D.emptyDiv(flex, "px-2 py-4");
 

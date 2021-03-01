@@ -50,7 +50,7 @@ class DrillLevelOneScreen {
             break;
         }
         D.textParagraph(flex, title,
-                        "font-black text-2xl text-yellow-800");
+                        "font-black text-2xl text-gray-400");
     }
 
     drawTitlePanel(div) {
@@ -131,7 +131,7 @@ class DrillLevelOneScreen {
 
     drawEntry(div, entry) {
         var e = D.emptyDiv(div,
-                           "bg-gray-600 hover:bg-gray-400 text-gray-300 py-2");
+                           "bg-gray-800 hover:bg-gray-900 text-gray-400 py-2");
         // TODO - on click
         e.onclick = (function() {
             if (this.onentryclick != null) {

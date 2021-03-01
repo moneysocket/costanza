@@ -62,8 +62,8 @@ class MainScreen {
 
     drawConnectAppButton(div, connect_func) {
         var b = D.button(div, connect_func,
-                         "bg-yellow-700 hover:bg-yellow-600 text-white " +
-                         "rounded px-2 py-1");
+                         "bg-gray-800 hover:bg-gray-900 text-gray-300 " +
+                         "rounded px-2 py-1 border border-gray-600");
         var flex = D.emptyDiv(b, "flex items-center justify-around");
         var bars_span = D.emptySpan(flex, "");
         var bars = I.flyingmoney(bars_span);
@@ -79,9 +79,9 @@ class MainScreen {
         D.deleteChildren(this.balance_div);
         var flex = D.emptyDiv(this.balance_div, "flex justify-center py-4");
         var button = D.emptyDiv(flex,
-            "rounded px-4 py-4 bg-yellow-200 hover:bg-yellow-300");
+            "rounded px-4 py-4 bg-gray-800 hover:bg-gray-900");
         D.textParagraph(button, wad.toString(),
-                        "font-bold text-3xl text-yellow-900");
+                        "font-bold text-3xl ms-green-txt");
         button.onclick = (function() {
             this.onconnectwalletclick();
         }).bind(this);
@@ -94,18 +94,18 @@ class MainScreen {
         var wad = this.model.getProviderBalanceWad();
         D.deleteChildren(this.auth_balance_div);
         var border = D.emptyDiv(this.auth_balance_div,
-                                "px-2 py-2 bg-yellow-200 hover:bg-yellow-300");
+                                "px-2 py-2 bg-gray-800 hover:bg-gray-900 border border-gray-600 rounded-2xl text-gray-300");
         var icon_span = D.emptySpan(border, "px-2 font-bold");
         icon_span.onclick = (function() {
             this.onconnectappclick();
         }).bind(this);
         I.flyingmoney(icon_span);
-        var a = D.textSpan(border, "App", "px-2 font-bold text-yellow-900");
+        var a = D.textSpan(border, "App", "px-2 font-bold text-gray-300");
         a.onclick = (function() {
             this.onconnectappclick();
         }).bind(this);
         var p = D.textParagraph(border, wad.toString(),
-                                "font-bold text-sm text-yellow-900");
+                                "font-bold text-sm text-gray-300");
         p.onclick = (function() {
             this.onconnectappclick();
         }).bind(this);
@@ -120,7 +120,7 @@ class MainScreen {
     drawPing() {
         var msecs = this.model.getConsumerLastPing();
         D.deleteChildren(this.ping_div);
-        D.textParagraph(this.ping_div, msecs.toString() + " ms", "text-sm");
+        D.textParagraph(this.ping_div, msecs.toString() + " ms", "text-sm text-gray-600");
     }
 
 
@@ -202,7 +202,7 @@ class MainScreen {
             this.model.msatsToWalletCurrencyWad(0) : total_wad;
         if (increment) {
             D.textSpan(flex, "+ " + wad.toString(),
-                       "font-bold text-green-400 px-2");
+                       "font-bold ms-green-txt px-2");
         } else {
             D.textSpan(flex, "- " + wad.toString(),
                        "font-bold text-red-400 px-2");
@@ -215,7 +215,7 @@ class MainScreen {
 
     drawConnectWalletPanel(div, connect_func) {
         var flex = D.emptyDiv(div,
-                              "flex-col justify-evenly section-background");
+                              "flex-col justify-evenly connect-wallet-panel");
         this.drawConnectWalletButton(flex, connect_func);
     }
 
@@ -273,13 +273,13 @@ class MainScreen {
 
     drawReceiptPanel(div, click_func) {
         var flex = D.emptyDiv(div,
-                              "flex-col justify-evenly section-background");
+                              "flex-col justify-evenly section-background receipt-panel");
         this.receipts_div = D.emptyDiv(flex);
         this.drawReceipts(click_func);
     }
 
     drawActionPanel(div, scan_func, menu_func) {
-        var flex = D.emptyDiv(div, "flex justify-evenly section-background");
+        var flex = D.emptyDiv(div, "flex justify-evenly section-background mt-20");
         this.drawScanButton(flex, scan_func);
         this.drawMenuButton(flex, menu_func);
     }

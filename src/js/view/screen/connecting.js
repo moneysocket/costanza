@@ -20,7 +20,7 @@ class ConnectingScreen {
         this.copy_span = null;
 
         var d = document.createElement("div");
-        D.setClass(d, "font-black text-2xl text-yellow-800");
+        D.setClass(d, "font-black text-2xl text-gray-600");
         this.connect_progress = new ConnectProgress(d);
 
         this.ondisconnectclick = null;
@@ -66,12 +66,12 @@ class ConnectingScreen {
     drawTitle(div) {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
         D.textParagraph(flex, this.title_string,
-                        "font-black text-2xl text-yellow-800");
+                        "font-black text-3xl text-gray-600");
     }
 
     drawTitlePanel(div) {
         var flex = D.emptyDiv(div,
-                              "flex flex-wrap section-background");
+                              "flex flex-wrap section-background justify-center");
         var button_flex = D.emptyDiv(flex, "flex-initial px-2");
         var title_flex = D.emptyDiv(flex, "flex-initial px-5 py-2");
         this.drawTitle(title_flex);
@@ -91,7 +91,7 @@ class ConnectingScreen {
             mode:      "label",
             mSize:     6,
             fontname:  "sans",
-            fontcolor: "#941",
+            fontcolor: "#3B5323",
             quiet:     0,
         });
         var b = D.emptyDiv(div, "border-8 border-white");

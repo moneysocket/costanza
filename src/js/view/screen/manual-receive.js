@@ -87,22 +87,22 @@ class ManualReceiveScreen {
     drawInputRow(div) {
         var wad = this.model.getConsumerBalanceWad();
         var background = D.emptyDiv(div, "flex justify-center items-center " +
-                                  "bg-yellow-500 py-2 m-2 rounded");
+                                  "bg-gray-800 py-2 m-2 rounded");
         var val = D.emptyDiv(background, "flex flex-col");
 
         var input_div = D.emptyDiv(val, "flex justify-center items-center");
         var symb = D.textSpan(input_div, wad['symbol'],
-                              "px-2 font-black text-yellow-800");
+                              "px-2 font-black text-gray-300");
         this.val_input = D.emptyInput(input_div,
             "w-40 appearance-none rounded shadow " +
-            "p-3 text-grey-dark mr-2 focus:outline-none");
+            "p-3 text-white mr-2 focus:outline-none");
         this.val_input.setAttribute("type", "number");
         this.val_input.setAttribute("min", "0");
         this.val_input.setAttribute("placeholder", "value");
         this.val_input.value = 1.0;
 
         var code = wad.asset_stable ? wad['code'] : "sats";
-        var curr = D.textSpan(input_div, code, "font-black text-yellow-800");
+        var curr = D.textSpan(input_div, code, "font-black text-gray-300");
 
         var button_div = D.emptyDiv(val, "flex justify-center py-2");
         this.drawRequestButton(button_div,
@@ -115,19 +115,19 @@ class ManualReceiveScreen {
         var payee = this.model.getConsumerIsPayee();
 
         D.deleteChildren(div);
-        var across = D.emptyDiv(div, "flex justify-around py-4 bg-yellow-500");
+        var across = D.emptyDiv(div, "flex justify-around py-4 bg-gray-800");
         var col1 = D.emptyDiv(across, "flex flex-col");
-        D.textSpan(col1, "Available:", "text-yellow-900");
-        D.textSpan(col1, wad.toString(), "font-bold text-xl text-yellow-900");
+        D.textSpan(col1, "Available:", "text-gray-600");
+        D.textSpan(col1, wad.toString(), "font-bold text-xl text-gray-600");
         var col2 = D.emptyDiv(across, "flex flex-col items-center");
         var r1 = D.emptyDiv(col2, "flex justify-center");
-        D.textSpan(r1, "Can Send:", "text-yellow-900");
+        D.textSpan(r1, "Can Send:", "text-gray-600");
         D.textSpan(r1, payer ? "True" : "False",
-                   "font-bold text-xl text-yellow-900 px-2");
+                   "font-bold text-xl text-gray-600 px-2");
         var r2 = D.emptyDiv(col2, "flex justify-center items-center");
-        D.textSpan(r2, "Can Receive:", "text-yellow-900");
+        D.textSpan(r2, "Can Receive:", "text-gray-600");
         D.textSpan(r2, payee ? "True" : "False",
-                   "font-bold text-xl text-yellow-900 px-2");
+                   "font-bold text-xl text-gray-600 px-2");
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -137,7 +137,7 @@ class ManualReceiveScreen {
     drawTitle(div) {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
         D.textParagraph(flex, "Manual Invoice:",
-                        "font-black text-yellow-800");
+                        "font-black text-gray-600");
     }
 
     drawTitlePanel(div) {

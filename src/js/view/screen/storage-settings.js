@@ -32,7 +32,7 @@ class StorageSettingsScreen {
 
     drawSelectButton(div, select_func) {
         var b = D.button(div, select_func,
-                         "bg-yellow-700 hover:bg-yellow-600 text-white " +
+                         "bg-gray-700 hover:bg-blue-600 text-white " +
                          "font-bold rounded py-1 px-5");
         var flex = D.emptyDiv(b, "flex items-center justify-around");
         D.textSpan(flex, "Use");
@@ -40,7 +40,7 @@ class StorageSettingsScreen {
 
     drawClearButton(div, clear_func) {
         var b = D.button(div, clear_func,
-                         "bg-yellow-700 hover:bg-yellow-600 text-white " +
+                         "bg-gray-700 hover:bg-blue-600 text-white " +
                          "font-bold rounded py-1 px-5");
         var flex = D.emptyDiv(b, "flex items-center justify-around");
         D.textSpan(flex, "Clear");
@@ -66,7 +66,7 @@ class StorageSettingsScreen {
     drawTitle(div) {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
         D.textParagraph(flex, "Storage Settings:",
-                        "font-black text-2xl text-yellow-800");
+                        "font-black text-2xl text-gray-600");
     }
 
     drawTitlePanel(div) {
@@ -83,7 +83,7 @@ class StorageSettingsScreen {
         var flex = D.emptyDiv(div,
                               "flex flex-col section-background");
 
-        D.textParagraph(flex, "Currently Using:", "text-yellow-900");
+        D.textParagraph(flex, "Currently Using:", "text-gray-600");
         var p;
         switch(profile) {
         case PERSIST_PROFILE.ONE:
@@ -96,14 +96,14 @@ class StorageSettingsScreen {
             p = "Profile 3"
             break;
         }
-        D.textParagraph(flex, p, "font-bold text-yellow-900");
+        D.textParagraph(flex, p, "font-bold text-gray-600");
 
         var profile1 = D.emptyDiv(flex, "flex justify-around items-center " +
-                                "bg-yellow-500 py-1 m-2 rounded");
-        D.textSpan(profile1, "Profile 1 In Use: ", "text-yellow-900");
+                                "bg-gray-800 py-1 m-2 rounded");
+        D.textSpan(profile1, "Profile 1 In Use: ", "text-gray-600");
         D.textSpan(profile1,
                    checkout_record[PERSIST_PROFILE.ONE] ? "True" : "False",
-                   "px-8 text-2xl font-bold text-yellow-900");
+                   "px-8 text-2xl font-bold text-gray-600");
         this.drawSelectButton(profile1,
                               (function() {
             this.doSelect(PERSIST_PROFILE.ONE)}).bind(this));
@@ -112,11 +112,11 @@ class StorageSettingsScreen {
             this.doClear(PERSIST_PROFILE.ONE)}).bind(this));
 
         var profile2 = D.emptyDiv(flex, "flex justify-around items-center " +
-                                "bg-yellow-500 py-1 m-2 rounded");
-        D.textSpan(profile2, "Profile 2 In Use: ", "text-yellow-900");
+                                "bg-gray-800 py-1 m-2 rounded");
+        D.textSpan(profile2, "Profile 2 In Use: ", "text-gray-600");
         D.textSpan(profile2,
                    checkout_record[PERSIST_PROFILE.TWO] ? "True" : "False",
-                   "px-8 text-2xl font-bold text-yellow-900");
+                   "px-8 text-2xl font-bold text-gray-600");
         this.drawSelectButton(profile2,
                               (function() {
             this.doSelect(PERSIST_PROFILE.TWO)}).bind(this));
@@ -125,11 +125,11 @@ class StorageSettingsScreen {
             this.doClear(PERSIST_PROFILE.TWO)}).bind(this));
 
         var profile3 = D.emptyDiv(flex, "flex justify-around items-center " +
-                                "bg-yellow-500 py-1 m-2 rounded");
-        D.textSpan(profile3, "Profile 3 In Use: ", "text-yellow-900");
+                                "bg-gray-800 py-1 m-2 rounded");
+        D.textSpan(profile3, "Profile 3 In Use: ", "text-gray-600");
         D.textSpan(profile3,
                    checkout_record[PERSIST_PROFILE.THREE] ? "True" : "False",
-                   "px-8 text-2xl font-bold text-yellow-900");
+                   "px-8 text-2xl font-bold text-gray-600");
         this.drawSelectButton(profile3,
                               (function() {
             this.doSelect(PERSIST_PROFILE.THREE)}).bind(this));

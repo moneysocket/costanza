@@ -55,7 +55,7 @@ class ConnectedAppScreen {
 
     drawToggleButton(div, toggle_func) {
         var b = D.button(div, toggle_func,
-                         "bg-yellow-700 hover:bg-yellow-600 text-white " +
+                         "bg-gray-700 hover:bg-gray-900 text-gray-300 " +
                          "font-bold rounded py-1 px-5");
         var flex = D.emptyDiv(b, "flex items-center justify-around");
         D.textSpan(flex, "Toggle");
@@ -63,7 +63,7 @@ class ConnectedAppScreen {
 
     drawPercentButton(div, pct, pct_func) {
         var b = D.button(div, pct_func,
-                         "bg-yellow-700 hover:bg-yellow-600 text-white " +
+                         "bg-gray-700 hover:bg-gray-900 text-gray-300 " +
                          "font-bold rounded py-3 px-5");
         var flex = D.emptyDiv(b, "flex items-center justify-around");
         D.textSpan(flex, pct.toString() + "%");
@@ -165,9 +165,9 @@ class ConnectedAppScreen {
         D.deleteChildren(div);
 
         var flex = D.emptyDiv(div, "flex flex-col py-2");
-        D.textParagraph(flex, "Authorized:", "text-yellow-900");
+        D.textParagraph(flex, "Authorized:", "text-gray-500");
         D.textParagraph(flex, wad.toString(),
-                        "font-bold text-3xl text-yellow-900 ");
+                        "font-bold text-3xl ms-green-txt ");
         var sats = (wad['msats'] / 1000.0).toFixed(3) + " sats";
         var hoverstring = wad['name'] + "\n" + sats;
         div.setAttribute("title", hoverstring);
@@ -175,10 +175,10 @@ class ConnectedAppScreen {
 
     drawInputRow(div) {
         var set = D.emptyDiv(div, "flex justify-center items-center " +
-                                  "bg-yellow-500 py-2 m-2 rounded");
+                                  "bg-gray-800 py-2 m-2 rounded");
         this.set_input = D.emptyInput(set,
             "w-40 appearance-none rounded shadow " +
-            "p-3 text-grey-dark mr-2 focus:outline-none");
+            "p-3 bg-gray-700 text-gray-300 mr-2 focus:outline-none");
         this.set_input.setAttribute("type", "number");
         this.set_input.setAttribute("min", "0");
         this.set_input.setAttribute("placeholder", "amount");
@@ -217,11 +217,11 @@ class ConnectedAppScreen {
     drawSendToggleRow(div) {
         D.deleteChildren(div);
         var toggle = D.emptyDiv(div, "flex justify-center items-center " +
-                                "bg-yellow-500 py-1 m-2 rounded");
-        D.textSpan(toggle, "Authorize Send:", "text-yellow-900");
+                                "bg-gray-800 py-1 m-2 rounded");
+        D.textSpan(toggle, "Authorize Send:", "text-gray-500");
         var payer = this.model.getProviderIsPayer();
         D.textSpan(toggle, payer ? "True" : "False",
-                   "px-8 text-2xl font-bold text-yellow-900");
+                   "px-8 text-2xl font-bold text-gray-500");
         if (! this.model.getConsumerIsPayer()) {
             return;
         }
@@ -232,11 +232,11 @@ class ConnectedAppScreen {
     drawReceiveToggleRow(div) {
         D.deleteChildren(div);
         var toggle = D.emptyDiv(div, "flex justify-center items-center " +
-                                "bg-yellow-500 py-1 m-2 rounded");
-        D.textSpan(toggle, "Authorize Receive:", "text-yellow-900");
+                                "bg-gray-800 py-1 m-2 rounded");
+        D.textSpan(toggle, "Authorize Receive:", "text-gray-500");
         var payee = this.model.getProviderIsPayee();
         D.textSpan(toggle, payee ? "True" : "False",
-                   "px-8 text-2xl font-bold text-yellow-900");
+                   "px-8 text-2xl font-bold text-gray-500");
         if (! this.model.getConsumerIsPayee()) {
             return;
         }
@@ -250,19 +250,19 @@ class ConnectedAppScreen {
         var payee = this.model.getConsumerIsPayee();
 
         D.deleteChildren(div);
-        var across = D.emptyDiv(div, "flex justify-around py-4 bg-yellow-500");
+        var across = D.emptyDiv(div, "flex justify-around py-4 bg-gray-800");
         var col1 = D.emptyDiv(across, "flex flex-col");
-        D.textSpan(col1, "Available:", "text-yellow-900");
-        D.textSpan(col1, wad.toString(), "font-bold text-xl text-yellow-900");
+        D.textSpan(col1, "Available:", "text-gray-500");
+        D.textSpan(col1, wad.toString(), "font-bold text-xl text-gray-500");
         var col2 = D.emptyDiv(across, "flex flex-col items-center");
         var r1 = D.emptyDiv(col2, "flex justify-center");
-        D.textSpan(r1, "Can Send:", "text-yellow-900");
+        D.textSpan(r1, "Can Send:", "text-gray-500");
         D.textSpan(r1, payer ? "True" : "False",
-                   "font-bold text-xl text-yellow-900 px-2");
+                   "font-bold text-xl text-gray-500 px-2");
         var r2 = D.emptyDiv(col2, "flex justify-center items-center");
-        D.textSpan(r2, "Can Receive:", "text-yellow-900");
+        D.textSpan(r2, "Can Receive:", "text-gray-500");
         D.textSpan(r2, payee ? "True" : "False",
-                   "font-bold text-xl text-yellow-900 px-2");
+                   "font-bold text-xl text-gray-500 px-2");
     }
 
     drawDisconnectRow(div) {
@@ -278,7 +278,7 @@ class ConnectedAppScreen {
     drawTitle(div) {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
         D.textParagraph(flex, "App Connection:",
-                        "font-black text-yellow-800");
+                        "font-black text-gray-400");
     }
 
     drawTitlePanel(div) {

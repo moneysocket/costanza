@@ -84,7 +84,7 @@ class ConnectedWalletScreen {
         var wad = this.model.getConsumerBalanceWad();
         D.deleteChildren(this.balance_div);
         D.textParagraph(this.balance_div, wad.toString(),
-                        "font-bold text-3xl text-yellow-900 ");
+                        "font-bold text-3xl ms-green-txt ");
         var sats = (wad['msats'] / 1000.0).toFixed(3) + " sats";
         var hoverstring = wad['name'] + "\n" + sats;
         this.balance_div.setAttribute("title", hoverstring);
@@ -93,17 +93,17 @@ class ConnectedWalletScreen {
     drawPayer() {
         var is_payer = this.model.getConsumerIsPayer();
         D.deleteChildren(this.payer_div);
-        D.textSpan(this.payer_div, "Is Payer: ", "text-sm text-yellow-900");
+        D.textSpan(this.payer_div, "Is Payer: ", "text-sm text-gray-400");
         D.textSpan(this.payer_div, is_payer ? "True" : "False",
-                   "font-bold text-sm text-yellow-900");
+                   "font-bold text-sm text-gray-600");
     }
 
     drawPayee() {
         var is_payee = this.model.getConsumerIsPayee();
         D.deleteChildren(this.payee_div);
-        D.textSpan(this.payee_div, "Is Payee: ", "text-sm text-yellow-900");
+        D.textSpan(this.payee_div, "Is Payee: ", "text-sm text-gray-400");
         D.textSpan(this.payee_div, is_payee ? "True" : "False",
-                   "font-bold text-sm text-yellow-900");
+                   "font-bold text-sm text-gray-600");
     }
 
     drawPing() {
@@ -119,7 +119,7 @@ class ConnectedWalletScreen {
     drawTitle(div) {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
         D.textParagraph(flex, "Wallet Disconnect:",
-                        "font-black text-2xl text-yellow-800");
+                        "font-black text-2xl text-gray-400");
     }
 
     drawTitlePanel(div) {

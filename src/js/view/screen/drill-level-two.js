@@ -42,7 +42,7 @@ class DrillLevelTwoScreen {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
         var title = this.typeToTitle(this.entry['type']);
         D.textParagraph(flex, title,
-                        "font-black text-2xl text-yellow-800");
+                        "font-black text-2xl text-gray-400");
     }
 
     drawTitlePanel(div) {
@@ -70,19 +70,19 @@ class DrillLevelTwoScreen {
 
     drawValue(div, key, value) {
         var v = D.emptyDiv(div,
-                           "flex justify-start text-yellow-800 px-4");
+                           "flex justify-start text-gray-400 px-4");
         D.textSpan(v, this.typeToTitle(key), "text-xs font-bold w-1/4");
         D.textSpan(v, value, "break-words w-3/4");
     }
 
     drawWad(div, key, wad) {
         var v = D.emptyDiv(div,
-                           "flex justify-start text-yellow-800 px-4");
+                           "flex justify-start text-gray-400 px-4");
         D.textSpan(v, this.typeToTitle(key), "text-xs font-bold w-1/4");
         D.textSpan(v, wad.toString(), "break-words w-3/4");
         var msats = wad.msats;
         var v = D.emptyDiv(div,
-                           "flex justify-start text-yellow-800 px-4");
+                           "flex justify-start text-gray-400 px-4");
         D.textSpan(v, "msats", "text-xs font-bold w-1/4");
         D.textSpan(v, msats + " msats", "break-words w-3/4");
     }

@@ -38,7 +38,7 @@ class MenuScreen {
     drawMenuTitle(div) {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
         D.textParagraph(flex, "MENU:",
-                        "font-black text-2xl text-yellow-800");
+                        "font-black text-2xl text-gray-600");
     }
 
     drawTitlePanel(div) {
@@ -53,7 +53,7 @@ class MenuScreen {
 
     drawWalletProviderEntry(div) {
         var d = D.emptyDiv(div,
-                           "bg-gray-500 hover:bg-gray-300 text-gray-300 py-2");
+                           "bg-gray-800 hover:bg-gray-900 text-gray-300 py-2");
         d.onclick = (function() {
             this.onwalletproviderclick();
         }).bind(this);
@@ -65,7 +65,7 @@ class MenuScreen {
 
     drawAppConsumerEntry(div) {
         var d = D.emptyDiv(div,
-                           "bg-gray-500 hover:bg-gray-300 text-gray-300 py-2");
+                           "bg-gray-800 hover:bg-gray-900 text-gray-300 py-2");
         d.onclick = (function() {
             this.onappconsumerclick();
         }).bind(this);
@@ -77,7 +77,7 @@ class MenuScreen {
 
     drawCreateBolt11Entry(div) {
         var d = D.emptyDiv(div,
-                           "bg-gray-500 hover:bg-gray-300 text-gray-300 py-2");
+                           "bg-gray-800 hover:bg-gray-900 text-gray-300 py-2");
         d.onclick = (function() {
             this.onbolt11receiveclick();
         }).bind(this);
@@ -89,7 +89,7 @@ class MenuScreen {
 
     drawStorageSettingsEntry(div) {
         var d = D.emptyDiv(div,
-                           "bg-gray-500 hover:bg-gray-300 text-gray-300 py-2");
+                           "bg-gray-800 hover:bg-gray-900 text-gray-300 py-2");
         d.onclick = (function() {
             this.onstoragesettingsclick();
         }).bind(this);
@@ -101,7 +101,7 @@ class MenuScreen {
 
     drawAboutEntry(div) {
         var d = D.emptyDiv(div,
-                           "bg-gray-500 hover:bg-gray-300 text-gray-300 py-2");
+                           "bg-gray-800 hover:bg-gray-900 text-gray-300 py-2");
         d.onclick = (function() {
             this.onaboutclick();
         }).bind(this);
