@@ -13,31 +13,9 @@ var ManualReceiveReceipt = require(
 var ManualSendReceipt = require(
     '../../model/manual-send-receipt.js').ManualSendReceipt;
 
-const CONNECT_STATE = require('../../model/model.js').CONNECT_STATE;
+var Screen = require('./Screen');
 
-class Screen {
-    constructor(app_div, model) {
-        this.app_div = app_div;
-        this.model = model;
-    }
-    
-    drawButton(div, icon_func, button_text, click_func) {
-        var b = D.button(div, click_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var qr = icon_func(icon_span);
-        var text = D.textSpan(flex, button_text);
-    }
-    drawSpecialButton(div, icon_func, button_text, click_func) {
-        var b = D.button(div, click_func,
-            "bg-gray-800 hover:bg-gray-900 text-gray-300 " +
-            "rounded px-2 py-1 border border-gray-600");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var bars_span = D.emptySpan(flex, "");
-        var bars = icon_func(bars_span);
-        var text = D.textSpan(flex, button_text);
-    }
-}
+const CONNECT_STATE = require('../../model/model.js').CONNECT_STATE;
 
 class MainScreen extends Screen {
     constructor(app_div, model) {
@@ -60,20 +38,19 @@ class MainScreen extends Screen {
     ///////////////////////////////////////////////////////////////////////////
 
     drawScanButton(div, scan_func) {
-        this.drawButton(div, I.qrcode2x, "Scan", scan_func);
+        this.drawButton(div, I.qrcode2x, "Scan", scan_func, "main-button");
     }
 
     drawMenuButton(div, menu_func) {
-        this.drawButton(div, I.bars2x, "Menu", menu_func);
+        this.drawButton(div, I.bars2x, "Menu", menu_func, "main-button");
     }
 
     drawConnectWalletButton(div, connect_func) {
-        this.drawButton(div, I.plug2x, "Connect Wallet Provider", connect_func);
- 
+        this.drawButton(div, I.plug2x, "Connect Wallet Provider", connect_func, "main-button");
     }
 
     drawConnectAppButton(div, connect_func) {
-        this.drawSpecialButton(div, I.flyingmoney, "App", connect_func);
+        this.drawButton(div, I.flyingmoney, "App", connect_func, "app-button");
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -285,7 +262,7 @@ class MainScreen extends Screen {
     }
 
     drawActionPanel(div, scan_func, menu_func) {
-        var flex = D.emptyDiv(div, "flex justify-evenly section-background mt-20");
+        var flex = D.emptyDiv(div, "flex justify-evenly section-background-lite mt-20");
         this.drawScanButton(flex, scan_func);
         this.drawMenuButton(flex, menu_func);
     }
@@ -314,7 +291,7 @@ class MainScreen extends Screen {
     }
 
     draw() {
-        var flex = D.emptyDiv(this.app_div, "flex flex-col h-screen");
+        var flex = this.screenDiv("div-reg-flex");
         var flex_top = D.emptyDiv(flex, "flex-none");
         var flex_mid = D.emptyDiv(flex, "flex-grow");
         var flex_bottom = D.emptyDiv(flex, "flex-none");
