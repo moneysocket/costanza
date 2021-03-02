@@ -5,14 +5,16 @@
 const D = require('../../utl/dom.js').DomUtl;
 const I = require('../../utl/icon.js').IconUtl;
 
+var Screen = require('./Screen');
+
 const MSATS_PER_SAT = 1000.0;
 const SATS_PER_BTC = 100000000.0;
 const MSATS_PER_BTC = SATS_PER_BTC * MSATS_PER_SAT;
 
-class ManualReceiveScreen {
+class ManualReceiveScreen extends Screen {
     constructor(app_div, model) {
-        this.app_div = app_div;
-        this.model = model;
+        super(app_div, model);
+
         this.onbackclick = null;
         this.oninputerror = null;
         this.oninvoicerequest = null;
@@ -23,14 +25,6 @@ class ManualReceiveScreen {
     ///////////////////////////////////////////////////////////////////////////
     // Buttons
     ///////////////////////////////////////////////////////////////////////////
-
-    drawBackButton(div, back_func) {
-        var b = D.button(div, back_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var back = I.backarrow2x(icon_span);
-        var text = D.textSpan(flex, "Back");
-    }
 
     drawRequestButton(div, set_func) {
         var b = D.button(div, set_func, "p-2 main-button");

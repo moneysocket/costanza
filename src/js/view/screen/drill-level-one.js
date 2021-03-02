@@ -5,27 +5,19 @@
 var D = require('../../utl/dom.js').DomUtl;
 var I = require('../../utl/icon.js').IconUtl;
 var Wad = require("moneysocket").Wad;
+
+var Screen = require('./Screen');
+
 const Bolt11 = require("moneysocket").Bolt11;
 const b11 = require("bolt11");
 
-class DrillLevelOneScreen {
+class DrillLevelOneScreen extends Screen {
     constructor(app_div) {
-        this.app_div = app_div;
+        super(app_div);
+        
         this.onbackclick = null;
         this.onentryclick = null;
         this.receipt = null;
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Buttons
-    ///////////////////////////////////////////////////////////////////////////
-
-    drawBackButton(div, back_func) {
-        var b = D.button(div, back_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var back = I.backarrow2x(icon_span);
-        var text = D.textSpan(flex, "Back");
     }
 
     ///////////////////////////////////////////////////////////////////////////

@@ -1,4 +1,5 @@
 var D = require('../../utl/dom.js').DomUtl;
+const I = require('../../utl/icon.js').IconUtl;
 
 class Screen {
     constructor(app_div, model) {
@@ -18,6 +19,11 @@ class Screen {
         var flex = D.emptyDiv(this.app_div, div_style);
         return flex;
     }
+
+    drawBackButton(div, back_func) {
+        this.drawButton(div, I.backarrow2x, "Back", back_func, "main-button");
+    }
+
 }
 
 module.exports = Screen;

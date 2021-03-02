@@ -8,11 +8,13 @@ const D = require('../../utl/dom.js').DomUtl;
 const I = require('../../utl/icon.js').IconUtl;
 const Copy = require('clipboard-copy');
 
+var Screen = require('./Screen');
 
-class ManualProvideInvoiceScreen {
+
+class ManualProvideInvoiceScreen extends Screen {
     constructor(app_div, model) {
-        this.app_div = app_div;
-        this.model = model;
+        super(app_div, model);
+
         this.onbackclick = null;
         this.displayed_bolt11 = "";
         this.copy_span = null;
@@ -21,15 +23,6 @@ class ManualProvideInvoiceScreen {
     ///////////////////////////////////////////////////////////////////////////
     // Buttons
     ///////////////////////////////////////////////////////////////////////////
-
-    drawBackButton(div, back_func) {
-        var b = D.button(div, back_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var back = I.backarrow2x(icon_span);
-        var text = D.textSpan(flex, "Back");
-    }
-
 
     drawCopyBolt11Button(div, copy_func) {
         var b = D.button(div, copy_func, "p-2 main-button");

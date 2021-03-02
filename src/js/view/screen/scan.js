@@ -5,11 +5,15 @@
 var D = require('../../utl/dom.js').DomUtl;
 var I = require('../../utl/icon.js').IconUtl;
 
+var Screen = require('./Screen');
+
 var QrScanner = require('qr-scanner');
 QrScanner.WORKER_PATH = "js/qr-scanner-worker.min.js";
 
-class ScanScreen {
+class ScanScreen extends Screen {
     constructor(app_div) {
+        super(app_div);
+
         this.app_div = app_div;
         this.onbackclick = null;
         this.onscanresult = null;
@@ -59,14 +63,6 @@ class ScanScreen {
     ///////////////////////////////////////////////////////////////////////////
     // Buttons
     ///////////////////////////////////////////////////////////////////////////
-
-    drawBackButton(div, back_func) {
-        var b = D.button(div, back_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var back = I.backarrow2x(icon_span);
-        var text = D.textSpan(flex, "Back");
-    }
 
     drawPasteButton(div, paste_func) {
         var b = D.button(div, paste_func, "p-2 main-button");

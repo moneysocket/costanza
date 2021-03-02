@@ -5,30 +5,25 @@
 var D = require('../../utl/dom.js').DomUtl;
 var I = require('../../utl/icon.js').IconUtl;
 
+var Screen = require('./Screen');
 
-class ConnectScreen {
-    constructor(app_div, model) {
-        this.app_div = app_div;
+
+class ConnectScreen extends Screen {
+    constructor(app_div, model) { 
+        super(app_div, model) ;
+
         this.onbbackclick = null;
         this.onbeaconselect = null;
         this.ongenerateselect = null;
         this.onscanselect = null;
         this.onforgetselect = null;
         this.onconnectstoredselect = null;
-        this.model = model;
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Buttons
     ///////////////////////////////////////////////////////////////////////////
 
-    drawBackButton(div, back_func) {
-        var b = D.button(div, back_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var back = I.backarrow2x(icon_span);
-        var text = D.textSpan(flex, "Back");
-    }
 
    drawPasteButton(div, paste_func) {
         var b = D.button(div, paste_func, "p-2 main-button");

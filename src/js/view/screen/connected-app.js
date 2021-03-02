@@ -5,18 +5,20 @@
 const D = require('../../utl/dom.js').DomUtl;
 const I = require('../../utl/icon.js').IconUtl;
 
+var Screen = require('./Screen');
+
 const Wad = require("moneysocket").Wad;
 
-class ConnectedAppScreen {
+class ConnectedAppScreen extends Screen {
     constructor(app_div, model) {
-        this.app_div = app_div;
+        super(app_div, model);
+
         this.onbackclick = null;
         this.ondisconnectclick = null;
         this.oninputerror = null;
         this.onwadchange = null;
         this.onpayerchange = null;
         this.onpayeechange = null;
-        this.model = model;
         this.balance_div = null;
         this.available_div = null;
         this.send_div = null;
@@ -30,14 +32,6 @@ class ConnectedAppScreen {
     ///////////////////////////////////////////////////////////////////////////
     // Buttons
     ///////////////////////////////////////////////////////////////////////////
-
-    drawBackButton(div, back_func) {
-        var b = D.button(div, back_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var back = I.backarrow2x(icon_span);
-        var text = D.textSpan(flex, "Back");
-    }
 
     drawDisconnectButton(div, disconnect_func) {
         var b = D.button(div, disconnect_func, "main-button");

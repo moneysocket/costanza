@@ -8,9 +8,13 @@ const I = require('../../utl/icon.js').IconUtl;
 
 const PERSIST_PROFILE = require("../../model/persist.js").PERSIST_PROFILE;
 
+var Screen = require('./Screen')
 
-class StorageSettingsScreen {
+
+class StorageSettingsScreen extends Screen {
     constructor(app_div, model) {
+        super(app_div, model);
+
         this.model = model;
         this.app_div = app_div;
         this.onbackclick = null;
@@ -21,14 +25,6 @@ class StorageSettingsScreen {
     ///////////////////////////////////////////////////////////////////////////
     // Buttons
     ///////////////////////////////////////////////////////////////////////////
-
-    drawBackButton(div, back_func) {
-        var b = D.button(div, back_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var back = I.backarrow2x(icon_span);
-        var text = D.textSpan(flex, "Back");
-    }
 
     drawSelectButton(div, select_func) {
         var b = D.button(div, select_func,
