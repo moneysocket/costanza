@@ -27,9 +27,7 @@ class ManualReceiveScreen extends Screen {
     ///////////////////////////////////////////////////////////////////////////
 
     drawRequestButton(div, set_func) {
-        var b = D.button(div, set_func, "p-2 main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        D.textSpan(flex, "Request Invoice");
+        this.drawButtonPlain(div, "Request Invoice", set_func, "main-button");
     }
 
     ///////////////////////////////////////////////////////////////////////////

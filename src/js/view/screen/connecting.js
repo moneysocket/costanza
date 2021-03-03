@@ -8,13 +8,14 @@ const Kjua = require('kjua');
 const D = require('../../utl/dom.js').DomUtl;
 const I = require('../../utl/icon.js').IconUtl;
 
+var Screen = require('./Screen');
+
 const ConnectProgress = require("./connect-progress.js").ConnectProgress;
 const Copy = require('clipboard-copy');
 
-class ConnectingScreen {
+class ConnectingScreen extends Screen {
     constructor(app_div, model) {
-        this.app_div = app_div;
-        this.model = model;
+        super(app_div, model);
 
         this.displayed_beacon = "";
         this.copy_span = null;
@@ -31,19 +32,11 @@ class ConnectingScreen {
     ///////////////////////////////////////////////////////////////////////////
 
     drawDisconnectButton(div, disconnect_func) {
-        var b = D.button(div, disconnect_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex);
-        var back = I.plug2x(icon_span);
-        var text = D.textSpan(flex, "Disconnect", "px-1");
+        this.drawButton(div, I.plug2x, "Disconnect", disconnect_func, "main-button");
     }
 
     drawCopyBeaconButton(div, copy_func) {
-        var b = D.button(div, copy_func, "p-2 main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex);
-        var qr = I.copy2x(icon_span);
-        this.copy_span = D.textSpan(flex, "Copy", "px-1");
+        this.drawButton(div, I.plug2x, "Copy", copy_func, "main-button");
     }
 
 

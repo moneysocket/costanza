@@ -20,6 +20,14 @@ body {
     @apply bg-gray-800 hover:bg-gray-900 text-gray-300 rounded px-2 py-1 border border-gray-600;
 }
 
+.secondary-button {
+    @apply bg-gray-700 hover:bg-gray-900 text-gray-300 font-bold rounded py-1 px-5;
+}
+
+.percent-button {
+    @apply bg-gray-700 hover:bg-gray-900 text-gray-300 font-bold rounded py-3 px-5;
+}
+
 .div-reg-flex {
     @apply flex flex-col h-screen;
 }
@@ -35,7 +43,7 @@ body {
 .section-background {
     @apply text-center px-5 py-3 bg-gray-800;
     box-shadow: rgb(0 0 0 / 3%) 0px 0px 1px, rgb(0 0 0 / 6%) 0px 5px 10px, rgb(0 0 0 / 12%) 0px 20px 36px;
-  }
+}
 
 .section-background-lite {
     @apply text-center px-5 py-3 bg-gray-700;

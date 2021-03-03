@@ -18,8 +18,6 @@ class ManualSendScreen extends Screen {
     constructor(app_div, model) {
         super(app_div, model);
 
-        this.app_div = app_div;
-        this.model = model;
         this.onbackclick = null;
         this.onpayerror = null;
         this.onpayrequest = null;
@@ -32,9 +30,7 @@ class ManualSendScreen extends Screen {
     ///////////////////////////////////////////////////////////////////////////
 
     drawPayButton(div, set_func) {
-        var b = D.button(div, set_func, "p-2 main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        D.textSpan(flex, "Pay Invoice");
+        this.drawButtonPlain(div, "Pay Invoice", set_func, "main-button");
     }
 
     ///////////////////////////////////////////////////////////////////////////

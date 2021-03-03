@@ -6,15 +6,21 @@
 const D = require('../../utl/dom.js').DomUtl;
 const I = require('../../utl/icon.js').IconUtl;
 
+var Screen = require('./Screen');
 
-class ConnectedWalletScreen {
+
+class ConnectedWalletScreen extends Screen {
     constructor(app_div, model) {
-        this.app_div = app_div;
+        super(app_div, model);
+
         this.onbackclick = null;
         this.ondisconnectclick = null;
         this.onmanualsendclick = null;
         this.onmanualreceiveclick = null;
+<<<<<<< HEAD
         this.model = model;
+=======
+>>>>>>> aggregated all buttons into Screen super class, added new changes to manual payments
         this.balance_div = null;
         this.payer_div = null;
         this.payee_div = null;
@@ -25,22 +31,15 @@ class ConnectedWalletScreen {
     // Buttons
     ///////////////////////////////////////////////////////////////////////////
 
-    drawBackButton(div, back_func) {
-        var b = D.button(div, back_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var back = I.backarrow2x(icon_span);
-        var text = D.textSpan(flex, "Back");
-    }
-
     drawDisconnectButton(div, disconnect_func) {
-        var b = D.button(div, disconnect_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var back = I.plug2x(icon_span);
-        var text = D.textSpan(flex, "Disconnect");
+        this.drawButton(div, I.plug2x, "Disconnect", disconnect_func, "main-button");
     }
 
+    drawSendButton(div, send_func) {
+        this.drawButton(div, I.qrcode2x, "Manual Send", send_func, "main-button");
+    }
+
+<<<<<<< HEAD
     drawSendButton(div, send_func) {
         var b = D.button(div, send_func, "main-button");
         var flex = D.emptyDiv(b, "flex items-center justify-around");
@@ -55,6 +54,10 @@ class ConnectedWalletScreen {
         var icon_span = D.emptySpan(flex, "px-2");
         var qr = I.qrcode2x(icon_span);
         var text = D.textSpan(flex, "Manual Receive");
+=======
+    drawReceiveButton(div, recv_func) {
+        this.drawButton(div, I.qrcode2x, "Manual Receive", recv_func, "main-button");
+>>>>>>> aggregated all buttons into Screen super class, added new changes to manual payments
     }
 
     doDisconnect() {
@@ -145,12 +148,21 @@ class ConnectedWalletScreen {
 
         var buttons = D.emptyDiv(flex, "flex justify-around py-4");
         this.drawDisconnectButton(buttons,
+<<<<<<< HEAD
                                  (function() {this.doDisconnect()}).bind(this));
         var send = D.emptyDiv(flex, "flex justify-around py-4");
         this.drawSendButton(send, (function() {this.doSend()}).bind(this));
         var recv = D.emptyDiv(flex, "flex justify-around py-4");
         this.drawReceiveButton(recv,
                                (function() {this.doReceive()}).bind(this));
+=======
+            (function() {this.doDisconnect()}).bind(this));
+            var send = D.emptyDiv(flex, "flex justify-around py-4");
+            this.drawSendButton(send, (function() {this.doSend()}).bind(this));
+            var recv = D.emptyDiv(flex, "flex justify-around py-4");
+            this.drawReceiveButton(recv,
+                                   (function() {this.doReceive()}).bind(this));
+>>>>>>> aggregated all buttons into Screen super class, added new changes to manual payments
     }
 
     ///////////////////////////////////////////////////////////////////////////

@@ -65,9 +65,7 @@ class ScanScreen extends Screen {
     ///////////////////////////////////////////////////////////////////////////
 
     drawPasteButton(div, paste_func) {
-        var b = D.button(div, paste_func, "p-2 main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        D.textSpan(flex, "Use");
+        this.drawButtonPlain(div, "Use", paste_func, "main button");
     }
 
     ///////////////////////////////////////////////////////////////////////////

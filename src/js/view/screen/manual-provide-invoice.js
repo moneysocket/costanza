@@ -25,11 +25,7 @@ class ManualProvideInvoiceScreen extends Screen {
     ///////////////////////////////////////////////////////////////////////////
 
     drawCopyBolt11Button(div, copy_func) {
-        var b = D.button(div, copy_func, "p-2 main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex);
-        var qr = I.copy2x(icon_span);
-        this.copy_span = D.textSpan(flex, "Copy", "px-1");
+        this.drawButton(div, I.copy2x, "Copy", copy_func, "main-button");
     }
 
     doCopy() {
@@ -70,7 +66,7 @@ class ManualProvideInvoiceScreen extends Screen {
             mode:      "label",
             mSize:     6,
             fontname:  "sans",
-            fontcolor: "#941",
+            fontcolor: "#3B5323",
             quiet:     0,
         });
         var b = D.emptyDiv(div, "border-8 border-white");

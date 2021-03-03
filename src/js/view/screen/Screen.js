@@ -15,6 +15,18 @@ class Screen {
         var text = D.textSpan(flex, button_text);
     }
 
+    drawButtonPlain(div, button_text, click_func, button_type) {
+        var b = D.button(div, click_func, button_type);
+        var flex = D.emptyDiv(b, "flex items-center justify-around");
+        var text = D.textSpan(flex, button_text);
+    }
+
+    drawButtonPercent(div, pct, click_func, button_type) {
+        var b = D.button(div, click_func, button_type);
+        var flex = D.emptyDiv(b, "flex items-center justify-around");
+        D.textSpan(flex, pct.toString() + "%");
+    }
+
     screenDiv(div_style) {
         var flex = D.emptyDiv(this.app_div, div_style);
         return flex;

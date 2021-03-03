@@ -25,42 +25,24 @@ class ConnectScreen extends Screen {
     ///////////////////////////////////////////////////////////////////////////
 
 
-   drawPasteButton(div, paste_func) {
-        var b = D.button(div, paste_func, "p-2 main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        D.textSpan(flex, "Use");
+    drawPasteButton(div, paste_func) {
+       this.drawButtonPlain(div, "Use", paste_func, "main-button");
     }
 
-   drawGenerateButton(div, generate_func) {
-        var b = D.button(div, generate_func, "p-2 main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-1");
-        var back = I.magic2x(icon_span);
-        var text = D.textSpan(flex, "Generate");
+    drawGenerateButton(div, generate_func) {
+       this.drawButton(div, I.magic2x, "Generate", generate_func, "main-button");
     }
 
     drawScanButton(div, scan_func) {
-        var b = D.button(div, scan_func, "p-2 main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var qr = I.qrcode2x(icon_span);
-        var text = D.textSpan(flex, "Scan");
+        this.drawButton(div, I.qrcode2x, "Scan", scan_func, "main-button");
     }
 
     drawConnectStoredButton(div, connect_func) {
-        var b = D.button(div, connect_func, "p-2 main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var qr = I.bolt2x(icon_span);
-        var text = D.textSpan(flex, "Connect");
+        this.drawButton(div, I.bolt2x, "Connect", connect_func, "main-button");
     }
 
     drawForgetButton(div, forget_func) {
-        var b = D.button(div, forget_func, "p-2 main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var qr = I.trash2x(icon_span);
-        var text = D.textSpan(flex, "Forget");
+        this.drawButton(div, I.trash2x, "Forget", forget_func, "main-button");
     }
 
     pasteResult() {

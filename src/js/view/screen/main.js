@@ -12,7 +12,6 @@ var ManualReceiveReceipt = require(
     '../../model/manual-receive-receipt.js').ManualReceiveReceipt;
 var ManualSendReceipt = require(
     '../../model/manual-send-receipt.js').ManualSendReceipt;
-
 var Screen = require('./Screen');
 
 const CONNECT_STATE = require('../../model/model.js').CONNECT_STATE;
@@ -115,7 +114,7 @@ class MainScreen extends Screen {
         var [error, got_invoice, completed, wad, expired] = (
             ManualReceiveReceipt.manualReceiveInfo(manual_receive));
 
-        var d = D.emptyDiv(div, "tx-button-qr");
+        var d = D.emptyDiv(div, "tx-button-socket");
         d.onclick = (function() {
             click_func(manual_receive);
         });
@@ -134,8 +133,8 @@ class MainScreen extends Screen {
             D.textSpan(flex, "+ " + wad.toString(),
                        "font-bold text-green-400 px-2");
         } else {
-            D.textSpan(flex, "Manual receive in progress " + wad.toString(),
-                       "flex-grow text-sm");
+            D.textSpan(flex, "Manual receive in progress ", "flex-grow text-sm");
+            D.textSpan(flex, wad.toString(), "font-bold ms-green-txt px-2");
         }
     }
 
@@ -143,7 +142,7 @@ class MainScreen extends Screen {
         var [error, completed, bolt11, wad, description] = (
             ManualSendReceipt.manualSendInfo(manual_send));
 
-        var d = D.emptyDiv(div, "tx-button-qr");
+        var d = D.emptyDiv(div, "tx-button-socket");
         d.onclick = (function() {
             click_func(manual_send);
         });

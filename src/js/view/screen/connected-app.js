@@ -34,34 +34,21 @@ class ConnectedAppScreen extends Screen {
     ///////////////////////////////////////////////////////////////////////////
 
     drawDisconnectButton(div, disconnect_func) {
-        var b = D.button(div, disconnect_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var back = I.plug2x(icon_span);
-        var text = D.textSpan(flex, "Disconnect App");
+        this.drawButton(div, I.plug2x, "Disconnect App", disconnect_func, "main-button");
     }
 
     drawSetButton(div, set_func) {
-        var b = D.button(div, set_func, "p-2 main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        D.textSpan(flex, "Set");
+        this.drawButtonPlain(div, "Set", set_func, "main-button");
     }
 
     drawToggleButton(div, toggle_func) {
-        var b = D.button(div, toggle_func,
-                         "bg-gray-700 hover:bg-gray-900 text-gray-300 " +
-                         "font-bold rounded py-1 px-5");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        D.textSpan(flex, "Toggle");
+        this.drawButtonPlain(div, "Toggle", toggle_func, "secondary-button");
     }
 
     drawPercentButton(div, pct, pct_func) {
-        var b = D.button(div, pct_func,
-                         "bg-gray-700 hover:bg-gray-900 text-gray-300 " +
-                         "font-bold rounded py-3 px-5");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        D.textSpan(flex, pct.toString() + "%");
+        this.drawButtonPercent(div, pct, pct_func, "percent-button");
     }
+    
 
     ///////////////////////////////////////////////////////////////////////////
     // input actions

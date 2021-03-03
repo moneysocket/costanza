@@ -27,19 +27,11 @@ class StorageSettingsScreen extends Screen {
     ///////////////////////////////////////////////////////////////////////////
 
     drawSelectButton(div, select_func) {
-        var b = D.button(div, select_func,
-                         "bg-gray-700 hover:bg-blue-600 text-white " +
-                         "font-bold rounded py-1 px-5");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        D.textSpan(flex, "Use");
+        this.drawButtonPlain(div, "Use", select_func, "secondary-button");
     }
 
     drawClearButton(div, clear_func) {
-        var b = D.button(div, clear_func,
-                         "bg-gray-700 hover:bg-blue-600 text-white " +
-                         "font-bold rounded py-1 px-5");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        D.textSpan(flex, "Clear");
+        this.drawButtonPlain(div, "Clear", clear_func, "secondary-button");
     }
 
 
