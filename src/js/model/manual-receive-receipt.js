@@ -52,6 +52,16 @@ class ManualReceiveReceipt {
         return entry;
     }
 
+    static manualReceiveErrorEntry(error_msg, request_reference_uuid)
+    {
+        var entry = {'type':                   'error',
+                     'time':                   Timestamp.getNowTimestamp(),
+                     'error_msg':              error_msg,
+                     'request_reference_uuid': request_reference_uuid,
+                    };
+        return entry;
+    }
+
     static manualReceiveInfo(manual_receive) {
         //console.log("manual_receive: " + JSON.stringify(manual_receive));
         var entries = manual_receive['entries']
@@ -59,11 +69,13 @@ class ManualReceiveReceipt {
                          entries[2]['type'] == 'preimage_notified');
         var got_invoice = ((entries.length >= 2) &&
                            entries[1]['type'] == 'invoice_notified');
+        var error = (((entries.length >= 2) && entries[1]['type'] == 'error') ?
+                     entries[1]['error_msg'] : null);
 
         var wad = entries[0]['wad'];
         var now = Timestamp.getNowTimestamp();
         var expired = got_invoice ? (now > entries[1]['timeout']) : false;
-        return [got_invoice, completed, wad, expired];
+        return [error, got_invoice, completed, wad, expired];
     }
 }
 

@@ -115,6 +115,9 @@ class CostanzaModel {
         s.onpreimage = (function(preimage, request_reference_uuid) {
             this.consumerOnPreimage(preimage, request_reference_uuid);
         }).bind(this);
+        s.onerror = (function(error_msg, request_reference_uuid) {
+            this.consumerOnError(error_msg, request_reference_uuid);
+        }).bind(this);
         return s;
     }
 
@@ -255,6 +258,34 @@ class CostanzaModel {
         }
         if (this.onmanualpreimage != null) {
             this.onmanualpreimage();
+        }
+    }
+
+    consumerOnError(error_msg, request_reference_uuid) {
+        console.log("error on request: " + error_msg);
+
+        var [known, socket, send] = this.transact.errorNotified(
+            request_reference_uuid);
+
+        if (! known) {
+            var err = "error message not matching request: " + error_msg;
+            console.log(err);
+            return;
+        }
+
+        if (socket) {
+            this.provider_stack.sendErrorNotification(error_msg,
+                                                      request_reference_uuid);
+            this.receipts.socketSessionErrorNotified(error_msg,
+                                                     request_reference_uuid);
+        } else {
+            if (send) {
+                this.receipts.manualSendError(error_msg,
+                                              request_reference_uuid);
+            } else {
+                this.receipts.manualReceiveError(error_msg,
+                                                 request_reference_uuid);
+            }
         }
     }
 

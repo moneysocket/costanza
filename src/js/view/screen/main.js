@@ -129,7 +129,7 @@ class MainScreen {
     ///////////////////////////////////////////////////////////////////////////
 
     drawManualReceiveReceipt(div, manual_receive, click_func) {
-        var [got_invoice, completed, wad, expired] = (
+        var [error, got_invoice, completed, wad, expired] = (
             ManualReceiveReceipt.manualReceiveInfo(manual_receive));
 
         var d = D.emptyDiv(div, "tx-button-qr");
@@ -140,7 +140,10 @@ class MainScreen {
         var icon_span = D.emptySpan(flex, "px-2 font-bold");
         I.qrcode1x(icon_span);
 
-        if (! got_invoice) {
+        if (error != null) {
+            D.textSpan(flex, "Manual Receive Err: " + error,
+                       "flex-grow font-bold");
+        } else if (! got_invoice) {
             D.textSpan(flex, "Waiting for invoice " + wad.toString(),
                        "flex-grow text-sm");
         } else if (completed) {
@@ -154,7 +157,7 @@ class MainScreen {
     }
 
     drawManualSendReceipt(div, manual_send, click_func) {
-        var [completed, bolt11, wad, description] = (
+        var [error, completed, bolt11, wad, description] = (
             ManualSendReceipt.manualSendInfo(manual_send));
 
         var d = D.emptyDiv(div, "tx-button-qr");
@@ -167,7 +170,9 @@ class MainScreen {
 
         description = (description == null) ? "(no description)" : description;
 
-        if (! completed) {
+        if (error != null) {
+            D.textSpan(flex, "Pay Error: " + error, "flex-grow font-bold");
+        } else if (! completed) {
             D.textSpan(flex, "Paying", "flex-grow font-bold");
             D.textSpan(flex, description, "flex-grow text-sm");
         } else {

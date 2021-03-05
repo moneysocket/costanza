@@ -70,10 +70,11 @@ class SocketSessionReceipt {
         return entry;
     }
 
-    static errNotifiedEntry(err) {
-        var entry = {'type':  'error_notified',
-                     'time':  Timestamp.getNowTimestamp(),
-                     'error': err,
+    static errNotifiedEntry(error_msg, request_reference_uuid) {
+        var entry = {'type':                   'error_notified',
+                     'time':                   Timestamp.getNowTimestamp(),
+                     'error_msg':              error_msg,
+                     'request_reference_uuid': request_reference_uuid,
                     };
         return entry;
     }

@@ -82,8 +82,9 @@ class Receipts {
         this.model.receiptsUpdated(this.socket_session.receipt_uuid);
     }
 
-    socketSessionErrorNotified(err) {
-        var entry = SocketSessionReceipt.errNotifiedEntry(err);
+    socketSessionErrorNotified(err, request_reference_uuid) {
+        var entry = SocketSessionReceipt.errNotifiedEntry(
+            err, request_reference_uuid);
         this.socket_session.entries.push(entry);
         this.storeReceipts();
         this.model.receiptsUpdated(this.socket_session.receipt_uuid);
@@ -138,6 +139,16 @@ class Receipts {
         this.model.receiptsUpdated(receive.receipt_uuid);
     }
 
+    manualReceiveError(error_msg, request_reference_uuid) {
+        var entry = ManualReceiveReceipt.manualReceiveErrorEntry(error_msg,
+            request_reference_uuid);
+        var receive = this.receive_requests[request_reference_uuid];
+        delete this.receive_requests[request_reference_uuid];
+        receive.entries.push(entry);
+        this.storeReceipts();
+        this.model.receiptsUpdated(receive.receipt_uuid);
+    }
+
     manualReceiveTimeout() {
         // TODO
     }
@@ -170,6 +181,16 @@ class Receipts {
         delete this.send_requests[request_reference_uuid];
         var entry = ManualSendReceipt.manualSendPreimageNotifiedEntry(
             preimage, payment_hash, request_reference_uuid);
+        send.entries.push(entry);
+        this.storeReceipts();
+        this.model.receiptsUpdated(send.receipt_uuid);
+    }
+
+    manualSendError(error_msg, request_reference_uuid) {
+        var entry = ManualSendReceipt.manualSendErrorEntry(error_msg,
+            request_reference_uuid);
+        var send = this.send_requests[request_reference_uuid];
+        delete this.send_requests[request_reference_uuid];
         send.entries.push(entry);
         this.storeReceipts();
         this.model.receiptsUpdated(send.receipt_uuid);

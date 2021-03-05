@@ -19,6 +19,8 @@ class Transact {
 
         this.pays_requested_socket = {};
         this.pays_requested_manual = {};
+        this.pays_requested_socket_by_request_uuid = {};
+        this.pays_requested_manual_by_request_uuid = {};
     }
 
     //////////////////////////////////////////////////////////////////////////
@@ -136,6 +138,22 @@ class Transact {
         if (this.isManualRequest(request_reference_uuid)) {
             delete this.invoices_requested_manual[request_reference_uuid];
         }
+        if (request_reference_uuid in
+            this.pays_requested_socket_by_request_uuid)
+        {
+            var payment_hash = this.pays_requested_socket_by_request_uuid;
+            delete this.pays_requested_socket[payment_hash];
+            delete this.pays_requested_socket_by_request_uuid[
+                request_reference_uuid];
+        }
+        if (request_reference_uuid in
+            this.pays_requested_manual_by_request_uuid)
+        {
+            var payment_hash = this.pays_requested_manual_by_request_uuid;
+            delete this.pays_requested_manual[payment_hash];
+            delete this.pays_requested_manual_by_request_uuid[
+                request_reference_uuid];
+        }
     }
 
 
@@ -184,6 +202,30 @@ class Transact {
         return [false, "unknown request_reference_uuid"];
     }
 
+    errorNotified(request_reference_uuid) {
+        if (request_reference_uuid in this.invoices_requested_socket) {
+            this.forgetRequest(request_reference_uuid);
+            return [true, true, false];
+        }
+        else if (request_reference_uuid in this.invoices_requested_manual) {
+            this.forgetRequest(request_reference_uuid);
+            return [true, false, false];
+        }
+        else if (request_reference_uuid in
+                 this.pays_requested_socket_by_request_uuid)
+        {
+            this.forgetRequest(request_reference_uuid);
+            return [true, true, true];
+        }
+        else if (request_reference_uuid in
+                 this.pays_requested_manual_by_request_uuid)
+        {
+            this.forgetRequest(request_reference_uuid);
+            return [true, false, true];
+        }
+        return [false, null, null]
+    }
+
     //////////////////////////////////////////////////////////////////////////
     // pay requests socket
     //////////////////////////////////////////////////////////////////////////
@@ -216,9 +258,12 @@ class Transact {
         var payment_hash = Bolt11.getPaymentHash(bolt11);
         var msats = this.getMsats(bolt11);
         var expiry = this.getExpiryTimestamp(bolt11);
-        this.pays_requested_socket[payment_hash] = {'bolt11': bolt11,
-                                                    'msats':  msats,
-                                                    'expiry': expiry};
+        this.pays_requested_socket[payment_hash] = {
+            'bolt11':       bolt11,
+            'msats':        msats,
+            'expiry':       expiry,
+            'request_uuid': request_uuid};
+        this.pays_requested_socket_by_request_uuid[request_uuid] = payment_hash;
     }
 
     //////////////////////////////////////////////////////////////////////////
@@ -246,13 +291,16 @@ class Transact {
         return null;
     }
 
-    payRequestedManual(bolt11) {
+    payRequestedManual(bolt11, request_uuid) {
         var payment_hash = Bolt11.getPaymentHash(bolt11);
         var msats = this.getMsats(bolt11);
         var expiry = this.getExpiryTimestamp(bolt11);
-        this.pays_requested_manual[payment_hash] = {'bolt11': bolt11,
-                                                    'msats':  msats,
-                                                    'expiry': expiry};
+        this.pays_requested_manual[payment_hash] = {
+            'bolt11':       bolt11,
+            'msats':        msats,
+            'expiry':       expiry,
+            'request_uuid': request_uuid};
+        this.pays_requested_manual_by_request_uuid[request_uuid] = payment_hash;
     }
 
     //////////////////////////////////////////////////////////////////////////
