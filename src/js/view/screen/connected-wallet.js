@@ -25,6 +25,8 @@ class ConnectedWalletScreen extends Screen {
         this.payer_div = null;
         this.payee_div = null;
         this.ping_div = null;
+
+        this.title_string = "Wallet Disconnect";
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -112,27 +114,12 @@ class ConnectedWalletScreen extends Screen {
     drawPing() {
         var msecs = this.model.getConsumerLastPing();
         D.deleteChildren(this.ping_div);
-        D.textParagraph(this.ping_div, msecs.toString() + " ms", "text-sm");
+        D.textParagraph(this.ping_div, msecs.toString() + " ms", "text-sm text-gray-500");
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Panels
     ///////////////////////////////////////////////////////////////////////////
-
-    drawTitle(div) {
-        var flex = D.emptyDiv(div, "flex items-center justify-around");
-        D.textParagraph(flex, "Wallet Disconnect:",
-                        "font-black text-2xl text-gray-400");
-    }
-
-    drawTitlePanel(div) {
-        var flex = D.emptyDiv(div,
-                              "flex flex-wrap section-background");
-        var button_flex = D.emptyDiv(flex, "flex-initial px-2");
-        var title_flex = D.emptyDiv(flex, "flex-initial px-5 py-2");
-        this.drawBackButton(button_flex, this.onbackclick);
-        this.drawTitle(title_flex);
-    }
 
     drawInterfacePanel(div) {
         var flex = D.emptyDiv(div,

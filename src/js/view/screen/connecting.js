@@ -56,20 +56,6 @@ class ConnectingScreen extends Screen {
     // Panels
     ///////////////////////////////////////////////////////////////////////////
 
-    drawTitle(div) {
-        var flex = D.emptyDiv(div, "flex items-center justify-around");
-        D.textParagraph(flex, this.title_string,
-                        "font-black text-3xl text-gray-600");
-    }
-
-    drawTitlePanel(div) {
-        var flex = D.emptyDiv(div,
-                              "flex flex-wrap section-background justify-center");
-        var button_flex = D.emptyDiv(flex, "flex-initial px-2");
-        var title_flex = D.emptyDiv(flex, "flex-initial px-5 py-2");
-        this.drawTitle(title_flex);
-    }
-
     drawQr(div) {
         var beacon = this.getBeacon()
         this.displayed_beacon = beacon;

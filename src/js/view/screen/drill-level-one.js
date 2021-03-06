@@ -24,7 +24,7 @@ class DrillLevelOneScreen extends Screen {
     // Panels
     ///////////////////////////////////////////////////////////////////////////
 
-    drawMenuTitle(div) {
+    drawTitle(div) {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
         var title;
         switch (this.receipt['type']) {
@@ -42,17 +42,7 @@ class DrillLevelOneScreen extends Screen {
             break;
         }
         D.textParagraph(flex, title,
-                        "font-black text-2xl text-gray-400");
-    }
-
-    drawTitlePanel(div) {
-        var flex = D.emptyDiv(div,
-                              "flex flex-wrap section-background");
-        var button_flex = D.emptyDiv(flex, "flex-initial px-2");
-        var title_flex = D.emptyDiv(flex, "flex-initial px-5 py-2");
-
-        this.drawBackButton(button_flex, this.onbackclick);
-        this.drawMenuTitle(title_flex);
+                        "page-title");
     }
 
     typeToTitle(type) {

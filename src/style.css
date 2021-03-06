@@ -12,7 +12,7 @@ body {
 }
 
 .main-button {
-    @apply bg-gray-800 hover:bg-gray-900 text-gray-300 font-bold py-2 px-10 rounded border-gray-600 border rounded-2xl;
+    @apply bg-gray-800 hover:bg-gray-900 text-gray-300 font-bold py-2 px-10 mx-1 rounded border-gray-600 border rounded-2xl;
     text-transform: uppercase;
 }
 
@@ -21,11 +21,27 @@ body {
 }
 
 .secondary-button {
-    @apply bg-gray-700 hover:bg-gray-900 text-gray-300 font-bold rounded py-1 px-5;
+    @apply bg-gray-700 hover:bg-gray-900 text-gray-300 font-bold rounded py-1 px-5 mx-1;
 }
 
 .percent-button {
     @apply bg-gray-700 hover:bg-gray-900 text-gray-300 font-bold rounded py-3 px-5;
+}
+
+.input-area {
+    @apply w-40 appearance-none rounded shadow p-3 bg-gray-600 text-white mr-2 focus:outline-none;
+}
+
+.page-title {
+    @apply font-black text-xl text-gray-500;
+}
+
+.text-subheading {
+    @apply font-bold text-xl text-gray-500;
+}
+
+.text-link {
+    @apply font-bold text-xl text-gray-300 hover:bg-gray-900;
 }
 
 .div-reg-flex {
@@ -47,16 +63,32 @@ body {
 
 .section-background-lite {
     @apply text-center px-5 py-3 bg-gray-700;
+    position: fixed;
+    margin-top: auto;
+    flex: 0 0 auto;
+    bottom: 0;
+    width: 100%;
 }
 
 .connect-wallet-panel {
     @apply text-center px-5 py-3;
+    position: relative;
+    margin-bottom: auto;
+    flex: 0 0 auto;
+    top: 0;
+    width: 100%;
+}
+
+.balance-panel {
+  @apply text-center px-5 py-3;
+  position: relative;
 }
 
 .receipt-panel {
-  @apply my-10 mx-8 rounded-3xl;
-  min-height: 50%;
-  min-width: 200px;
+  @apply my-5 py-5 mx-8 rounded-3xl overflow-y-auto;
+  position: relative;
+  max-height: calc(100vh - 310px);
+  width: calc(100% - 4rem);
 }
 
 .slider {
@@ -87,4 +119,22 @@ body {
   border-radius: 50%;
   background: #3f3c3a;
   cursor: pointer;
+}
+
+.receipt-panel::-webkit-scrollbar-track {
+  background-color: none;
+}
+
+.receipt-panel::-webkit-scrollbar {
+  background-color: none;
+  width: 0.65em;
+}
+
+.receipt-panel::-webkit-scrollbar-thumb {
+  @apply bg-gray-700;
+  border-radius: 1em;
+}
+
+.receipt-panel::-webkit-scrollbar-button {
+  background-color: none;
 }

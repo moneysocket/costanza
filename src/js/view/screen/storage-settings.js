@@ -20,6 +20,8 @@ class StorageSettingsScreen extends Screen {
         this.onbackclick = null;
         this.onprofilechange = null;
         this.onclearclick = null;
+
+        this.title_string = "Storage Settings:";
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -50,21 +52,6 @@ class StorageSettingsScreen extends Screen {
     ///////////////////////////////////////////////////////////////////////////
     // Panels
     ///////////////////////////////////////////////////////////////////////////
-
-    drawTitle(div) {
-        var flex = D.emptyDiv(div, "flex items-center justify-around");
-        D.textParagraph(flex, "Storage Settings:",
-                        "font-black text-2xl text-gray-600");
-    }
-
-    drawTitlePanel(div) {
-        var flex = D.emptyDiv(div,
-                              "flex flex-wrap section-background");
-        var button_flex = D.emptyDiv(flex, "flex-initial px-2");
-        var title_flex = D.emptyDiv(flex, "flex-initial px-5 py-2");
-        this.drawBackButton(button_flex, this.onbackclick);
-        this.drawTitle(title_flex);
-    }
 
     drawInfoPanel(div) {
         var [profile, checkout_record] = this.model.getStorageSettings();

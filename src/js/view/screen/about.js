@@ -14,43 +14,30 @@ class AboutScreen extends Screen {
         super(app_div);
 
         this.onbackclick = null;
+
+        this.title_string = "About";
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Panels
     ///////////////////////////////////////////////////////////////////////////
 
-    drawTitle(div) {
-        var flex = D.emptyDiv(div, "flex items-center justify-around");
-        D.textParagraph(flex, "About:",
-                        "font-black text-2xl text-gray-500");
-    }
-
-    drawTitlePanel(div) {
-        var flex = D.emptyDiv(div,
-                              "flex flex-wrap section-background");
-        var button_flex = D.emptyDiv(flex, "flex-initial px-2");
-        var title_flex = D.emptyDiv(flex, "flex-initial px-5 py-2");
-        this.drawBackButton(button_flex, this.onbackclick);
-        this.drawTitle(title_flex);
-    }
-
     drawInfoPanel(div) {
         var flex = D.emptyDiv(div,
                               "flex flex-col section-background");
         D.textParagraph(flex, "Costanza Wallet for Moneysocket v0.0.0",
-                        "font-black text-2xl text-gray-500");
+                        "text-subheading");
         D.textParagraph(flex, "Reckless! Use at your own risk!",
-                        "font-black text-2xl text-gray-500");
+                        "text-subheading");
         D.hyperlinkTabOpen(flex, "Wallet Source",
                            "https://github.com/moneysocket/costanza",
-                           "font-black text-2xl text-gray-300 hover:bg-gray-900");
+                           "text-link");
         D.hyperlinkTabOpen(flex, "Moneysocket Homepage", "https://socket.money",
-                           "font-black text-2xl text-gray-300 hover:bg-gray-900");
+                           "text-link");
         D.hyperlinkTabOpen(flex, "Telegram Chat", "https://t.me/moneysocket",
-                           "font-black text-2xl text-gray-300 hover:bg-gray-900");
+                           "text-link");
         D.hyperlinkTabOpen(flex, "Donate", "https://socket.money/#donate",
-                           "font-black text-2xl text-gray-300 hover:bg-gray-900");
+                           "text-link");
     }
 
     ///////////////////////////////////////////////////////////////////////////

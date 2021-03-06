@@ -102,7 +102,7 @@ class MainScreen extends Screen {
     drawPing() {
         var msecs = this.model.getConsumerLastPing();
         D.deleteChildren(this.ping_div);
-        D.textParagraph(this.ping_div, msecs.toString() + " ms", "text-sm text-gray-600");
+        D.textParagraph(this.ping_div, msecs.toString() + " ms", "text-sm text-gray-500");
     }
 
 
@@ -221,7 +221,7 @@ class MainScreen extends Screen {
 
     drawBalancePanel(div, connect_func) {
         var flex = D.emptyDiv(div,
-                              "flex-col justify-evenly section-background");
+                              "flex-col justify-evenly section-background balance-panel");
         var left_box = D.emptyDiv(flex, "flex flex-row");
 
         this.auth_balance_div = D.emptyDiv(left_box);
@@ -261,7 +261,7 @@ class MainScreen extends Screen {
     }
 
     drawActionPanel(div, scan_func, menu_func) {
-        var flex = D.emptyDiv(div, "flex justify-evenly section-background-lite mt-20");
+        var flex = D.emptyDiv(div, "flex justify-evenly section-background-lite");
         this.drawScanButton(flex, scan_func);
         this.drawMenuButton(flex, menu_func);
     }

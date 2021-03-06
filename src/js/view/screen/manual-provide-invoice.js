@@ -18,6 +18,8 @@ class ManualProvideInvoiceScreen extends Screen {
         this.onbackclick = null;
         this.displayed_bolt11 = "";
         this.copy_span = null;
+
+        this.title_string = "Pay This:";
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -37,21 +39,6 @@ class ManualProvideInvoiceScreen extends Screen {
     ///////////////////////////////////////////////////////////////////////////
     // Panels
     ///////////////////////////////////////////////////////////////////////////
-
-    drawTitle(div) {
-        var flex = D.emptyDiv(div, "flex items-center justify-around");
-        D.textParagraph(flex, "Pay This:",
-                        "font-black text-2xl text-gray-600");
-    }
-
-    drawTitlePanel(div) {
-        var flex = D.emptyDiv(div,
-                              "flex flex-wrap section-background");
-        var button_flex = D.emptyDiv(flex, "flex-initial px-2");
-        var title_flex = D.emptyDiv(flex, "flex-initial px-5 py-2");
-        this.drawBackButton(button_flex, this.onbackclick);
-        this.drawTitle(title_flex);
-    }
 
     drawQr(div, bolt11) {
         this.displayed_bolt11 = bolt11;

@@ -85,25 +85,11 @@ class ConnectScreen extends Screen {
     // Panels
     ///////////////////////////////////////////////////////////////////////////
 
-    drawTitle(div) {
-        var flex = D.emptyDiv(div, "flex items-center justify-around");
-        D.textParagraph(flex, this.title_string,
-                        "font-black text-xl text-gray-600");
-    }
 
     drawDisconnected(div) {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
         D.textParagraph(flex, "(disconnected)",
-                        "font-black text-gray-600 py-5");
-    }
-
-    drawTitlePanel(div) {
-        var flex = D.emptyDiv(div,
-                              "flex flex-wrap section-background");
-        var button_flex = D.emptyDiv(flex, "flex-initial px-2");
-        var title_flex = D.emptyDiv(flex, "flex-initial px-5 py-2");
-        this.drawBackButton(button_flex, this.onbackclick);
-        this.drawTitle(title_flex);
+                        "font-black text-red-600 py-5");
     }
 
 
@@ -140,16 +126,14 @@ class ConnectScreen extends Screen {
 
     drawInterfacePanel(div) {
         var flex = D.emptyDiv(div,
-                              "flex flex-col section-background");
+                              "flex flex-col section-background justify-center");
 
         this.drawDisconnected(flex);
 
         var paste = D.emptyDiv(flex,
                                "flex justify-center items-center " +
                                "border border-gray-800 py-2 m-2 rounded-2xl");
-        this.paste_input = D.emptyInput(paste,
-            "w-auto appearance-none rounded shadow " +
-            "p-3 text-white bg-gray-700 mr-2 focus:outline-none");
+        this.paste_input = D.emptyInput(paste,"input-area");
         this.paste_input.setAttribute("placeholder", "Paste Beacon Here");
         this.drawPasteButton(paste,
                              (function() {this.pasteResult()}).bind(this));

@@ -34,7 +34,7 @@ class DrillLevelTwoScreen extends Screen {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
         var title = this.typeToTitle(this.entry['type']);
         D.textParagraph(flex, title,
-                        "font-black text-2xl text-gray-400");
+                        "page-title");
     }
 
     drawTitlePanel(div) {

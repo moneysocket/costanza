@@ -20,6 +20,8 @@ class ManualReceiveScreen extends Screen {
         this.oninvoicerequest = null;
 
         this.val_input = null;
+
+        this.title_string = "Manual Invoice:";
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -85,9 +87,7 @@ class ManualReceiveScreen extends Screen {
         var input_div = D.emptyDiv(val, "flex justify-center items-center");
         var symb = D.textSpan(input_div, wad['symbol'],
                               "px-2 font-black text-gray-300");
-        this.val_input = D.emptyInput(input_div,
-            "w-40 appearance-none rounded shadow " +
-            "p-3 text-white mr-2 focus:outline-none");
+        this.val_input = D.emptyInput(input_div, "input-area");
         this.val_input.setAttribute("type", "number");
         this.val_input.setAttribute("min", "0");
         this.val_input.setAttribute("placeholder", "value");
@@ -125,21 +125,6 @@ class ManualReceiveScreen extends Screen {
     ///////////////////////////////////////////////////////////////////////////
     // Panels
     ///////////////////////////////////////////////////////////////////////////
-
-    drawTitle(div) {
-        var flex = D.emptyDiv(div, "flex items-center justify-around");
-        D.textParagraph(flex, "Manual Invoice:",
-                        "font-black text-gray-600");
-    }
-
-    drawTitlePanel(div) {
-        var flex = D.emptyDiv(div,
-                              "flex flex-wrap section-background");
-        var button_flex = D.emptyDiv(flex, "flex-initial px-2");
-        var title_flex = D.emptyDiv(flex, "flex-initial px-5 py-2");
-        this.drawBackButton(button_flex, this.onbackclick);
-        this.drawTitle(title_flex);
-    }
 
     drawInterfacePanel(div) {
         var flex = D.emptyDiv(div, "flex flex-col section-background");

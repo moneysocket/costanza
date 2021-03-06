@@ -20,6 +20,8 @@ class ScanScreen extends Screen {
         this.video_div = null;
         this.scanner = null;
         this.paste_input = null;
+
+        this.title_string = "Scan QR:";
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -65,28 +67,12 @@ class ScanScreen extends Screen {
     ///////////////////////////////////////////////////////////////////////////
 
     drawPasteButton(div, paste_func) {
-        this.drawButtonPlain(div, "Use", paste_func, "main button");
+        this.drawButtonPlain(div, "Use", paste_func, "main-button");
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Panels
     ///////////////////////////////////////////////////////////////////////////
-
-    drawTitle(div) {
-        var flex = D.emptyDiv(div, "flex items-center justify-around");
-        D.textParagraph(flex, "SCAN QR:",
-                        "font-black text-2xl text-gray-600");
-    }
-
-    drawTitlePanel(div) {
-        var flex = D.emptyDiv(div,
-                              "flex flex-wrap section-background");
-        var button_flex = D.emptyDiv(flex, "flex-initial px-2");
-        var title_flex = D.emptyDiv(flex, "flex-initial px-5 py-2");
-
-        this.drawBackButton(button_flex, this.onbackclick);
-        this.drawTitle(title_flex);
-    }
 
     drawPastePanel(div) {
         var flex = D.emptyDiv(div,
@@ -94,9 +80,7 @@ class ScanScreen extends Screen {
         var paste = D.emptyDiv(flex,
                                "flex justify-center items-center " +
                                "bg-gray-800 px-2 py-2 m-2 rounded");
-        this.paste_input = D.emptyInput(paste,
-            "flex-initial w-auto appearance-none rounded shadow " +
-            "p-3 text-white bg-gray-700 mr-2 focus:outline-none");
+        this.paste_input = D.emptyInput(paste, "input-area");
         this.paste_input.setAttribute("placeholder", "beacon or bolt11");
         var button_flex = D.emptyDiv(paste, "flex-initial");
         this.drawPasteButton(button_flex,

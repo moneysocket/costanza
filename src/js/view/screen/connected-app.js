@@ -27,6 +27,8 @@ class ConnectedAppScreen extends Screen {
         this.set_input = null;
         this.slider_val = 0;
         this.slider_input = null;
+
+        this.title_string = "App Connection";
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -48,7 +50,7 @@ class ConnectedAppScreen extends Screen {
     drawPercentButton(div, pct, pct_func) {
         this.drawButtonPercent(div, pct, pct_func, "percent-button");
     }
-    
+
 
     ///////////////////////////////////////////////////////////////////////////
     // input actions
@@ -157,9 +159,7 @@ class ConnectedAppScreen extends Screen {
     drawInputRow(div) {
         var set = D.emptyDiv(div, "flex justify-center items-center " +
                                   "bg-gray-800 py-2 m-2 rounded");
-        this.set_input = D.emptyInput(set,
-            "w-40 appearance-none rounded shadow " +
-            "p-3 bg-gray-700 text-gray-300 mr-2 focus:outline-none");
+        this.set_input = D.emptyInput(set, "input-area");
         this.set_input.setAttribute("type", "number");
         this.set_input.setAttribute("min", "0");
         this.set_input.setAttribute("placeholder", "amount");
@@ -255,21 +255,6 @@ class ConnectedAppScreen extends Screen {
     ///////////////////////////////////////////////////////////////////////////
     // Panels
     ///////////////////////////////////////////////////////////////////////////
-
-    drawTitle(div) {
-        var flex = D.emptyDiv(div, "flex items-center justify-around");
-        D.textParagraph(flex, "App Connection:",
-                        "font-black text-gray-400");
-    }
-
-    drawTitlePanel(div) {
-        var flex = D.emptyDiv(div,
-                              "flex flex-wrap section-background");
-        var button_flex = D.emptyDiv(flex, "flex-initial px-2");
-        var title_flex = D.emptyDiv(flex, "flex-initial px-5 py-2");
-        this.drawBackButton(button_flex, this.onbackclick);
-        this.drawTitle(title_flex);
-    }
 
     drawInterfacePanel(div) {
         var flex = D.emptyDiv(div, "flex flex-col section-background");
