@@ -109,17 +109,17 @@ class ManualReceiveScreen extends Screen {
         D.deleteChildren(div);
         var across = D.emptyDiv(div, "flex justify-around py-4 bg-gray-800");
         var col1 = D.emptyDiv(across, "flex flex-col");
-        D.textSpan(col1, "Available:", "text-gray-600");
-        D.textSpan(col1, wad.toString(), "font-bold text-xl text-gray-600");
+        D.textSpan(col1, "Available:", "text-gray-500");
+        D.textSpan(col1, wad.toString(), "font-bold text-xl ms-green-txt");
         var col2 = D.emptyDiv(across, "flex flex-col items-center");
         var r1 = D.emptyDiv(col2, "flex justify-center");
-        D.textSpan(r1, "Can Send:", "text-gray-600");
+        D.textSpan(r1, "Can Send:", "text-gray-500");
         D.textSpan(r1, payer ? "True" : "False",
-                   "font-bold text-xl text-gray-600 px-2");
+                   "font-bold text-xl text-gray-500 px-2");
         var r2 = D.emptyDiv(col2, "flex justify-center items-center");
-        D.textSpan(r2, "Can Receive:", "text-gray-600");
+        D.textSpan(r2, "Can Receive:", "text-gray-500");
         D.textSpan(r2, payee ? "True" : "False",
-                   "font-bold text-xl text-gray-600 px-2");
+                   "font-bold text-xl text-gray-500 px-2");
     }
 
     ///////////////////////////////////////////////////////////////////////////

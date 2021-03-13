@@ -161,7 +161,7 @@ class MainScreen extends Screen {
             D.textSpan(flex, "Paid", "flex-grow font-bold");
             D.textSpan(flex, description, "flex-grow text-sm");
             D.textSpan(flex, "+ " + wad.toString(),
-                       "font-bold text-red-400 px-2");
+                       "font-bold text-red-700 px-2");
         }
     }
 
@@ -187,7 +187,7 @@ class MainScreen extends Screen {
                        "font-bold ms-green-txt px-2");
         } else {
             D.textSpan(flex, "- " + wad.toString(),
-                       "font-bold text-red-400 px-2");
+                       "font-bold text-red-700 px-2");
         }
     }
 

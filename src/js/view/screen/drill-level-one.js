@@ -78,7 +78,7 @@ class DrillLevelOneScreen extends Screen {
                             "font-bold text-green-400"];
                 } else {
                     return ["-" + entry['wad'].toString(),
-                            "font-bold text-red-400"];
+                            "font-bold text-red-700"];
                 }
             }
             return ["-", ""];
@@ -90,7 +90,7 @@ class DrillLevelOneScreen extends Screen {
                         "font-bold text-red-400"];
             } else {
                 var w = this.receipt['entries'][0]['wad'];
-                return [ "-" + w.toString(), "font-bold text-red-400"];
+                return [ "-" + w.toString(), "font-bold text-red-700"];
             }
             return ["-", ""];
             break;

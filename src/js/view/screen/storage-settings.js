@@ -71,14 +71,14 @@ class StorageSettingsScreen extends Screen {
             p = "Profile 3"
             break;
         }
-        D.textParagraph(flex, p, "font-bold text-gray-600");
+        D.textParagraph(flex, p, "font-bold text-gray-500");
 
         var profile1 = D.emptyDiv(flex, "flex justify-around items-center " +
                                 "bg-gray-800 py-1 m-2 rounded");
-        D.textSpan(profile1, "Profile 1 In Use: ", "text-gray-600");
+        D.textSpan(profile1, "Profile 1 In Use: ", "text-gray-500");
         D.textSpan(profile1,
                    checkout_record[PERSIST_PROFILE.ONE] ? "True" : "False",
-                   "px-8 text-2xl font-bold text-gray-600");
+                   "px-8 text-2xl font-bold text-gray-500");
         this.drawSelectButton(profile1,
                               (function() {
             this.doSelect(PERSIST_PROFILE.ONE)}).bind(this));
@@ -88,10 +88,10 @@ class StorageSettingsScreen extends Screen {
 
         var profile2 = D.emptyDiv(flex, "flex justify-around items-center " +
                                 "bg-gray-800 py-1 m-2 rounded");
-        D.textSpan(profile2, "Profile 2 In Use: ", "text-gray-600");
+        D.textSpan(profile2, "Profile 2 In Use: ", "text-gray-500");
         D.textSpan(profile2,
                    checkout_record[PERSIST_PROFILE.TWO] ? "True" : "False",
-                   "px-8 text-2xl font-bold text-gray-600");
+                   "px-8 text-2xl font-bold text-gray-500");
         this.drawSelectButton(profile2,
                               (function() {
             this.doSelect(PERSIST_PROFILE.TWO)}).bind(this));
@@ -101,10 +101,10 @@ class StorageSettingsScreen extends Screen {
 
         var profile3 = D.emptyDiv(flex, "flex justify-around items-center " +
                                 "bg-gray-800 py-1 m-2 rounded");
-        D.textSpan(profile3, "Profile 3 In Use: ", "text-gray-600");
+        D.textSpan(profile3, "Profile 3 In Use: ", "text-gray-500");
         D.textSpan(profile3,
                    checkout_record[PERSIST_PROFILE.THREE] ? "True" : "False",
-                   "px-8 text-2xl font-bold text-gray-600");
+                   "px-8 text-2xl font-bold text-gray-500");
         this.drawSelectButton(profile3,
                               (function() {
             this.doSelect(PERSIST_PROFILE.THREE)}).bind(this));
