@@ -88,6 +88,8 @@ class DrillLevelOneScreen {
                 return [entry['wad'].toString(), ""];
             } else if (entry['type'] == 'pay_request') {
                 return [entry['wad'].toString(), ""];
+            } else if (entry['type'] == 'error_notified') {
+                return [entry['error_msg'], "font-bold text-red-400"];
             } else if (entry['type'] == "preimage_notified") {
                 if (entry['increment']) {
                     return ["+" + entry['wad'].toString(),
@@ -101,6 +103,9 @@ class DrillLevelOneScreen {
         case "manual_send":
             if (entry['type'] == 'request_pay') {
                 return [entry['wad'].toString(), ""];
+            } else if (entry['type'] == 'error') {
+                return ["Error: " + entry['error_msg'],
+                        "font-bold text-red-400"];
             } else {
                 var w = this.receipt['entries'][0]['wad'];
                 return [ "-" + w.toString(), "font-bold text-red-400"];
@@ -110,6 +115,9 @@ class DrillLevelOneScreen {
         case "manual_receive":
             if (entry['type'] == 'request_invoice') {
                 return [entry['wad'].toString(), ""];
+            } else if (entry['type'] == 'error') {
+                return ["Error: " + entry['error_msg'],
+                        "font-bold text-red-400"];
             } else if (entry['type'] == 'preimage_notified') {
                 var w = this.receipt['entries'][0]['wad'];
                 return [ "+" + w.toString(), "font-bold text-green-400"];
