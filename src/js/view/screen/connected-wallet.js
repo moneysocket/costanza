@@ -17,10 +17,7 @@ class ConnectedWalletScreen extends Screen {
         this.ondisconnectclick = null;
         this.onmanualsendclick = null;
         this.onmanualreceiveclick = null;
-<<<<<<< HEAD
         this.model = model;
-=======
->>>>>>> aggregated all buttons into Screen super class, added new changes to manual payments
         this.balance_div = null;
         this.payer_div = null;
         this.payee_div = null;
@@ -41,25 +38,8 @@ class ConnectedWalletScreen extends Screen {
         this.drawButton(div, I.qrcode2x, "Manual Send", send_func, "main-button");
     }
 
-<<<<<<< HEAD
-    drawSendButton(div, send_func) {
-        var b = D.button(div, send_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var qr = I.qrcode2x(icon_span);
-        var text = D.textSpan(flex, "Manual Send");
-    }
-
-    drawReceiveButton(div, recv_func) {
-        var b = D.button(div, recv_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var qr = I.qrcode2x(icon_span);
-        var text = D.textSpan(flex, "Manual Receive");
-=======
     drawReceiveButton(div, recv_func) {
         this.drawButton(div, I.qrcode2x, "Manual Receive", recv_func, "main-button");
->>>>>>> aggregated all buttons into Screen super class, added new changes to manual payments
     }
 
     doDisconnect() {
@@ -135,21 +115,12 @@ class ConnectedWalletScreen extends Screen {
 
         var buttons = D.emptyDiv(flex, "flex justify-around py-4");
         this.drawDisconnectButton(buttons,
-<<<<<<< HEAD
                                  (function() {this.doDisconnect()}).bind(this));
         var send = D.emptyDiv(flex, "flex justify-around py-4");
         this.drawSendButton(send, (function() {this.doSend()}).bind(this));
         var recv = D.emptyDiv(flex, "flex justify-around py-4");
         this.drawReceiveButton(recv,
                                (function() {this.doReceive()}).bind(this));
-=======
-            (function() {this.doDisconnect()}).bind(this));
-            var send = D.emptyDiv(flex, "flex justify-around py-4");
-            this.drawSendButton(send, (function() {this.doSend()}).bind(this));
-            var recv = D.emptyDiv(flex, "flex justify-around py-4");
-            this.drawReceiveButton(recv,
-                                   (function() {this.doReceive()}).bind(this));
->>>>>>> aggregated all buttons into Screen super class, added new changes to manual payments
     }
 
     ///////////////////////////////////////////////////////////////////////////
