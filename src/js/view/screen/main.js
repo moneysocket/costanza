@@ -12,14 +12,14 @@ var ManualReceiveReceipt = require(
     '../../model/manual-receive-receipt.js').ManualReceiveReceipt;
 var ManualSendReceipt = require(
     '../../model/manual-send-receipt.js').ManualSendReceipt;
+var Screen = require('./Screen');
 
 const CONNECT_STATE = require('../../model/model.js').CONNECT_STATE;
 
-
-class MainScreen {
+class MainScreen extends Screen {
     constructor(app_div, model) {
-        this.app_div = app_div;
-        this.model = model;
+        super(app_div, model);
+
         this.onconnectwalletclick = null;
         this.onconnectappclick = null;
         this.onscanclick = null;
@@ -37,37 +37,19 @@ class MainScreen {
     ///////////////////////////////////////////////////////////////////////////
 
     drawScanButton(div, scan_func) {
-        var b = D.button(div, scan_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var qr = I.qrcode2x(icon_span);
-        var text = D.textSpan(flex, "Scan");
+        this.drawButton(div, I.qrcode2x, "Scan", scan_func, "main-button");
     }
 
     drawMenuButton(div, menu_func) {
-        var b = D.button(div, menu_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var bars_span = D.emptySpan(flex, "px-2");
-        var bars = I.bars2x(bars_span);
-        var text = D.textSpan(flex, "Menu");
+        this.drawButton(div, I.bars2x, "Menu", menu_func, "main-button");
     }
 
     drawConnectWalletButton(div, connect_func) {
-        var b = D.button(div, connect_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var bars_span = D.emptySpan(flex, "px-2");
-        var bars = I.plug2x(bars_span);
-        var text = D.textSpan(flex, "Connect Wallet Provider");
+        this.drawButton(div, I.plug2x, "Connect Wallet Provider", connect_func, "main-button");
     }
 
     drawConnectAppButton(div, connect_func) {
-        var b = D.button(div, connect_func,
-                         "bg-yellow-700 hover:bg-yellow-600 text-white " +
-                         "rounded px-2 py-1");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var bars_span = D.emptySpan(flex, "");
-        var bars = I.flyingmoney(bars_span);
-        var text = D.textSpan(flex, "App");
+        this.drawButton(div, I.flyingmoney, "App", connect_func, "app-button");
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -79,9 +61,9 @@ class MainScreen {
         D.deleteChildren(this.balance_div);
         var flex = D.emptyDiv(this.balance_div, "flex justify-center py-4");
         var button = D.emptyDiv(flex,
-            "rounded px-4 py-4 bg-yellow-200 hover:bg-yellow-300");
+            "rounded px-4 py-4 bg-gray-800 hover:bg-gray-900");
         D.textParagraph(button, wad.toString(),
-                        "font-bold text-3xl text-yellow-900");
+                        "font-bold text-3xl ms-green-txt");
         button.onclick = (function() {
             this.onconnectwalletclick();
         }).bind(this);
@@ -94,18 +76,18 @@ class MainScreen {
         var wad = this.model.getProviderBalanceWad();
         D.deleteChildren(this.auth_balance_div);
         var border = D.emptyDiv(this.auth_balance_div,
-                                "px-2 py-2 bg-yellow-200 hover:bg-yellow-300");
+                                "px-2 py-2 bg-gray-800 hover:bg-gray-900 border border-gray-600 rounded-2xl text-gray-300");
         var icon_span = D.emptySpan(border, "px-2 font-bold");
         icon_span.onclick = (function() {
             this.onconnectappclick();
         }).bind(this);
         I.flyingmoney(icon_span);
-        var a = D.textSpan(border, "App", "px-2 font-bold text-yellow-900");
+        var a = D.textSpan(border, "App", "px-2 font-bold text-gray-300");
         a.onclick = (function() {
             this.onconnectappclick();
         }).bind(this);
         var p = D.textParagraph(border, wad.toString(),
-                                "font-bold text-sm text-yellow-900");
+                                "font-bold text-sm text-gray-300");
         p.onclick = (function() {
             this.onconnectappclick();
         }).bind(this);
@@ -120,7 +102,7 @@ class MainScreen {
     drawPing() {
         var msecs = this.model.getConsumerLastPing();
         D.deleteChildren(this.ping_div);
-        D.textParagraph(this.ping_div, msecs.toString() + " ms", "text-sm");
+        D.textParagraph(this.ping_div, msecs.toString() + " ms", "text-sm text-gray-300");
     }
 
 
@@ -132,7 +114,7 @@ class MainScreen {
         var [error, got_invoice, completed, wad, expired] = (
             ManualReceiveReceipt.manualReceiveInfo(manual_receive));
 
-        var d = D.emptyDiv(div, "tx-button-qr");
+        var d = D.emptyDiv(div, "tx-button-socket");
         d.onclick = (function() {
             click_func(manual_receive);
         });
@@ -151,8 +133,8 @@ class MainScreen {
             D.textSpan(flex, "+ " + wad.toString(),
                        "font-bold text-green-400 px-2");
         } else {
-            D.textSpan(flex, "Manual receive in progress " + wad.toString(),
-                       "flex-grow text-sm");
+            D.textSpan(flex, "Manual receive in progress ", "flex-grow text-sm");
+            D.textSpan(flex, wad.toString(), "font-bold ms-green-txt px-2");
         }
     }
 
@@ -160,7 +142,7 @@ class MainScreen {
         var [error, completed, bolt11, wad, description] = (
             ManualSendReceipt.manualSendInfo(manual_send));
 
-        var d = D.emptyDiv(div, "tx-button-qr");
+        var d = D.emptyDiv(div, "tx-button-socket");
         d.onclick = (function() {
             click_func(manual_send);
         });
@@ -179,7 +161,7 @@ class MainScreen {
             D.textSpan(flex, "Paid", "flex-grow font-bold");
             D.textSpan(flex, description, "flex-grow text-sm");
             D.textSpan(flex, "+ " + wad.toString(),
-                       "font-bold text-red-400 px-2");
+                       "font-bold text-red-700 px-2");
         }
     }
 
@@ -202,10 +184,10 @@ class MainScreen {
             this.model.msatsToWalletCurrencyWad(0) : total_wad;
         if (increment) {
             D.textSpan(flex, "+ " + wad.toString(),
-                       "font-bold text-green-400 px-2");
+                       "font-bold ms-green-txt px-2");
         } else {
             D.textSpan(flex, "- " + wad.toString(),
-                       "font-bold text-red-400 px-2");
+                       "font-bold text-red-700 px-2");
         }
     }
 
@@ -215,7 +197,7 @@ class MainScreen {
 
     drawConnectWalletPanel(div, connect_func) {
         var flex = D.emptyDiv(div,
-                              "flex-col justify-evenly section-background");
+                              "flex-col justify-evenly connect-wallet-panel");
         this.drawConnectWalletButton(flex, connect_func);
     }
 
@@ -239,7 +221,7 @@ class MainScreen {
 
     drawBalancePanel(div, connect_func) {
         var flex = D.emptyDiv(div,
-                              "flex-col justify-evenly section-background");
+                              "flex-col justify-evenly section-background balance-panel");
         var left_box = D.emptyDiv(flex, "flex flex-row");
 
         this.auth_balance_div = D.emptyDiv(left_box);
@@ -273,13 +255,13 @@ class MainScreen {
 
     drawReceiptPanel(div, click_func) {
         var flex = D.emptyDiv(div,
-                              "flex-col justify-evenly section-background");
+                              "flex-col justify-evenly section-background receipt-panel");
         this.receipts_div = D.emptyDiv(flex);
         this.drawReceipts(click_func);
     }
 
     drawActionPanel(div, scan_func, menu_func) {
-        var flex = D.emptyDiv(div, "flex justify-evenly section-background");
+        var flex = D.emptyDiv(div, "flex justify-evenly section-background-lite");
         this.drawScanButton(flex, scan_func);
         this.drawMenuButton(flex, menu_func);
     }
@@ -308,7 +290,7 @@ class MainScreen {
     }
 
     draw() {
-        var flex = D.emptyDiv(this.app_div, "flex flex-col h-screen");
+        var flex = this.screenDiv("div-reg-flex");
         var flex_top = D.emptyDiv(flex, "flex-none");
         var flex_mid = D.emptyDiv(flex, "flex-grow");
         var flex_bottom = D.emptyDiv(flex, "flex-none");

@@ -5,23 +5,15 @@
 var D = require('../../utl/dom.js').DomUtl;
 var I = require('../../utl/icon.js').IconUtl;
 
+var Screen = require('./Screen');
 
-class ErrorScreen {
+
+class ErrorScreen extends Screen {
     constructor(app_div) {
+        super(app_div);
+
         this.app_div = app_div;
         this.onokclick = null;
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Buttons
-    ///////////////////////////////////////////////////////////////////////////
-
-    drawOkButton(div, back_func) {
-        var b = D.button(div, back_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var back = I.checkcircle2x(icon_span);
-        var text = D.textSpan(flex, "OK");
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -30,13 +22,13 @@ class ErrorScreen {
 
     drawErrorPanel(div, err_str) {
         var flex = D.emptyDiv(div, "flex-col section-background");
-        var icon_flex = D.emptyDiv(flex, "text-yellow-700 py-4");
+        var icon_flex = D.emptyDiv(flex, "text-gray-300 py-4");
         I.exclaimcircle2x(icon_flex);
-        var text_flex = D.emptyDiv(flex, "text-yellow-800");
+        var text_flex = D.emptyDiv(flex, "text-gray-300");
         D.textParagraph(text_flex, "Error: " + err_str, "text-center py-10");
         var button_flex = D.emptyDiv(flex, "px-2 py-4");
 
-        this.drawOkButton(button_flex, this.onokclick);
+        this.drawBackButton(button_flex, this.onokclick);
     }
 
     ///////////////////////////////////////////////////////////////////////////

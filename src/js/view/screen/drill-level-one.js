@@ -5,34 +5,26 @@
 var D = require('../../utl/dom.js').DomUtl;
 var I = require('../../utl/icon.js').IconUtl;
 var Wad = require("moneysocket").Wad;
+
+var Screen = require('./Screen');
+
 const Bolt11 = require("moneysocket").Bolt11;
 const b11 = require("bolt11");
 
-class DrillLevelOneScreen {
+class DrillLevelOneScreen extends Screen {
     constructor(app_div) {
-        this.app_div = app_div;
+        super(app_div);
+        
         this.onbackclick = null;
         this.onentryclick = null;
         this.receipt = null;
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    // Buttons
-    ///////////////////////////////////////////////////////////////////////////
-
-    drawBackButton(div, back_func) {
-        var b = D.button(div, back_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var back = I.backarrow2x(icon_span);
-        var text = D.textSpan(flex, "Back");
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
     // Panels
     ///////////////////////////////////////////////////////////////////////////
 
-    drawMenuTitle(div) {
+    drawTitle(div) {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
         var title;
         switch (this.receipt['type']) {
@@ -50,17 +42,7 @@ class DrillLevelOneScreen {
             break;
         }
         D.textParagraph(flex, title,
-                        "font-black text-2xl text-yellow-800");
-    }
-
-    drawTitlePanel(div) {
-        var flex = D.emptyDiv(div,
-                              "flex flex-wrap section-background");
-        var button_flex = D.emptyDiv(flex, "flex-initial px-2");
-        var title_flex = D.emptyDiv(flex, "flex-initial px-5 py-2");
-
-        this.drawBackButton(button_flex, this.onbackclick);
-        this.drawMenuTitle(title_flex);
+                        "page-title");
     }
 
     typeToTitle(type) {
@@ -96,7 +78,7 @@ class DrillLevelOneScreen {
                             "font-bold text-green-400"];
                 } else {
                     return ["-" + entry['wad'].toString(),
-                            "font-bold text-red-400"];
+                            "font-bold text-red-700"];
                 }
             }
             return ["-", ""];
@@ -108,7 +90,7 @@ class DrillLevelOneScreen {
                         "font-bold text-red-400"];
             } else {
                 var w = this.receipt['entries'][0]['wad'];
-                return [ "-" + w.toString(), "font-bold text-red-400"];
+                return [ "-" + w.toString(), "font-bold text-red-700"];
             }
             return ["-", ""];
             break;
@@ -131,7 +113,7 @@ class DrillLevelOneScreen {
 
     drawEntry(div, entry) {
         var e = D.emptyDiv(div,
-                           "bg-gray-600 hover:bg-gray-400 text-gray-300 py-2");
+                           "bg-gray-800 hover:bg-gray-900 text-gray-300 py-2");
         // TODO - on click
         e.onclick = (function() {
             if (this.onentryclick != null) {

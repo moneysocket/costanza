@@ -5,27 +5,19 @@
 var D = require('../../utl/dom.js').DomUtl;
 var I = require('../../utl/icon.js').IconUtl;
 var Wad = require("moneysocket").Wad;
+
+var Screen = require('./Screen');
+
 const Bolt11 = require("moneysocket").Bolt11;
 const b11 = require("bolt11");
 
-class DrillLevelTwoScreen {
+class DrillLevelTwoScreen extends Screen {
     constructor(app_div) {
-        this.app_div = app_div;
+        super(app_div);
+
         this.onbackclick = null;
         this.receipt = null;
         this.entry = null;
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Buttons
-    ///////////////////////////////////////////////////////////////////////////
-
-    drawBackButton(div, back_func) {
-        var b = D.button(div, back_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var back = I.backarrow2x(icon_span);
-        var text = D.textSpan(flex, "Back");
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -42,7 +34,7 @@ class DrillLevelTwoScreen {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
         var title = this.typeToTitle(this.entry['type']);
         D.textParagraph(flex, title,
-                        "font-black text-2xl text-yellow-800");
+                        "page-title");
     }
 
     drawTitlePanel(div) {
@@ -70,19 +62,19 @@ class DrillLevelTwoScreen {
 
     drawValue(div, key, value) {
         var v = D.emptyDiv(div,
-                           "flex justify-start text-yellow-800 px-4");
+                           "flex justify-start text-gray-300 px-4");
         D.textSpan(v, this.typeToTitle(key), "text-xs font-bold w-1/4");
         D.textSpan(v, value, "break-words w-3/4");
     }
 
     drawWad(div, key, wad) {
         var v = D.emptyDiv(div,
-                           "flex justify-start text-yellow-800 px-4");
+                           "flex justify-start text-gray-300 px-4");
         D.textSpan(v, this.typeToTitle(key), "text-xs font-bold w-1/4");
         D.textSpan(v, wad.toString(), "break-words w-3/4");
         var msats = wad.msats;
         var v = D.emptyDiv(div,
-                           "flex justify-start text-yellow-800 px-4");
+                           "flex justify-start text-gray-300 px-4");
         D.textSpan(v, "msats", "text-xs font-bold w-1/4");
         D.textSpan(v, msats + " msats", "break-words w-3/4");
     }

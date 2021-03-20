@@ -5,67 +5,44 @@
 var D = require('../../utl/dom.js').DomUtl;
 var I = require('../../utl/icon.js').IconUtl;
 
+var Screen = require('./Screen');
 
-class ConnectScreen {
-    constructor(app_div, model) {
-        this.app_div = app_div;
+
+class ConnectScreen extends Screen {
+    constructor(app_div, model) { 
+        super(app_div, model) ;
+
         this.onbbackclick = null;
         this.onbeaconselect = null;
         this.ongenerateselect = null;
         this.onscanselect = null;
         this.onforgetselect = null;
         this.onconnectstoredselect = null;
-        this.model = model;
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Buttons
     ///////////////////////////////////////////////////////////////////////////
 
-    drawBackButton(div, back_func) {
-        var b = D.button(div, back_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var back = I.backarrow2x(icon_span);
-        var text = D.textSpan(flex, "Back");
+
+    drawPasteButton(div, paste_func) {
+       this.drawButtonPlain(div, "Use", paste_func, "main-button");
     }
 
-   drawPasteButton(div, paste_func) {
-        var b = D.button(div, paste_func, "p-2 main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        D.textSpan(flex, "Use");
-    }
-
-   drawGenerateButton(div, generate_func) {
-        var b = D.button(div, generate_func, "p-2 main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-1");
-        var back = I.magic2x(icon_span);
-        var text = D.textSpan(flex, "Generate");
+    drawGenerateButton(div, generate_func) {
+       this.drawButton(div, I.magic2x, "Generate", generate_func, "main-button");
     }
 
     drawScanButton(div, scan_func) {
-        var b = D.button(div, scan_func, "p-2 main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var qr = I.qrcode2x(icon_span);
-        var text = D.textSpan(flex, "Scan");
+        this.drawButton(div, I.qrcode2x, "Scan", scan_func, "main-button");
     }
 
     drawConnectStoredButton(div, connect_func) {
-        var b = D.button(div, connect_func, "p-2 main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var qr = I.bolt2x(icon_span);
-        var text = D.textSpan(flex, "Connect");
+        this.drawButton(div, I.bolt2x, "Connect", connect_func, "main-button");
     }
 
     drawForgetButton(div, forget_func) {
-        var b = D.button(div, forget_func, "p-2 main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var qr = I.trash2x(icon_span);
-        var text = D.textSpan(flex, "Forget");
+        this.drawButton(div, I.trash2x, "Forget", forget_func, "main-button");
     }
 
     pasteResult() {
@@ -108,25 +85,11 @@ class ConnectScreen {
     // Panels
     ///////////////////////////////////////////////////////////////////////////
 
-    drawTitle(div) {
-        var flex = D.emptyDiv(div, "flex items-center justify-around");
-        D.textParagraph(flex, this.title_string,
-                        "font-black text-xl text-yellow-800");
-    }
 
     drawDisconnected(div) {
         var flex = D.emptyDiv(div, "flex items-center justify-around");
         D.textParagraph(flex, "(disconnected)",
-                        "font-black text-yellow-800 py-5");
-    }
-
-    drawTitlePanel(div) {
-        var flex = D.emptyDiv(div,
-                              "flex flex-wrap section-background");
-        var button_flex = D.emptyDiv(flex, "flex-initial px-2");
-        var title_flex = D.emptyDiv(flex, "flex-initial px-5 py-2");
-        this.drawBackButton(button_flex, this.onbackclick);
-        this.drawTitle(title_flex);
+                        "font-black text-red-600 py-5");
     }
 
 
@@ -143,15 +106,15 @@ class ConnectScreen {
     drawStored(div) {
         var flex = D.emptyDiv(div, "flex flex-col");
         D.textParagraph(flex, this.stored_string,
-                        "font-black text-yellow-800 py-5");
+                        "font-black text-gray-300 py-5");
         if (! this.hasBeacon()) {
             D.textParagraph(flex, "(none)",
-                            "font-black text-yellow-800 py-5");
+                            "font-black text-gray-300 py-5");
             return;
         }
         var beacon = this.getBeacon();
         D.textParagraph(flex, beacon,
-                        "font-black break-words text-yellow-800 py-5");
+                        "font-black break-words text-gray-300 py-5");
 
         var buttons = D.emptyDiv(flex, "flex justify-around py-4");
         this.drawConnectStoredButton(buttons,
@@ -163,17 +126,15 @@ class ConnectScreen {
 
     drawInterfacePanel(div) {
         var flex = D.emptyDiv(div,
-                              "flex flex-col section-background");
+                              "flex flex-col section-background justify-center");
 
         this.drawDisconnected(flex);
 
         var paste = D.emptyDiv(flex,
                                "flex justify-center items-center " +
-                               "bg-yellow-500 py-2 m-2 rounded");
-        this.paste_input = D.emptyInput(paste,
-            "w-auto appearance-none rounded shadow " +
-            "p-3 text-grey-dark mr-2 focus:outline-none");
-        this.paste_input.setAttribute("placeholder", "paste beacon");
+                               "border border-gray-800 py-2 m-2 rounded-2xl");
+        this.paste_input = D.emptyInput(paste,"input-area");
+        this.paste_input.setAttribute("placeholder", "Paste Beacon Here");
         this.drawPasteButton(paste,
                              (function() {this.pasteResult()}).bind(this));
         var buttons = D.emptyDiv(flex, "flex justify-around py-4");

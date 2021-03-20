@@ -5,18 +5,20 @@
 const D = require('../../utl/dom.js').DomUtl;
 const I = require('../../utl/icon.js').IconUtl;
 
+var Screen = require('./Screen');
+
 const Wad = require("moneysocket").Wad;
 
-class ConnectedAppScreen {
+class ConnectedAppScreen extends Screen {
     constructor(app_div, model) {
-        this.app_div = app_div;
+        super(app_div, model);
+
         this.onbackclick = null;
         this.ondisconnectclick = null;
         this.oninputerror = null;
         this.onwadchange = null;
         this.onpayerchange = null;
         this.onpayeechange = null;
-        this.model = model;
         this.balance_div = null;
         this.available_div = null;
         this.send_div = null;
@@ -25,49 +27,30 @@ class ConnectedAppScreen {
         this.set_input = null;
         this.slider_val = 0;
         this.slider_input = null;
+
+        this.title_string = "App Connection";
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Buttons
     ///////////////////////////////////////////////////////////////////////////
 
-    drawBackButton(div, back_func) {
-        var b = D.button(div, back_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var back = I.backarrow2x(icon_span);
-        var text = D.textSpan(flex, "Back");
-    }
-
     drawDisconnectButton(div, disconnect_func) {
-        var b = D.button(div, disconnect_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var back = I.plug2x(icon_span);
-        var text = D.textSpan(flex, "Disconnect App");
+        this.drawButton(div, I.plug2x, "Disconnect App", disconnect_func, "main-button");
     }
 
     drawSetButton(div, set_func) {
-        var b = D.button(div, set_func, "p-2 main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        D.textSpan(flex, "Set");
+        this.drawButtonPlain(div, "Set", set_func, "main-button");
     }
 
     drawToggleButton(div, toggle_func) {
-        var b = D.button(div, toggle_func,
-                         "bg-yellow-700 hover:bg-yellow-600 text-white " +
-                         "font-bold rounded py-1 px-5");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        D.textSpan(flex, "Toggle");
+        this.drawButtonPlain(div, "Toggle", toggle_func, "secondary-button");
     }
 
     drawPercentButton(div, pct, pct_func) {
-        var b = D.button(div, pct_func,
-                         "bg-yellow-700 hover:bg-yellow-600 text-white " +
-                         "font-bold rounded py-3 px-5");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        D.textSpan(flex, pct.toString() + "%");
+        this.drawButtonPercent(div, pct, pct_func, "percent-button");
     }
+
 
     ///////////////////////////////////////////////////////////////////////////
     // input actions
@@ -165,9 +148,9 @@ class ConnectedAppScreen {
         D.deleteChildren(div);
 
         var flex = D.emptyDiv(div, "flex flex-col py-2");
-        D.textParagraph(flex, "Authorized:", "text-yellow-900");
+        D.textParagraph(flex, "Authorized:", "text-gray-300");
         D.textParagraph(flex, wad.toString(),
-                        "font-bold text-3xl text-yellow-900 ");
+                        "font-bold text-3xl ms-green-txt ");
         var sats = (wad['msats'] / 1000.0).toFixed(3) + " sats";
         var hoverstring = wad['name'] + "\n" + sats;
         div.setAttribute("title", hoverstring);
@@ -175,10 +158,8 @@ class ConnectedAppScreen {
 
     drawInputRow(div) {
         var set = D.emptyDiv(div, "flex justify-center items-center " +
-                                  "bg-yellow-500 py-2 m-2 rounded");
-        this.set_input = D.emptyInput(set,
-            "w-40 appearance-none rounded shadow " +
-            "p-3 text-grey-dark mr-2 focus:outline-none");
+                                  "bg-gray-800 py-2 m-2 rounded");
+        this.set_input = D.emptyInput(set, "input-area");
         this.set_input.setAttribute("type", "number");
         this.set_input.setAttribute("min", "0");
         this.set_input.setAttribute("placeholder", "amount");
@@ -217,11 +198,11 @@ class ConnectedAppScreen {
     drawSendToggleRow(div) {
         D.deleteChildren(div);
         var toggle = D.emptyDiv(div, "flex justify-center items-center " +
-                                "bg-yellow-500 py-1 m-2 rounded");
-        D.textSpan(toggle, "Authorize Send:", "text-yellow-900");
+                                "bg-gray-800 py-1 m-2 rounded");
+        D.textSpan(toggle, "Authorize Send:", "text-gray-300");
         var payer = this.model.getProviderIsPayer();
         D.textSpan(toggle, payer ? "True" : "False",
-                   "px-8 text-2xl font-bold text-yellow-900");
+                   "px-8 text-2xl font-bold text-gray-300");
         if (! this.model.getConsumerIsPayer()) {
             return;
         }
@@ -232,11 +213,11 @@ class ConnectedAppScreen {
     drawReceiveToggleRow(div) {
         D.deleteChildren(div);
         var toggle = D.emptyDiv(div, "flex justify-center items-center " +
-                                "bg-yellow-500 py-1 m-2 rounded");
-        D.textSpan(toggle, "Authorize Receive:", "text-yellow-900");
+                                "bg-gray-800 py-1 m-2 rounded");
+        D.textSpan(toggle, "Authorize Receive:", "text-gray-300");
         var payee = this.model.getProviderIsPayee();
         D.textSpan(toggle, payee ? "True" : "False",
-                   "px-8 text-2xl font-bold text-yellow-900");
+                   "px-8 text-2xl font-bold text-gray-300");
         if (! this.model.getConsumerIsPayee()) {
             return;
         }
@@ -250,19 +231,19 @@ class ConnectedAppScreen {
         var payee = this.model.getConsumerIsPayee();
 
         D.deleteChildren(div);
-        var across = D.emptyDiv(div, "flex justify-around py-4 bg-yellow-500");
+        var across = D.emptyDiv(div, "flex justify-around py-4 bg-gray-800");
         var col1 = D.emptyDiv(across, "flex flex-col");
-        D.textSpan(col1, "Available:", "text-yellow-900");
-        D.textSpan(col1, wad.toString(), "font-bold text-xl text-yellow-900");
+        D.textSpan(col1, "Available:", "text-gray-300");
+        D.textSpan(col1, wad.toString(), "font-bold text-xl text-gray-300");
         var col2 = D.emptyDiv(across, "flex flex-col items-center");
         var r1 = D.emptyDiv(col2, "flex justify-center");
-        D.textSpan(r1, "Can Send:", "text-yellow-900");
+        D.textSpan(r1, "Can Send:", "text-gray-300");
         D.textSpan(r1, payer ? "True" : "False",
-                   "font-bold text-xl text-yellow-900 px-2");
+                   "font-bold text-xl text-gray-300 px-2");
         var r2 = D.emptyDiv(col2, "flex justify-center items-center");
-        D.textSpan(r2, "Can Receive:", "text-yellow-900");
+        D.textSpan(r2, "Can Receive:", "text-gray-300");
         D.textSpan(r2, payee ? "True" : "False",
-                   "font-bold text-xl text-yellow-900 px-2");
+                   "font-bold text-xl text-gray-300 px-2");
     }
 
     drawDisconnectRow(div) {
@@ -274,21 +255,6 @@ class ConnectedAppScreen {
     ///////////////////////////////////////////////////////////////////////////
     // Panels
     ///////////////////////////////////////////////////////////////////////////
-
-    drawTitle(div) {
-        var flex = D.emptyDiv(div, "flex items-center justify-around");
-        D.textParagraph(flex, "App Connection:",
-                        "font-black text-yellow-800");
-    }
-
-    drawTitlePanel(div) {
-        var flex = D.emptyDiv(div,
-                              "flex flex-wrap section-background");
-        var button_flex = D.emptyDiv(flex, "flex-initial px-2");
-        var title_flex = D.emptyDiv(flex, "flex-initial px-5 py-2");
-        this.drawBackButton(button_flex, this.onbackclick);
-        this.drawTitle(title_flex);
-    }
 
     drawInterfacePanel(div) {
         var flex = D.emptyDiv(div, "flex flex-col section-background");

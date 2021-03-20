@@ -8,35 +8,26 @@ const D = require('../../utl/dom.js').DomUtl;
 const I = require('../../utl/icon.js').IconUtl;
 const Copy = require('clipboard-copy');
 
+var Screen = require('./Screen');
 
-class ManualProvideInvoiceScreen {
+
+class ManualProvideInvoiceScreen extends Screen {
     constructor(app_div, model) {
-        this.app_div = app_div;
-        this.model = model;
+        super(app_div, model);
+
         this.onbackclick = null;
         this.displayed_bolt11 = "";
         this.copy_span = null;
+
+        this.title_string = "Pay This:";
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Buttons
     ///////////////////////////////////////////////////////////////////////////
 
-    drawBackButton(div, back_func) {
-        var b = D.button(div, back_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var back = I.backarrow2x(icon_span);
-        var text = D.textSpan(flex, "Back");
-    }
-
-
     drawCopyBolt11Button(div, copy_func) {
-        var b = D.button(div, copy_func, "p-2 main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex);
-        var qr = I.copy2x(icon_span);
-        this.copy_span = D.textSpan(flex, "Copy", "px-1");
+        this.drawButton(div, I.copy2x, "Copy", copy_func, "main-button");
     }
 
     doCopy() {
@@ -48,21 +39,6 @@ class ManualProvideInvoiceScreen {
     ///////////////////////////////////////////////////////////////////////////
     // Panels
     ///////////////////////////////////////////////////////////////////////////
-
-    drawTitle(div) {
-        var flex = D.emptyDiv(div, "flex items-center justify-around");
-        D.textParagraph(flex, "Pay This:",
-                        "font-black text-2xl text-yellow-800");
-    }
-
-    drawTitlePanel(div) {
-        var flex = D.emptyDiv(div,
-                              "flex flex-wrap section-background");
-        var button_flex = D.emptyDiv(flex, "flex-initial px-2");
-        var title_flex = D.emptyDiv(flex, "flex-initial px-5 py-2");
-        this.drawBackButton(button_flex, this.onbackclick);
-        this.drawTitle(title_flex);
-    }
 
     drawQr(div, bolt11) {
         this.displayed_bolt11 = bolt11;
@@ -77,7 +53,7 @@ class ManualProvideInvoiceScreen {
             mode:      "label",
             mSize:     6,
             fontname:  "sans",
-            fontcolor: "#941",
+            fontcolor: "#3B5323",
             quiet:     0,
         });
         var b = D.emptyDiv(div, "border-8 border-white");

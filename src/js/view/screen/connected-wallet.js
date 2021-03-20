@@ -6,10 +6,13 @@
 const D = require('../../utl/dom.js').DomUtl;
 const I = require('../../utl/icon.js').IconUtl;
 
+var Screen = require('./Screen');
 
-class ConnectedWalletScreen {
+
+class ConnectedWalletScreen extends Screen {
     constructor(app_div, model) {
-        this.app_div = app_div;
+        super(app_div, model);
+
         this.onbackclick = null;
         this.ondisconnectclick = null;
         this.onmanualsendclick = null;
@@ -19,42 +22,24 @@ class ConnectedWalletScreen {
         this.payer_div = null;
         this.payee_div = null;
         this.ping_div = null;
+
+        this.title_string = "Wallet Disconnect";
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Buttons
     ///////////////////////////////////////////////////////////////////////////
 
-    drawBackButton(div, back_func) {
-        var b = D.button(div, back_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var back = I.backarrow2x(icon_span);
-        var text = D.textSpan(flex, "Back");
-    }
-
     drawDisconnectButton(div, disconnect_func) {
-        var b = D.button(div, disconnect_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var back = I.plug2x(icon_span);
-        var text = D.textSpan(flex, "Disconnect");
+        this.drawButton(div, I.plug2x, "Disconnect", disconnect_func, "main-button");
     }
 
     drawSendButton(div, send_func) {
-        var b = D.button(div, send_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var qr = I.qrcode2x(icon_span);
-        var text = D.textSpan(flex, "Manual Send");
+        this.drawButton(div, I.qrcode2x, "Manual Send", send_func, "main-button");
     }
 
     drawReceiveButton(div, recv_func) {
-        var b = D.button(div, recv_func, "main-button");
-        var flex = D.emptyDiv(b, "flex items-center justify-around");
-        var icon_span = D.emptySpan(flex, "px-2");
-        var qr = I.qrcode2x(icon_span);
-        var text = D.textSpan(flex, "Manual Receive");
+        this.drawButton(div, I.qrcode2x, "Manual Receive", recv_func, "main-button");
     }
 
     doDisconnect() {
@@ -84,7 +69,7 @@ class ConnectedWalletScreen {
         var wad = this.model.getConsumerBalanceWad();
         D.deleteChildren(this.balance_div);
         D.textParagraph(this.balance_div, wad.toString(),
-                        "font-bold text-3xl text-yellow-900 ");
+                        "font-bold text-3xl ms-green-txt ");
         var sats = (wad['msats'] / 1000.0).toFixed(3) + " sats";
         var hoverstring = wad['name'] + "\n" + sats;
         this.balance_div.setAttribute("title", hoverstring);
@@ -93,43 +78,28 @@ class ConnectedWalletScreen {
     drawPayer() {
         var is_payer = this.model.getConsumerIsPayer();
         D.deleteChildren(this.payer_div);
-        D.textSpan(this.payer_div, "Is Payer: ", "text-sm text-yellow-900");
+        D.textSpan(this.payer_div, "Is Payer: ", "text-sm text-gray-300");
         D.textSpan(this.payer_div, is_payer ? "True" : "False",
-                   "font-bold text-sm text-yellow-900");
+                   "font-bold text-sm text-gray-300");
     }
 
     drawPayee() {
         var is_payee = this.model.getConsumerIsPayee();
         D.deleteChildren(this.payee_div);
-        D.textSpan(this.payee_div, "Is Payee: ", "text-sm text-yellow-900");
+        D.textSpan(this.payee_div, "Is Payee: ", "text-sm text-gray-300");
         D.textSpan(this.payee_div, is_payee ? "True" : "False",
-                   "font-bold text-sm text-yellow-900");
+                   "font-bold text-sm text-gray-300");
     }
 
     drawPing() {
         var msecs = this.model.getConsumerLastPing();
         D.deleteChildren(this.ping_div);
-        D.textParagraph(this.ping_div, msecs.toString() + " ms", "text-sm");
+        D.textParagraph(this.ping_div, msecs.toString() + " ms", "text-sm text-gray-300");
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Panels
     ///////////////////////////////////////////////////////////////////////////
-
-    drawTitle(div) {
-        var flex = D.emptyDiv(div, "flex items-center justify-around");
-        D.textParagraph(flex, "Wallet Disconnect:",
-                        "font-black text-2xl text-yellow-800");
-    }
-
-    drawTitlePanel(div) {
-        var flex = D.emptyDiv(div,
-                              "flex flex-wrap section-background");
-        var button_flex = D.emptyDiv(flex, "flex-initial px-2");
-        var title_flex = D.emptyDiv(flex, "flex-initial px-5 py-2");
-        this.drawBackButton(button_flex, this.onbackclick);
-        this.drawTitle(title_flex);
-    }
 
     drawInterfacePanel(div) {
         var flex = D.emptyDiv(div,
