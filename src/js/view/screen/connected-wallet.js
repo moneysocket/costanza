@@ -78,23 +78,23 @@ class ConnectedWalletScreen extends Screen {
     drawPayer() {
         var is_payer = this.model.getConsumerIsPayer();
         D.deleteChildren(this.payer_div);
-        D.textSpan(this.payer_div, "Is Payer: ", "text-sm text-gray-400");
+        D.textSpan(this.payer_div, "Is Payer: ", "text-sm text-gray-300");
         D.textSpan(this.payer_div, is_payer ? "True" : "False",
-                   "font-bold text-sm text-gray-600");
+                   "font-bold text-sm text-gray-300");
     }
 
     drawPayee() {
         var is_payee = this.model.getConsumerIsPayee();
         D.deleteChildren(this.payee_div);
-        D.textSpan(this.payee_div, "Is Payee: ", "text-sm text-gray-400");
+        D.textSpan(this.payee_div, "Is Payee: ", "text-sm text-gray-300");
         D.textSpan(this.payee_div, is_payee ? "True" : "False",
-                   "font-bold text-sm text-gray-600");
+                   "font-bold text-sm text-gray-300");
     }
 
     drawPing() {
         var msecs = this.model.getConsumerLastPing();
         D.deleteChildren(this.ping_div);
-        D.textParagraph(this.ping_div, msecs.toString() + " ms", "text-sm text-gray-500");
+        D.textParagraph(this.ping_div, msecs.toString() + " ms", "text-sm text-gray-300");
     }
 
     ///////////////////////////////////////////////////////////////////////////

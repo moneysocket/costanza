@@ -62,19 +62,19 @@ class DrillLevelTwoScreen extends Screen {
 
     drawValue(div, key, value) {
         var v = D.emptyDiv(div,
-                           "flex justify-start text-gray-400 px-4");
+                           "flex justify-start text-gray-300 px-4");
         D.textSpan(v, this.typeToTitle(key), "text-xs font-bold w-1/4");
         D.textSpan(v, value, "break-words w-3/4");
     }
 
     drawWad(div, key, wad) {
         var v = D.emptyDiv(div,
-                           "flex justify-start text-gray-400 px-4");
+                           "flex justify-start text-gray-300 px-4");
         D.textSpan(v, this.typeToTitle(key), "text-xs font-bold w-1/4");
         D.textSpan(v, wad.toString(), "break-words w-3/4");
         var msats = wad.msats;
         var v = D.emptyDiv(div,
-                           "flex justify-start text-gray-400 px-4");
+                           "flex justify-start text-gray-300 px-4");
         D.textSpan(v, "msats", "text-xs font-bold w-1/4");
         D.textSpan(v, msats + " msats", "break-words w-3/4");
     }

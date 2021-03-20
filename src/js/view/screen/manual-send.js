@@ -70,13 +70,13 @@ class ManualSendScreen extends Screen {
 
         var val = D.emptyDiv(div, "flex flex-col");
         D.textParagraph(val, this.bolt11,
-                   "font-black break-words text-gray-600 py-5");
+                   "font-black break-words text-gray-300 py-5");
         D.textParagraph(val, "Description: " + description,
-                        "font-black text-gray-600 py-5");
+                        "font-black text-gray-300 py-5");
         D.textParagraph(val, "Requested: " + send_wad.toString(),
-                   "font-black text-gray-600 py-5");
+                   "font-black text-gray-300 py-5");
         D.textParagraph(val, "Expires: " + expiryfmt.toString(),
-                   "font-black break-words text-gray-600 py-5");
+                   "font-black break-words text-gray-300 py-5");
 
         var button_div = D.emptyDiv(val, "flex justify-center py-2");
         this.drawPayButton(button_div,
@@ -91,17 +91,17 @@ class ManualSendScreen extends Screen {
         D.deleteChildren(div);
         var across = D.emptyDiv(div, "flex justify-around py-4 bg-gray-800");
         var col1 = D.emptyDiv(across, "flex flex-col");
-        D.textSpan(col1, "Available:", "text-gray-600");
-        D.textSpan(col1, wad.toString(), "font-bold text-xl text-gray-600");
+        D.textSpan(col1, "Available:", "text-gray-300");
+        D.textSpan(col1, wad.toString(), "font-bold text-xl text-gray-300");
         var col2 = D.emptyDiv(across, "flex flex-col items-center");
         var r1 = D.emptyDiv(col2, "flex justify-center");
-        D.textSpan(r1, "Can Send:", "text-gray-600");
+        D.textSpan(r1, "Can Send:", "text-gray-300");
         D.textSpan(r1, payer ? "True" : "False",
-                   "font-bold text-xl text-gray-600 px-2");
+                   "font-bold text-xl text-gray-300 px-2");
         var r2 = D.emptyDiv(col2, "flex justify-center items-center");
-        D.textSpan(r2, "Can Receive:", "text-gray-600");
+        D.textSpan(r2, "Can Receive:", "text-gray-300");
         D.textSpan(r2, payee ? "True" : "False",
-                   "font-bold text-xl text-gray-600 px-2");
+                   "font-bold text-xl text-gray-300 px-2");
     }
 
     ///////////////////////////////////////////////////////////////////////////

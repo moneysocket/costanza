@@ -102,7 +102,7 @@ class MainScreen extends Screen {
     drawPing() {
         var msecs = this.model.getConsumerLastPing();
         D.deleteChildren(this.ping_div);
-        D.textParagraph(this.ping_div, msecs.toString() + " ms", "text-sm text-gray-500");
+        D.textParagraph(this.ping_div, msecs.toString() + " ms", "text-sm text-gray-300");
     }
 
 

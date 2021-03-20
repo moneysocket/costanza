@@ -29,7 +29,7 @@ class ConnectProgress {
     }
 
     setConnectingTitle(div, title, color) {
-        var t = D.textSpan(div, title, "text-gray-600");
+        var t = D.textSpan(div, title, "text-gray-300");
     }
 
     setProgressLine(div, progress_string) {

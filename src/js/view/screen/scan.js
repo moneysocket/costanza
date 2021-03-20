@@ -93,7 +93,7 @@ class ScanScreen extends Screen {
             "Ensure that a) the browser has permission from the OS to " +
             "access the camera and b) the page has permission from the " +
             "browser.");
-        D.textParagraph(div, text, "font-black text-2xl text-gray-600");
+        D.textParagraph(div, text, "font-black text-2xl text-gray-300");
     }
 
     drawScanVideo(div) {

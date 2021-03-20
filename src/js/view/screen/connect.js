@@ -106,15 +106,15 @@ class ConnectScreen extends Screen {
     drawStored(div) {
         var flex = D.emptyDiv(div, "flex flex-col");
         D.textParagraph(flex, this.stored_string,
-                        "font-black text-gray-600 py-5");
+                        "font-black text-gray-300 py-5");
         if (! this.hasBeacon()) {
             D.textParagraph(flex, "(none)",
-                            "font-black text-gray-600 py-5");
+                            "font-black text-gray-300 py-5");
             return;
         }
         var beacon = this.getBeacon();
         D.textParagraph(flex, beacon,
-                        "font-black break-words text-gray-500 py-5");
+                        "font-black break-words text-gray-300 py-5");
 
         var buttons = D.emptyDiv(flex, "flex justify-around py-4");
         this.drawConnectStoredButton(buttons,

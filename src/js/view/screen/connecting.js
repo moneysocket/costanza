@@ -21,7 +21,7 @@ class ConnectingScreen extends Screen {
         this.copy_span = null;
 
         var d = document.createElement("div");
-        D.setClass(d, "font-black text-2xl text-gray-600");
+        D.setClass(d, "font-black text-2xl text-gray-300");
         this.connect_progress = new ConnectProgress(d);
 
         this.ondisconnectclick = null;

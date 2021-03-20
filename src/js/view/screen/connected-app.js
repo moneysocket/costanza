@@ -148,7 +148,7 @@ class ConnectedAppScreen extends Screen {
         D.deleteChildren(div);
 
         var flex = D.emptyDiv(div, "flex flex-col py-2");
-        D.textParagraph(flex, "Authorized:", "text-gray-500");
+        D.textParagraph(flex, "Authorized:", "text-gray-300");
         D.textParagraph(flex, wad.toString(),
                         "font-bold text-3xl ms-green-txt ");
         var sats = (wad['msats'] / 1000.0).toFixed(3) + " sats";
@@ -199,10 +199,10 @@ class ConnectedAppScreen extends Screen {
         D.deleteChildren(div);
         var toggle = D.emptyDiv(div, "flex justify-center items-center " +
                                 "bg-gray-800 py-1 m-2 rounded");
-        D.textSpan(toggle, "Authorize Send:", "text-gray-500");
+        D.textSpan(toggle, "Authorize Send:", "text-gray-300");
         var payer = this.model.getProviderIsPayer();
         D.textSpan(toggle, payer ? "True" : "False",
-                   "px-8 text-2xl font-bold text-gray-500");
+                   "px-8 text-2xl font-bold text-gray-300");
         if (! this.model.getConsumerIsPayer()) {
             return;
         }
@@ -214,10 +214,10 @@ class ConnectedAppScreen extends Screen {
         D.deleteChildren(div);
         var toggle = D.emptyDiv(div, "flex justify-center items-center " +
                                 "bg-gray-800 py-1 m-2 rounded");
-        D.textSpan(toggle, "Authorize Receive:", "text-gray-500");
+        D.textSpan(toggle, "Authorize Receive:", "text-gray-300");
         var payee = this.model.getProviderIsPayee();
         D.textSpan(toggle, payee ? "True" : "False",
-                   "px-8 text-2xl font-bold text-gray-500");
+                   "px-8 text-2xl font-bold text-gray-300");
         if (! this.model.getConsumerIsPayee()) {
             return;
         }
@@ -233,17 +233,17 @@ class ConnectedAppScreen extends Screen {
         D.deleteChildren(div);
         var across = D.emptyDiv(div, "flex justify-around py-4 bg-gray-800");
         var col1 = D.emptyDiv(across, "flex flex-col");
-        D.textSpan(col1, "Available:", "text-gray-500");
-        D.textSpan(col1, wad.toString(), "font-bold text-xl text-gray-500");
+        D.textSpan(col1, "Available:", "text-gray-300");
+        D.textSpan(col1, wad.toString(), "font-bold text-xl text-gray-300");
         var col2 = D.emptyDiv(across, "flex flex-col items-center");
         var r1 = D.emptyDiv(col2, "flex justify-center");
-        D.textSpan(r1, "Can Send:", "text-gray-500");
+        D.textSpan(r1, "Can Send:", "text-gray-300");
         D.textSpan(r1, payer ? "True" : "False",
-                   "font-bold text-xl text-gray-500 px-2");
+                   "font-bold text-xl text-gray-300 px-2");
         var r2 = D.emptyDiv(col2, "flex justify-center items-center");
-        D.textSpan(r2, "Can Receive:", "text-gray-500");
+        D.textSpan(r2, "Can Receive:", "text-gray-300");
         D.textSpan(r2, payee ? "True" : "False",
-                   "font-bold text-xl text-gray-500 px-2");
+                   "font-bold text-xl text-gray-300 px-2");
     }
 
     drawDisconnectRow(div) {

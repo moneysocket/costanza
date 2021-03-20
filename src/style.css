@@ -33,11 +33,11 @@ body {
 }
 
 .page-title {
-    @apply font-black text-xl text-gray-500;
+    @apply font-black text-xl text-gray-300;
 }
 
 .text-subheading {
-    @apply font-bold text-xl text-gray-500;
+    @apply font-bold text-xl text-gray-300;
 }
 
 .text-link {
@@ -53,7 +53,7 @@ body {
 }
 
 .tx-button-socket {
-    @apply bg-gray-800 hover:bg-gray-900 text-gray-400 py-2;
+    @apply bg-gray-800 hover:bg-gray-900 text-gray-300 py-2;
 }
 
 .section-background {
