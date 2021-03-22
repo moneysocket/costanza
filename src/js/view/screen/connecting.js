@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Jarret Dyrbye
+// Copyright (c) 2021 Moneysocket Developers
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
@@ -8,7 +8,7 @@ const Kjua = require('kjua');
 const D = require('../../utl/dom.js').DomUtl;
 const I = require('../../utl/icon.js').IconUtl;
 
-var Screen = require('./Screen');
+const Screen = require('./screen.js').Screen;
 
 const ConnectProgress = require("./connect-progress.js").ConnectProgress;
 const Copy = require('clipboard-copy');
@@ -32,13 +32,15 @@ class ConnectingScreen extends Screen {
     ///////////////////////////////////////////////////////////////////////////
 
     drawDisconnectButton(div, disconnect_func) {
-        this.drawButton(div, I.plug2x, "Disconnect", disconnect_func, "main-button");
+        this.drawButton(div, I.plug2x, "Disconnect", disconnect_func,
+                        "main-button");
     }
 
     drawCopyBeaconButton(div, copy_func) {
-        this.drawButton(div, I.plug2x, "Copy", copy_func, "main-button");
+        var b = this.drawButton(div, I.plug2x, "Copy", copy_func,
+                                "main-button");
+        this.copy_span = b.inner_text_span;
     }
-
 
     doDisconnect() {
         if (this.ondisconnectclick != null) {

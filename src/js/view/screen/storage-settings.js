@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Jarret Dyrbye
+// Copyright (c) 2021 Moneysocket Developers
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
@@ -8,7 +8,7 @@ const I = require('../../utl/icon.js').IconUtl;
 
 const PERSIST_PROFILE = require("../../model/persist.js").PERSIST_PROFILE;
 
-var Screen = require('./Screen')
+const Screen = require('./screen.js').Screen;
 
 
 class StorageSettingsScreen extends Screen {

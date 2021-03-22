@@ -1,12 +1,12 @@
-// Copyright (c) 2021 Jarret Dyrbye
+// Copyright (c) 2021 Moneysocket Developers
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
-var D = require('../../utl/dom.js').DomUtl;
-var I = require('../../utl/icon.js').IconUtl;
-var Wad = require("moneysocket").Wad;
+const D = require('../../utl/dom.js').DomUtl;
+const I = require('../../utl/icon.js').IconUtl;
+const Wad = require("moneysocket").Wad;
 
-var Screen = require('./Screen');
+const Screen = require('./screen.js').Screen;
 
 const Bolt11 = require("moneysocket").Bolt11;
 const b11 = require("bolt11");
@@ -14,7 +14,6 @@ const b11 = require("bolt11");
 class DrillLevelOneScreen extends Screen {
     constructor(app_div) {
         super(app_div);
-        
         this.onbackclick = null;
         this.onentryclick = null;
         this.receipt = null;

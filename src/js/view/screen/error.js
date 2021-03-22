@@ -1,11 +1,11 @@
-// Copyright (c) 2021 Jarret Dyrbye
+// Copyright (c) 2021 Moneysocket Developers
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
-var D = require('../../utl/dom.js').DomUtl;
-var I = require('../../utl/icon.js').IconUtl;
+const D = require('../../utl/dom.js').DomUtl;
+const I = require('../../utl/icon.js').IconUtl;
 
-var Screen = require('./Screen');
+const Screen = require('./screen.js').Screen;
 
 
 class ErrorScreen extends Screen {

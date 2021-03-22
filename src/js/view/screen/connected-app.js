@@ -1,11 +1,11 @@
-// Copyright (c) 2021 Jarret Dyrbye
+// Copyright (c) 2021 Moneysocket Developers
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
 const D = require('../../utl/dom.js').DomUtl;
 const I = require('../../utl/icon.js').IconUtl;
 
-var Screen = require('./Screen');
+const Screen = require('./screen.js').Screen;
 
 const Wad = require("moneysocket").Wad;
 
