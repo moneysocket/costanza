@@ -6,7 +6,7 @@ var D = require('../../utl/dom.js').DomUtl;
 var I = require('../../utl/icon.js').IconUtl;
 var Wad = require("moneysocket").Wad;
 
-var Screen = require('./Screen');
+const Screen = require('./screen.js').Screen;
 
 const Bolt11 = require("moneysocket").Bolt11;
 const b11 = require("bolt11");

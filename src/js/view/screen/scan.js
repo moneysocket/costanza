@@ -5,7 +5,7 @@
 var D = require('../../utl/dom.js').DomUtl;
 var I = require('../../utl/icon.js').IconUtl;
 
-var Screen = require('./Screen');
+const Screen = require('./screen.js').Screen;
 
 var QrScanner = require('qr-scanner');
 QrScanner.WORKER_PATH = "js/qr-scanner-worker.min.js";

@@ -12,7 +12,7 @@ var ManualReceiveReceipt = require(
     '../../model/manual-receive-receipt.js').ManualReceiveReceipt;
 var ManualSendReceipt = require(
     '../../model/manual-send-receipt.js').ManualSendReceipt;
-var Screen = require('./Screen');
+const Screen = require('./screen.js').Screen;
 
 const CONNECT_STATE = require('../../model/model.js').CONNECT_STATE;
 

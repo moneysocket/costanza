@@ -87,4 +87,4 @@ class Screen {
 
 }
 
-module.exports = Screen;
+exports.Screen = Screen;

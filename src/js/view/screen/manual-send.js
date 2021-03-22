@@ -8,7 +8,7 @@ const Wad = require("moneysocket").Wad;
 const D = require('../../utl/dom.js').DomUtl;
 const I = require('../../utl/icon.js').IconUtl;
 
-var Screen = require('./Screen');
+const Screen = require('./screen.js').Screen;
 
 const MSATS_PER_SAT = 1000.0;
 const SATS_PER_BTC = 100000000.0;

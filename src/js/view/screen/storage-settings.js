@@ -8,7 +8,7 @@ const I = require('../../utl/icon.js').IconUtl;
 
 const PERSIST_PROFILE = require("../../model/persist.js").PERSIST_PROFILE;
 
-var Screen = require('./Screen')
+const Screen = require('./screen.js').Screen;
 
 
 class StorageSettingsScreen extends Screen {
