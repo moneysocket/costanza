@@ -188,6 +188,9 @@ class CostanzaView {
 
     setupConnectingWalletScreen(div) {
         var s = new ConnectingWalletScreen(div, this.model);
+        s.onbackclick = (function() {
+            this.ondisconnectselect();
+        }).bind(this);
         s.ondisconnectclick = (function() {
             this.ondisconnectselect();
         }).bind(this);
@@ -238,6 +241,9 @@ class CostanzaView {
 
     setupConnectingAppScreen(div) {
         var s = new ConnectingAppScreen(div, this.model);
+        s.onbackclick = (function() {
+            this.ondisconnectselect();
+        }).bind(this);
         s.ondisconnectclick = (function() {
             this.ondisconnectselect();
         }).bind(this);

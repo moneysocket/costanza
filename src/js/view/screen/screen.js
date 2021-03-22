@@ -8,6 +8,7 @@ class Screen {
     constructor(app_div, model) {
         this.app_div = app_div;
         this.model = model;
+        this.onbackclick = null;
     }
 
     ///////////////////////////////////////////////////////////////////////////
