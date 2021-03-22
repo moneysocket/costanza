@@ -35,7 +35,7 @@ class Screen {
     drawButtonPercent(div, pct, click_func, button_type) {
         var b = D.button(div, click_func, button_type);
         var flex = D.emptyDiv(b, "flex items-center justify-around");
-        D.textSpan(flex, pct.toString() + "%");
+        var text = D.textSpan(flex, pct.toString() + "%");
         b.inner_text_span = text;
         return b;
     }
