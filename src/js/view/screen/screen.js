@@ -1,4 +1,4 @@
-var D = require('../../utl/dom.js').DomUtl;
+const D = require('../../utl/dom.js').DomUtl;
 const I = require('../../utl/icon.js').IconUtl;
 
 class Screen {

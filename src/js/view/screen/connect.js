@@ -2,14 +2,14 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
-var D = require('../../utl/dom.js').DomUtl;
-var I = require('../../utl/icon.js').IconUtl;
+const D = require('../../utl/dom.js').DomUtl;
+const I = require('../../utl/icon.js').IconUtl;
 
 const Screen = require('./screen.js').Screen;
 
 
 class ConnectScreen extends Screen {
-    constructor(app_div, model) { 
+    constructor(app_div, model) {
         super(app_div, model) ;
 
         this.onbbackclick = null;

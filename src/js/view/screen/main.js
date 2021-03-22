@@ -2,15 +2,15 @@
 // Distributed under the MIT software license, see the accompanying
 // file LICENSE or http://www.opensource.org/licenses/mit-license.php
 
-var D = require('../../utl/dom.js').DomUtl;
-var I = require('../../utl/icon.js').IconUtl;
-var Wad = require("moneysocket").Wad;
+const D = require('../../utl/dom.js').DomUtl;
+const I = require('../../utl/icon.js').IconUtl;
+const Wad = require("moneysocket").Wad;
 
-var SocketSessionReceipt = require(
+const SocketSessionReceipt = require(
     '../../model/socket-session-receipt.js').SocketSessionReceipt;
-var ManualReceiveReceipt = require(
+const ManualReceiveReceipt = require(
     '../../model/manual-receive-receipt.js').ManualReceiveReceipt;
-var ManualSendReceipt = require(
+const ManualSendReceipt = require(
     '../../model/manual-send-receipt.js').ManualSendReceipt;
 const Screen = require('./screen.js').Screen;
 
