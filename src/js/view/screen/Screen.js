@@ -10,29 +10,36 @@ class Screen {
     ///////////////////////////////////////////////////////////////////////////
     // Buttons
     ///////////////////////////////////////////////////////////////////////////
-    
+
     drawButton(div, icon_func, button_text, click_func, button_type) {
         var b = D.button(div, click_func, button_type);
         var flex = D.emptyDiv(b, "flex items-center justify-around");
         var icon_span = D.emptySpan(flex, "px-2");
         var qr = icon_func(icon_span);
         var text = D.textSpan(flex, button_text);
+        b.inner_text_span = text;
+        return b;
     }
 
     drawButtonPlain(div, button_text, click_func, button_type) {
         var b = D.button(div, click_func, button_type);
         var flex = D.emptyDiv(b, "flex items-center justify-around");
         var text = D.textSpan(flex, button_text);
+        b.inner_text_span = text;
+        return b;
     }
 
     drawButtonPercent(div, pct, click_func, button_type) {
         var b = D.button(div, click_func, button_type);
         var flex = D.emptyDiv(b, "flex items-center justify-around");
         D.textSpan(flex, pct.toString() + "%");
+        b.inner_text_span = text;
+        return b;
     }
 
     drawBackButton(div, back_func) {
-        this.drawButton(div, I.backarrow2x, "Back", back_func, "main-button");
+        return this.drawButton(div, I.backarrow2x, "Back", back_func,
+                               "main-button");
     }
 
     ///////////////////////////////////////////////////////////////////////////
