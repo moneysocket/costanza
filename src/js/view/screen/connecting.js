@@ -32,13 +32,15 @@ class ConnectingScreen extends Screen {
     ///////////////////////////////////////////////////////////////////////////
 
     drawDisconnectButton(div, disconnect_func) {
-        this.drawButton(div, I.plug2x, "Disconnect", disconnect_func, "main-button");
+        this.drawButton(div, I.plug2x, "Disconnect", disconnect_func,
+                        "main-button");
     }
 
     drawCopyBeaconButton(div, copy_func) {
-        this.drawButton(div, I.plug2x, "Copy", copy_func, "main-button");
+        var b = this.drawButton(div, I.plug2x, "Copy", copy_func,
+                                "main-button");
+        this.copy_span = b.inner_text_span;
     }
-
 
     doDisconnect() {
         if (this.ondisconnectclick != null) {
