@@ -63,7 +63,7 @@ class MainScreen extends Screen {
         var button = D.emptyDiv(flex,
             "rounded px-4 py-4 bg-gray-800 hover:bg-gray-900");
         D.textParagraph(button, wad.toString(),
-                        "font-bold text-3xl ms-green-txt");
+                        "font-bold text-3xl text-green-400");
         button.onclick = (function() {
             this.onconnectwalletclick();
         }).bind(this);

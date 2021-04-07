@@ -69,7 +69,7 @@ class ConnectedWalletScreen extends Screen {
         var wad = this.model.getConsumerBalanceWad();
         D.deleteChildren(this.balance_div);
         D.textParagraph(this.balance_div, wad.toString(),
-                        "font-bold text-3xl ms-green-txt ");
+                        "font-bold text-3xl text-green-400 ");
         var sats = (wad['msats'] / 1000.0).toFixed(3) + " sats";
         var hoverstring = wad['name'] + "\n" + sats;
         this.balance_div.setAttribute("title", hoverstring);
