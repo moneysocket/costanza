@@ -124,17 +124,21 @@ class MainScreen extends Screen {
 
         if (error != null) {
             D.textSpan(flex, "Manual Receive Err: " + error,
-                       "flex-grow font-bold");
+                       "pl-4 font-bold text-left");
         } else if (! got_invoice) {
             D.textSpan(flex, "Waiting for invoice " + wad.toString(),
-                       "flex-grow text-sm");
+                       "pl-4 text-left");
         } else if (completed) {
-            D.textSpan(flex, "Manual Receive", "flex-grow text-sm");
+            D.textSpan(flex, "Manual Receive", "pl-4 text-left");
+            D.emptyDiv(flex, "flex-grow");
             D.textSpan(flex, "+ " + wad.toString(),
-                       "font-bold text-green-400 px-2");
+                       "font-bold text-green-400 text-right w-40");
         } else {
-            D.textSpan(flex, "Manual receive in progress ", "flex-grow text-sm");
-            D.textSpan(flex, wad.toString(), "font-bold ms-green-txt px-2");
+            D.textSpan(flex, "Manual receive in progress ",
+                       "pl-4 text-left");
+            D.emptyDiv(flex, "flex-grow");
+            D.textSpan(flex, wad.toString(),
+                       "font-bold text-gray-400 text-right w-40");
         }
     }
 
@@ -153,15 +157,16 @@ class MainScreen extends Screen {
         description = (description == null) ? "(no description)" : description;
 
         if (error != null) {
-            D.textSpan(flex, "Pay Error: " + error, "flex-grow font-bold");
+            D.textSpan(flex, "Pay Error: " + error, "pl-4 text-left font-bold");
         } else if (! completed) {
-            D.textSpan(flex, "Paying", "flex-grow font-bold");
-            D.textSpan(flex, description, "flex-grow text-sm");
+            D.textSpan(flex, "Paying", "pl-4 font-bold text-left");
+            D.textSpan(flex, description, "pl-4 text-left");
         } else {
-            D.textSpan(flex, "Paid", "flex-grow font-bold");
-            D.textSpan(flex, description, "flex-grow text-sm");
+            D.textSpan(flex, "Paid", "pl-4 text-left");
+            D.textSpan(flex, description, "text-left pl-4");
+            D.emptyDiv(flex, "flex-grow");
             D.textSpan(flex, "+ " + wad.toString(),
-                       "font-bold text-red-700 px-2");
+                       "font-bold text-red-400 w-40 text-right");
         }
     }
 
@@ -178,16 +183,17 @@ class MainScreen extends Screen {
         var icon_span = D.emptySpan(flex, "px-2 font-bold");
         I.flyingmoney(icon_span);
         var label = ended ? "Socket Session" : "In Progress";
-        D.textSpan(flex, label, "flex-grow text-sm");
-        D.textSpan(flex, total_txs.toString() + "tx", "font-bold px-2");
+        D.textSpan(flex, label, "pl-4 text-left");
+        D.emptyDiv(flex, "flex-grow");
+        D.textSpan(flex, total_txs.toString() + "tx", "font-bold w-30 text-right");
         var wad = (total_txs == 0) ?
             this.model.msatsToWalletCurrencyWad(0) : total_wad;
         if (increment) {
             D.textSpan(flex, "+ " + wad.toString(),
-                       "font-bold ms-green-txt px-2");
+                       "font-bold text-green-400 w-40 text-right");
         } else {
             D.textSpan(flex, "- " + wad.toString(),
-                       "font-bold text-red-700 px-2");
+                       "font-bold text-red-400 w-40 text-right");
         }
     }
 
