@@ -225,9 +225,7 @@ class MainScreen extends Screen {
         var left_box = D.emptyDiv(flex, "flex flex-row");
 
         this.auth_balance_div = D.emptyDiv(left_box);
-        this.drawAppSocketInfo(left_box, connect_func);
-        //var button_div = D.emptyDiv(left_box);
-        //this.drawConnectAppButton(button_div, connect_func);
+        this.drawAppSocketInfo(connect_func);
 
         this.balance_div = D.emptyDiv(flex);
         this.drawBalance();
