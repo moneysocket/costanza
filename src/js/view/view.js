@@ -374,6 +374,11 @@ class CostanzaView {
         this.main_screen.draw();
     }
 
+    redrawPing() {
+        this.main_screen.redrawPing();
+        this.connected_wallet_screen.redrawPing();
+    }
+
     redrawDynamicInfo() {
         this.main_screen.redrawInfo();
         this.connected_wallet_screen.redrawInfo();

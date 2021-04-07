@@ -277,6 +277,9 @@ class MainScreen extends Screen {
         if (this.auth_balance_div != null) {
             this.drawAppSocketInfo(this.onconnectappclick);
         }
+    }
+
+    redrawPing() {
         if (this.ping_div != null) {
             this.drawPing();
         }

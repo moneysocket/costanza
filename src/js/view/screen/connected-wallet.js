@@ -127,6 +127,12 @@ class ConnectedWalletScreen extends Screen {
     // Screens
     ///////////////////////////////////////////////////////////////////////////
 
+    redrawPing() {
+        if (this.ping_div != null) {
+            this.drawPing();
+        }
+    }
+
     redrawInfo() {
         if (this.balance_div != null) {
             this.drawBalance();
@@ -136,9 +142,6 @@ class ConnectedWalletScreen extends Screen {
         }
         if (this.payee_div != null) {
             this.drawPayee();
-        }
-        if (this.ping_div != null) {
-            this.drawPing();
         }
     }
 
