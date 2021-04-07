@@ -17,7 +17,7 @@ body {
 }
 
 .app-button {
-    @apply bg-gray-800 hover:bg-gray-900 text-gray-300 rounded px-2 py-1 border border-gray-600;
+    @apply bg-gray-800 hover:bg-gray-900 text-gray-300 rounded-md px-4 py-2 border border-gray-600;
 }
 
 .secondary-button {

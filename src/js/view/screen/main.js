@@ -45,7 +45,8 @@ class MainScreen extends Screen {
     }
 
     drawConnectWalletButton(div, connect_func) {
-        this.drawButton(div, I.plug2x, "Connect Wallet Provider", connect_func, "main-button");
+        this.drawButton(div, I.plug2x, "Connect Wallet Provider", connect_func,
+                        "main-button");
     }
 
     drawConnectAppButton(div, connect_func) {
@@ -76,24 +77,16 @@ class MainScreen extends Screen {
         var wad = this.model.getProviderBalanceWad();
         D.deleteChildren(this.auth_balance_div);
         var border = D.emptyDiv(this.auth_balance_div,
-                                "px-2 py-2 bg-gray-800 hover:bg-gray-900 border border-gray-600 rounded-2xl text-gray-300");
-        var icon_span = D.emptySpan(border, "px-2 font-bold");
-        icon_span.onclick = (function() {
-            this.onconnectappclick();
-        }).bind(this);
-        I.flyingmoney(icon_span);
-        var a = D.textSpan(border, "App", "px-2 font-bold text-gray-300");
-        a.onclick = (function() {
-            this.onconnectappclick();
-        }).bind(this);
-        var p = D.textParagraph(border, wad.toString(),
-                                "font-bold text-sm text-gray-300");
-        p.onclick = (function() {
-            this.onconnectappclick();
-        }).bind(this);
+            ("px-4 py-2 bg-gray-800 hover:bg-gray-900 border " +
+             "border-gray-600 rounded-2xl text-gray-300"));
         border.onclick = (function() {
             this.onconnectappclick();
         }).bind(this);
+        var icon_span = D.emptySpan(border, "px-2 font-bold");
+        I.flyingmoney(icon_span);
+        var a = D.textSpan(border, "App Authorized", "px-2 font-bold text-sm text-gray-300");
+        var p = D.textParagraph(border, wad.toString(),
+                                "font-bold text-sm text-gray-300");
         var sats = (wad['msats'] / 1000.0).toFixed(3) + " sats";
         var hoverstring = wad['name'] + "\n" + sats;
         border.setAttribute("title", hoverstring);
@@ -102,7 +95,8 @@ class MainScreen extends Screen {
     drawPing() {
         var msecs = this.model.getConsumerLastPing();
         D.deleteChildren(this.ping_div);
-        D.textParagraph(this.ping_div, msecs.toString() + " ms", "text-sm text-gray-300");
+        D.textParagraph(this.ping_div, msecs.toString() + " ms",
+                        "text-sm text-gray-300");
     }
 
 
@@ -227,7 +221,7 @@ class MainScreen extends Screen {
 
     drawBalancePanel(div, connect_func) {
         var flex = D.emptyDiv(div,
-                              "flex-col justify-evenly section-background balance-panel");
+            "flex-col justify-evenly section-background balance-panel");
         var left_box = D.emptyDiv(flex, "flex flex-row");
 
         this.auth_balance_div = D.emptyDiv(left_box);
@@ -259,13 +253,14 @@ class MainScreen extends Screen {
 
     drawReceiptPanel(div, click_func) {
         var flex = D.emptyDiv(div,
-                              "flex-col justify-evenly section-background receipt-panel");
+            "flex-col justify-evenly section-background receipt-panel");
         this.receipts_div = D.emptyDiv(flex);
         this.drawReceipts(click_func);
     }
 
     drawActionPanel(div, scan_func, menu_func) {
-        var flex = D.emptyDiv(div, "flex justify-evenly section-background-lite");
+        var flex = D.emptyDiv(div,
+            "flex justify-evenly section-background-lite");
         this.drawScanButton(flex, scan_func);
         this.drawMenuButton(flex, menu_func);
     }
