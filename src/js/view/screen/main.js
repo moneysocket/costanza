@@ -176,7 +176,8 @@ class MainScreen extends Screen {
         var flex = D.emptyDiv(d, "flex items-center justify-start");
         var icon_span = D.emptySpan(flex, "px-2 font-bold");
         I.flyingmoney(icon_span);
-        var label = ended ? "Socket Session" : "In Progress";
+        var label = ended ? "Socket Session Completed" :
+                            "Socket Session In Progress";
         D.textSpan(flex, label, "pl-4 text-left");
         D.emptyDiv(flex, "flex-grow");
         D.textSpan(flex, total_txs.toString() + "tx", "font-bold w-30 text-right");
@@ -260,7 +261,7 @@ class MainScreen extends Screen {
 
     drawActionPanel(div, scan_func, menu_func) {
         var flex = D.emptyDiv(div,
-            "flex justify-evenly section-background-lite");
+            "flex justify-evenly pb-4 bg-gray-700");
         this.drawScanButton(flex, scan_func);
         this.drawMenuButton(flex, menu_func);
     }
@@ -292,7 +293,8 @@ class MainScreen extends Screen {
     }
 
     draw() {
-        var flex = this.screenDiv("div-reg-flex");
+        var screen = this.screenDiv();
+        var flex = D.emptyDiv(screen, "flex flex-col h-full")
         var flex_top = D.emptyDiv(flex, "flex-none");
         var flex_mid = D.emptyDiv(flex, "flex-grow");
         var flex_bottom = D.emptyDiv(flex, "flex-none");

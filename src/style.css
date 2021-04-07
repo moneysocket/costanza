@@ -87,7 +87,7 @@ body {
 .receipt-panel {
   @apply my-5 py-5 mx-8 rounded-3xl overflow-y-auto;
   position: relative;
-  max-height: calc(100vh - 310px);
+  max-height: calc(100vh - 210px);
   width: calc(100% - 4rem);
 }
 

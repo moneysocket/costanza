@@ -84,9 +84,11 @@ class Screen {
     // Screens
     ///////////////////////////////////////////////////////////////////////////
 
-    screenDiv(div_style) {
-        var flex = D.emptyDiv(this.app_div, div_style);
-        return flex;
+    screenDiv() {
+        var row = D.emptyDiv(this.app_div, "flex flex-row justify-center");
+        var body = D.emptyDiv(row,
+            "h-screen sm:w-full md:w-5/6 lg:w-3/4 xl:w-1/2 2xl:w-1/3");
+        return body;
     }
 
 }
