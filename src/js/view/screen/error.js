@@ -36,7 +36,7 @@ class ErrorScreen extends Screen {
     ///////////////////////////////////////////////////////////////////////////
 
     draw(err_str) {
-        var flex = D.emptyDiv(this.app_div, "flex flex-col h-screen");
+        var flex = this.screenDiv();
         var flex_top = D.emptyDiv(flex, "flex-none h-10");
         var flex_mid = D.emptyDiv(flex, "flex-grow ");
         var flex_bottom = D.emptyDiv(flex, "flex-none h-10");

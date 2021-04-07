@@ -198,8 +198,9 @@ class MainScreen extends Screen {
 
     drawConnectWalletPanel(div, connect_func) {
         var flex = D.emptyDiv(div,
-                              "flex-col justify-evenly connect-wallet-panel");
-        this.drawConnectWalletButton(flex, connect_func);
+                              "flex flex-col justify-center items-center py-5 bg-gray-700");
+        var row = D.emptyDiv(flex, "flex flex-row justify-center");
+        this.drawConnectWalletButton(row, connect_func);
     }
 
     drawAppSocketInfo(connect_func) {
@@ -221,8 +222,9 @@ class MainScreen extends Screen {
     }
 
     drawBalancePanel(div, connect_func) {
-        var flex = D.emptyDiv(div,
-            "flex-col justify-evenly section-background balance-panel");
+        var outer = D.emptyDiv(div, "bg-gray-700 px-1 py-2");
+        var flex = D.emptyDiv(outer,
+            "flex flex-col justify-evenly rounded-xl px-2 py-2 bg-gray-800");
         var left_box = D.emptyDiv(flex, "flex flex-row");
 
         this.auth_balance_div = D.emptyDiv(left_box);
@@ -253,15 +255,16 @@ class MainScreen extends Screen {
     }
 
     drawReceiptPanel(div, click_func) {
-        var flex = D.emptyDiv(div,
-            "flex-col justify-evenly section-background receipt-panel");
+        var outer = D.emptyDiv(div, "px-1 py-2 overflow-auto");
+        var s = D.emptyDiv(outer, "px-4 py-4 bg-gray-800 rounded-3xl");
+        var flex = D.emptyDiv(s, "flex flex-col justify-evenly");
         this.receipts_div = D.emptyDiv(flex);
         this.drawReceipts(click_func);
     }
 
     drawActionPanel(div, scan_func, menu_func) {
         var flex = D.emptyDiv(div,
-            "flex justify-evenly pb-4 bg-gray-700");
+            "flex justify-evenly py-4 bg-gray-700");
         this.drawScanButton(flex, scan_func);
         this.drawMenuButton(flex, menu_func);
     }
@@ -294,28 +297,25 @@ class MainScreen extends Screen {
 
     draw() {
         var screen = this.screenDiv();
-        var flex = D.emptyDiv(screen, "flex flex-col h-full")
-        var flex_top = D.emptyDiv(flex, "flex-none");
-        var flex_mid = D.emptyDiv(flex, "flex-grow");
-        var flex_bottom = D.emptyDiv(flex, "flex-none");
+        var flex = D.emptyDiv(screen, "flex flex-col justify-between h-full")
 
         switch (this.model.getConsumerConnectState()) {
         case CONNECT_STATE.CONNECTED:
-            this.drawBalancePanel(flex_top, this.onconnectappclick);
+            this.drawBalancePanel(flex, this.onconnectappclick);
             break;
         case CONNECT_STATE.CONNECTING:
-            this.drawConnectWalletPanel(flex_top, this.onconnectwalletclick);
+            this.drawConnectWalletPanel(flex, this.onconnectwalletclick);
             break;
         case CONNECT_STATE.DISCONNECTED:
-            this.drawConnectWalletPanel(flex_top, this.onconnectwalletclick);
+            this.drawConnectWalletPanel(flex, this.onconnectwalletclick);
             break;
         default:
             console.error("unknown state");
             break;
         }
 
-        this.drawReceiptPanel(flex_mid, this.onreceiptclick);
-        this.drawActionPanel(flex_bottom, this.onscanclick, this.onmenuclick);
+        this.drawReceiptPanel(flex, this.onreceiptclick);
+        this.drawActionPanel(flex, this.onscanclick, this.onmenuclick);
     }
 }
 

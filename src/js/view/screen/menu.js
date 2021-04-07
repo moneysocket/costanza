@@ -43,7 +43,7 @@ class MenuScreen extends Screen {
     ///////////////////////////////////////////////////////////////////////////
 
     draw() {
-        var flex = D.emptyDiv(this.app_div, "flex flex-col h-screen");
+        var flex = this.screenDiv();
         var flex_top = D.emptyDiv(flex, "flex-none");
         this.drawTitlePanel(flex_top);
         this.drawEntryPanel(flex_top);

@@ -64,19 +64,19 @@ class DrillLevelTwoScreen extends Screen {
         var v = D.emptyDiv(div,
                            "flex justify-start text-gray-300 px-4");
         D.textSpan(v, this.typeToTitle(key), "text-xs font-bold w-1/4");
-        D.textSpan(v, value, "break-words w-3/4");
+        D.textSpan(v, value, "break-all w-3/4");
     }
 
     drawWad(div, key, wad) {
         var v = D.emptyDiv(div,
                            "flex justify-start text-gray-300 px-4");
         D.textSpan(v, this.typeToTitle(key), "text-xs font-bold w-1/4");
-        D.textSpan(v, wad.toString(), "break-words w-3/4");
+        D.textSpan(v, wad.toString(), "break-all w-3/4");
         var msats = wad.msats;
         var v = D.emptyDiv(div,
                            "flex justify-start text-gray-300 px-4");
         D.textSpan(v, "msats", "text-xs font-bold w-1/4");
-        D.textSpan(v, msats + " msats", "break-words w-3/4");
+        D.textSpan(v, msats + " msats", "break-all w-3/4");
     }
 
     drawInfoPanel(div) {
@@ -105,7 +105,7 @@ class DrillLevelTwoScreen extends Screen {
         console.log("drawing entry " + JSON.stringify(entry));
         this.receipt = receipt;
         this.entry = entry;
-        var panel_div = D.emptyDiv(this.app_div, "flex flex-col h-screen");
+        var panel_div = this.screenDiv();
         var flex_top = D.emptyDiv(panel_div, "flex-none");
         this.drawTitlePanel(flex_top);
         this.drawInfoPanel(flex_top);

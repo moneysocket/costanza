@@ -155,7 +155,7 @@ class DrillLevelOneScreen extends Screen {
 
     draw(receipt) {
         this.receipt = receipt;
-        var panel_div = D.emptyDiv(this.app_div, "flex flex-col h-screen");
+        var panel_div = this.screenDiv();
         var flex_top = D.emptyDiv(panel_div, "flex-none");
         this.drawTitlePanel(flex_top);
         this.drawInfoPanel(flex_top);
