@@ -27,7 +27,8 @@ class ManualProvideInvoiceScreen extends Screen {
     ///////////////////////////////////////////////////////////////////////////
 
     drawCopyBolt11Button(div, copy_func) {
-        this.drawButton(div, I.copy2x, "Copy", copy_func, "main-button");
+        var b = this.drawButton(div, I.copy2x, "Copy", copy_func, "main-button");
+        this.copy_span = b.inner_text_span;
     }
 
     doCopy() {
