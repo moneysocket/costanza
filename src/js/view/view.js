@@ -37,6 +37,7 @@ const DrillLevelTwoScreen = require(
 class CostanzaView {
     constructor(app_div, model) {
         this.app_div = app_div;
+        this.drawn = null;
         this.model = model;
         this.main_screen = this.setupMainScreen(this.app_div);
         this.scan_screen = this.setupScanScreen(this.app_div);
@@ -369,9 +370,15 @@ class CostanzaView {
     // goto ui
     ///////////////////////////////////////////////////////////////////////////
 
-    changeToMain() {
+    undraw() {
         D.deleteChildren(this.app_div);
+        this.drawn = null;
+    }
+
+    changeToMain() {
+        this.undraw();
         this.main_screen.draw();
+        this.drawn = this.main_screen;
     }
 
     redrawPing() {
@@ -386,82 +393,100 @@ class CostanzaView {
     }
 
     redrawReceiptInfo(uuid) {
-        this.main_screen.redrawReceiptInfo(uuid);
-        this.drill_level_one_screen.redrawUuid(uuid);
+        if (this.drawn == this.main_screen) {
+            this.main_screen.redrawReceiptInfo(uuid);
+        } else if (this.drawn == this.drill_level_one_screen) {
+            this.drill_level_one_screen.redrawUuid(uuid);
+        }
     }
 
     changeToScan() {
-        D.deleteChildren(this.app_div);
+        this.undraw();
         this.scan_screen.draw();
+        this.drawn = this.scan_screen;
     }
 
     changeToError(error_str) {
-        D.deleteChildren(this.app_div);
+        this.undraw();
         this.error_screen.draw(error_str);
+        this.drawn = this.error_screen;
     }
 
     changeToMenu() {
         console.log("change to main");
-        D.deleteChildren(this.app_div);
+        this.undraw();
         this.menu_screen.draw();
+        this.drawn = this.menu_screen;
     }
 
     changeToReceipt(receipt) {
-        D.deleteChildren(this.app_div);
+        this.undraw();
         this.drill_level_one_screen.draw(receipt);
+        this.drawn = this.drill_level_one_screen;
     }
 
     changeToReceiptEntry(receipt, entry) {
-        D.deleteChildren(this.app_div);
+        this.undraw();
         this.drill_level_two_screen.draw(receipt, entry);
+        this.drawn = this.drill_level_two_screen;
     }
 
     changeToManualSend(bolt11) {
-        D.deleteChildren(this.app_div);
+        this.undraw();
         this.manual_send_screen.draw(bolt11);
+        this.drawn = this.manual_send_screen;
     }
 
     changeToConnectWallet(beacon) {
-        D.deleteChildren(this.app_div);
+        this.undraw();
         this.connect_wallet_screen.draw();
+        this.drawn = this.connect_wallet_screen;
     }
 
     changeToConnectApp(beacon) {
-        D.deleteChildren(this.app_div);
+        this.undraw();
         this.connect_app_screen.draw();
+        this.drawn = this.connect_app_screen;
     }
 
     changeToConnectingWallet() {
-        D.deleteChildren(this.app_div);
+        this.undraw();
         this.connecting_wallet_screen.draw();
+        this.drawn = this.connecting_wallet_screen;
     }
 
     changeToConnectingApp() {
-        D.deleteChildren(this.app_div);
+        this.undraw();
         this.connecting_app_screen.draw();
+        this.drawn = this.connecting_app_screen;
     }
 
     changeToAbout(beacon) {
-        D.deleteChildren(this.app_div);
+        this.undraw();
         this.about_screen.draw();
+        this.drawn = this.about_screen;
     }
 
     changeToManualProvideInvoice(bolt11) {
-        D.deleteChildren(this.app_div);
+        this.undraw();
         this.manual_provide_invoice_screen.draw(bolt11);
+        this.drawn = this.manual_provide_invoice_screen;
     }
 
     changeToWalletProviderSetup() {
-        D.deleteChildren(this.app_div);
+        this.undraw();
         switch (this.model.getConsumerConnectState()) {
         case CONNECT_STATE.CONNECTED:
             this.connected_wallet_screen.draw();
+            this.drawn = this.connected_wallet_screen;
             break;
         case CONNECT_STATE.CONNECTING:
             this.connecting_wallet_screen.draw();
+            this.drawn = this.connecting_wallet_screen;
             break;
         case CONNECT_STATE.DISCONNECTED:
             this.connect_wallet_screen.draw();
+            this.drawn = this.connect_wallet_screen;
             break;
         default:
             console.error("unknown state");
@@ -470,16 +495,19 @@ class CostanzaView {
     }
 
     changeToAppConsumerSetup() {
-        D.deleteChildren(this.app_div);
+        this.undraw();
         switch (this.model.getProviderConnectState()) {
         case CONNECT_STATE.CONNECTED:
             this.connected_app_screen.draw();
+            this.drawn = this.connected_app_screen;
             break;
         case CONNECT_STATE.CONNECTING:
             this.connecting_app_screen.draw();
+            this.drawn = this.connecting_app_screen;
             break;
         case CONNECT_STATE.DISCONNECTED:
             this.connect_app_screen.draw();
+            this.drawn = this.connect_app_screen;
             break;
         default:
             console.error("unknown state");
@@ -488,14 +516,16 @@ class CostanzaView {
     }
 
     changeToBolt11Receive() {
-        D.deleteChildren(this.app_div);
+        this.undraw();
         switch (this.model.getConsumerConnectState()) {
         case CONNECT_STATE.CONNECTED:
             this.manual_receive_screen.draw();
+            this.drawn = this.manual_receive_screen;
             break;
         case CONNECT_STATE.CONNECTING:
         case CONNECT_STATE.DISCONNECTED:
             this.error_screen.draw("must be connected to wallet provider");
+            this.drawn = this.error_screen;
             break;
         default:
             console.error("unknown state");
@@ -505,8 +535,9 @@ class CostanzaView {
 
     changeToStorageSettings() {
         console.log("storage settings stub");
-        D.deleteChildren(this.app_div);
+        this.undraw();
         this.storage_settings_screen.draw();
+        this.drawn = this.storage_settings_screen;
     }
 }
 
