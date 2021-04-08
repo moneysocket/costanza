@@ -66,7 +66,7 @@ class ConnectingScreen extends Screen {
         var qr = Kjua({
             ecLevel:   "M",
             render:    "canvas",
-            size:      360,
+            size:      320,
             text:      beacon,
             label:     this.qr_string,
             mode:      "label",

@@ -48,7 +48,7 @@ class ManualProvideInvoiceScreen extends Screen {
         var qr = Kjua({
             ecLevel:   "M",
             render:    "canvas",
-            size:      360,
+            size:      320,
             text:      upper_bolt11,
             label:     "manual bolt11",
             mode:      "label",
