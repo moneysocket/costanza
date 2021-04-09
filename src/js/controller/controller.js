@@ -106,7 +106,7 @@ class CostanzaController {
             this.view.redrawDynamicInfo();
         }).bind(this);
         this.model.onping = (function() {
-            this.view.redrawDynamicInfo();
+            this.view.redrawPing();
         }).bind(this);
         this.model.onreceiptchange = (function(uuid) {
             this.view.redrawReceiptInfo(uuid);

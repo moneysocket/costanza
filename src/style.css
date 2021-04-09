@@ -17,7 +17,7 @@ body {
 }
 
 .app-button {
-    @apply bg-gray-800 hover:bg-gray-900 text-gray-300 rounded px-2 py-1 border border-gray-600;
+    @apply bg-gray-800 hover:bg-gray-900 text-gray-300 rounded-md px-4 py-2 border border-gray-600;
 }
 
 .secondary-button {
@@ -41,7 +41,7 @@ body {
 }
 
 .text-link {
-    @apply font-bold text-xl text-gray-300 hover:bg-gray-900;
+    @apply font-bold text-xl text-blue-300 hover:bg-gray-900;
 }
 
 .div-reg-flex {
@@ -59,36 +59,6 @@ body {
 .section-background {
     @apply text-center px-5 py-3 bg-gray-800;
     box-shadow: rgb(0 0 0 / 3%) 0px 0px 1px, rgb(0 0 0 / 6%) 0px 5px 10px, rgb(0 0 0 / 12%) 0px 20px 36px;
-}
-
-.section-background-lite {
-    @apply text-center px-5 py-3 bg-gray-700;
-    position: fixed;
-    margin-top: auto;
-    flex: 0 0 auto;
-    bottom: 0;
-    width: 100%;
-}
-
-.connect-wallet-panel {
-    @apply text-center px-5 py-3;
-    position: relative;
-    margin-bottom: auto;
-    flex: 0 0 auto;
-    top: 0;
-    width: 100%;
-}
-
-.balance-panel {
-  @apply text-center px-5 py-3;
-  position: relative;
-}
-
-.receipt-panel {
-  @apply my-5 py-5 mx-8 rounded-3xl overflow-y-auto;
-  position: relative;
-  max-height: calc(100vh - 310px);
-  width: calc(100% - 4rem);
 }
 
 .slider {
@@ -119,22 +89,4 @@ body {
   border-radius: 50%;
   background: #3f3c3a;
   cursor: pointer;
-}
-
-.receipt-panel::-webkit-scrollbar-track {
-  background-color: none;
-}
-
-.receipt-panel::-webkit-scrollbar {
-  background-color: none;
-  width: 0.65em;
-}
-
-.receipt-panel::-webkit-scrollbar-thumb {
-  @apply bg-gray-700;
-  border-radius: 1em;
-}
-
-.receipt-panel::-webkit-scrollbar-button {
-  background-color: none;
 }

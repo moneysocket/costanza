@@ -156,6 +156,7 @@ class CostanzaModel {
         console.log("consumer revoke");
         this.consumer_state = CONNECT_STATE.DISCONNECTED;
         this.consumer_reported_info = null;
+        this.disconnectProvider();
         if (this.onconsumeroffline != null) {
             this.onconsumeroffline();
         }
@@ -199,7 +200,8 @@ class CostanzaModel {
             console.log("invoice error: " + err);
             if (socket) {
                 this.receipts.socketSessionErrNotified(err);
-                // TODO - send error on socket with uuid reference
+                this.provider_stack.sendErrorNotification(
+                    err, request_reference_uuid);
                 return;
             }
             // TODO - present manual invoice error on screen
@@ -324,13 +326,12 @@ class CostanzaModel {
 
     providerHandleInvoiceRequest(msats, request_uuid) {
         console.log("got invoice request from provider: " + request_uuid);
-        // TODO log receipt
         this.receipts.socketSessionInvoiceRequest(msats, request_uuid);
         var err = this.transact.checkInvoiceRequestSocket();
         if (err != null) {
+            this.provider_stack.sendErrorNotification(err, request_uuid);
             this.receipts.socketSessionErrNotified(err);
             console.log("err: " + err);
-            // TODO send error message
             return;
         }
         this.consumer_stack.requestInvoice(msats, request_uuid);
@@ -342,9 +343,9 @@ class CostanzaModel {
         this.receipts.socketSessionPayRequest(bolt11, request_uuid);
         var err = this.transact.checkPayRequestSocket(bolt11);
         if (err != null) {
+            this.provider_stack.sendErrorNotification(err, request_uuid);
             this.receipts.socketSessionErrorNotified(err);
             console.log("err: " + err);
-            // TODO send error message
             return;
         }
         this.consumer_stack.requestPay(bolt11, request_uuid);

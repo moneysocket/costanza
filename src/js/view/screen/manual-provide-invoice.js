@@ -27,7 +27,8 @@ class ManualProvideInvoiceScreen extends Screen {
     ///////////////////////////////////////////////////////////////////////////
 
     drawCopyBolt11Button(div, copy_func) {
-        this.drawButton(div, I.copy2x, "Copy", copy_func, "main-button");
+        var b = this.drawButton(div, I.copy2x, "Copy", copy_func, "main-button");
+        this.copy_span = b.inner_text_span;
     }
 
     doCopy() {
@@ -47,7 +48,7 @@ class ManualProvideInvoiceScreen extends Screen {
         var qr = Kjua({
             ecLevel:   "M",
             render:    "canvas",
-            size:      360,
+            size:      320,
             text:      upper_bolt11,
             label:     "manual bolt11",
             mode:      "label",
@@ -76,7 +77,7 @@ class ManualProvideInvoiceScreen extends Screen {
     ///////////////////////////////////////////////////////////////////////////
 
     draw(bolt11) {
-        var flex = D.emptyDiv(this.app_div, "flex flex-col h-screen");
+        var flex = this.screenDiv();
         var flex_top = D.emptyDiv(flex, "flex-none");
         this.drawTitlePanel(flex_top);
 

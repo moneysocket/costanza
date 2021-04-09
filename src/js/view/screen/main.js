@@ -45,7 +45,8 @@ class MainScreen extends Screen {
     }
 
     drawConnectWalletButton(div, connect_func) {
-        this.drawButton(div, I.plug2x, "Connect Wallet Provider", connect_func, "main-button");
+        this.drawButton(div, I.plug2x, "Connect Wallet Provider", connect_func,
+                        "main-button");
     }
 
     drawConnectAppButton(div, connect_func) {
@@ -63,7 +64,7 @@ class MainScreen extends Screen {
         var button = D.emptyDiv(flex,
             "rounded px-4 py-4 bg-gray-800 hover:bg-gray-900");
         D.textParagraph(button, wad.toString(),
-                        "font-bold text-3xl ms-green-txt");
+                        "font-bold text-3xl text-green-400");
         button.onclick = (function() {
             this.onconnectwalletclick();
         }).bind(this);
@@ -76,24 +77,16 @@ class MainScreen extends Screen {
         var wad = this.model.getProviderBalanceWad();
         D.deleteChildren(this.auth_balance_div);
         var border = D.emptyDiv(this.auth_balance_div,
-                                "px-2 py-2 bg-gray-800 hover:bg-gray-900 border border-gray-600 rounded-2xl text-gray-300");
-        var icon_span = D.emptySpan(border, "px-2 font-bold");
-        icon_span.onclick = (function() {
-            this.onconnectappclick();
-        }).bind(this);
-        I.flyingmoney(icon_span);
-        var a = D.textSpan(border, "App", "px-2 font-bold text-gray-300");
-        a.onclick = (function() {
-            this.onconnectappclick();
-        }).bind(this);
-        var p = D.textParagraph(border, wad.toString(),
-                                "font-bold text-sm text-gray-300");
-        p.onclick = (function() {
-            this.onconnectappclick();
-        }).bind(this);
+            ("px-4 py-2 bg-gray-800 hover:bg-gray-900 border " +
+             "border-gray-600 rounded-2xl text-gray-300"));
         border.onclick = (function() {
             this.onconnectappclick();
         }).bind(this);
+        var icon_span = D.emptySpan(border, "px-2 font-bold");
+        I.flyingmoney(icon_span);
+        var a = D.textSpan(border, "App Authorized", "px-2 font-bold text-sm text-gray-300");
+        var p = D.textParagraph(border, wad.toString(),
+                                "font-bold text-sm text-gray-300");
         var sats = (wad['msats'] / 1000.0).toFixed(3) + " sats";
         var hoverstring = wad['name'] + "\n" + sats;
         border.setAttribute("title", hoverstring);
@@ -102,7 +95,8 @@ class MainScreen extends Screen {
     drawPing() {
         var msecs = this.model.getConsumerLastPing();
         D.deleteChildren(this.ping_div);
-        D.textParagraph(this.ping_div, msecs.toString() + " ms", "text-sm text-gray-300");
+        D.textParagraph(this.ping_div, msecs.toString() + " ms",
+                        "text-sm text-gray-300");
     }
 
 
@@ -124,17 +118,21 @@ class MainScreen extends Screen {
 
         if (error != null) {
             D.textSpan(flex, "Manual Receive Err: " + error,
-                       "flex-grow font-bold");
+                       "pl-4 font-bold text-left");
         } else if (! got_invoice) {
             D.textSpan(flex, "Waiting for invoice " + wad.toString(),
-                       "flex-grow text-sm");
+                       "pl-4 text-left");
         } else if (completed) {
-            D.textSpan(flex, "Manual Receive", "flex-grow text-sm");
+            D.textSpan(flex, "Manual Receive", "pl-4 text-left");
+            D.emptyDiv(flex, "flex-grow");
             D.textSpan(flex, "+ " + wad.toString(),
-                       "font-bold text-green-400 px-2");
+                       "font-bold text-green-400 text-right w-40");
         } else {
-            D.textSpan(flex, "Manual receive in progress ", "flex-grow text-sm");
-            D.textSpan(flex, wad.toString(), "font-bold ms-green-txt px-2");
+            D.textSpan(flex, "Manual receive in progress ",
+                       "pl-4 text-left");
+            D.emptyDiv(flex, "flex-grow");
+            D.textSpan(flex, wad.toString(),
+                       "font-bold text-gray-400 text-right w-40");
         }
     }
 
@@ -153,15 +151,16 @@ class MainScreen extends Screen {
         description = (description == null) ? "(no description)" : description;
 
         if (error != null) {
-            D.textSpan(flex, "Pay Error: " + error, "flex-grow font-bold");
+            D.textSpan(flex, "Pay Error: " + error, "pl-4 text-left font-bold");
         } else if (! completed) {
-            D.textSpan(flex, "Paying", "flex-grow font-bold");
-            D.textSpan(flex, description, "flex-grow text-sm");
+            D.textSpan(flex, "Paying", "pl-4 font-bold text-left");
+            D.textSpan(flex, description, "pl-4 text-left");
         } else {
-            D.textSpan(flex, "Paid", "flex-grow font-bold");
-            D.textSpan(flex, description, "flex-grow text-sm");
+            D.textSpan(flex, "Paid", "pl-4 text-left");
+            D.textSpan(flex, description, "text-left pl-4");
+            D.emptyDiv(flex, "flex-grow");
             D.textSpan(flex, "+ " + wad.toString(),
-                       "font-bold text-red-700 px-2");
+                       "font-bold text-red-400 w-40 text-right");
         }
     }
 
@@ -177,17 +176,19 @@ class MainScreen extends Screen {
         var flex = D.emptyDiv(d, "flex items-center justify-start");
         var icon_span = D.emptySpan(flex, "px-2 font-bold");
         I.flyingmoney(icon_span);
-        var label = ended ? "Socket Session" : "In Progress";
-        D.textSpan(flex, label, "flex-grow text-sm");
-        D.textSpan(flex, total_txs.toString() + "tx", "font-bold px-2");
+        var label = ended ? "Socket Session Completed" :
+                            "Socket Session In Progress";
+        D.textSpan(flex, label, "pl-4 text-left");
+        D.emptyDiv(flex, "flex-grow");
+        D.textSpan(flex, total_txs.toString() + "tx", "font-bold w-30 text-right");
         var wad = (total_txs == 0) ?
             this.model.msatsToWalletCurrencyWad(0) : total_wad;
         if (increment) {
             D.textSpan(flex, "+ " + wad.toString(),
-                       "font-bold ms-green-txt px-2");
+                       "font-bold text-green-400 w-40 text-right");
         } else {
             D.textSpan(flex, "- " + wad.toString(),
-                       "font-bold text-red-700 px-2");
+                       "font-bold text-red-400 w-40 text-right");
         }
     }
 
@@ -197,8 +198,9 @@ class MainScreen extends Screen {
 
     drawConnectWalletPanel(div, connect_func) {
         var flex = D.emptyDiv(div,
-                              "flex-col justify-evenly connect-wallet-panel");
-        this.drawConnectWalletButton(flex, connect_func);
+                              "flex flex-col justify-center items-center py-5 bg-gray-700");
+        var row = D.emptyDiv(flex, "flex flex-row justify-center");
+        this.drawConnectWalletButton(row, connect_func);
     }
 
     drawAppSocketInfo(connect_func) {
@@ -220,14 +222,13 @@ class MainScreen extends Screen {
     }
 
     drawBalancePanel(div, connect_func) {
-        var flex = D.emptyDiv(div,
-                              "flex-col justify-evenly section-background balance-panel");
+        var outer = D.emptyDiv(div, "bg-gray-700 px-1 py-2");
+        var flex = D.emptyDiv(outer,
+            "flex flex-col justify-evenly rounded-xl px-2 py-2 bg-gray-800");
         var left_box = D.emptyDiv(flex, "flex flex-row");
 
         this.auth_balance_div = D.emptyDiv(left_box);
-        this.drawAppSocketInfo(left_box, connect_func);
-        //var button_div = D.emptyDiv(left_box);
-        //this.drawConnectAppButton(button_div, connect_func);
+        this.drawAppSocketInfo(connect_func);
 
         this.balance_div = D.emptyDiv(flex);
         this.drawBalance();
@@ -254,14 +255,16 @@ class MainScreen extends Screen {
     }
 
     drawReceiptPanel(div, click_func) {
-        var flex = D.emptyDiv(div,
-                              "flex-col justify-evenly section-background receipt-panel");
+        var outer = D.emptyDiv(div, "px-1 py-2 overflow-auto");
+        var s = D.emptyDiv(outer, "px-4 py-4 bg-gray-800 rounded-3xl");
+        var flex = D.emptyDiv(s, "flex flex-col justify-evenly");
         this.receipts_div = D.emptyDiv(flex);
         this.drawReceipts(click_func);
     }
 
     drawActionPanel(div, scan_func, menu_func) {
-        var flex = D.emptyDiv(div, "flex justify-evenly section-background-lite");
+        var flex = D.emptyDiv(div,
+            "flex justify-evenly py-4 bg-gray-700");
         this.drawScanButton(flex, scan_func);
         this.drawMenuButton(flex, menu_func);
     }
@@ -277,6 +280,9 @@ class MainScreen extends Screen {
         if (this.auth_balance_div != null) {
             this.drawAppSocketInfo(this.onconnectappclick);
         }
+    }
+
+    redrawPing() {
         if (this.ping_div != null) {
             this.drawPing();
         }
@@ -290,28 +296,26 @@ class MainScreen extends Screen {
     }
 
     draw() {
-        var flex = this.screenDiv("div-reg-flex");
-        var flex_top = D.emptyDiv(flex, "flex-none");
-        var flex_mid = D.emptyDiv(flex, "flex-grow");
-        var flex_bottom = D.emptyDiv(flex, "flex-none");
+        var screen = this.screenDiv();
+        var flex = D.emptyDiv(screen, "flex flex-col justify-between h-full")
 
         switch (this.model.getConsumerConnectState()) {
         case CONNECT_STATE.CONNECTED:
-            this.drawBalancePanel(flex_top, this.onconnectappclick);
+            this.drawBalancePanel(flex, this.onconnectappclick);
             break;
         case CONNECT_STATE.CONNECTING:
-            this.drawConnectWalletPanel(flex_top, this.onconnectwalletclick);
+            this.drawConnectWalletPanel(flex, this.onconnectwalletclick);
             break;
         case CONNECT_STATE.DISCONNECTED:
-            this.drawConnectWalletPanel(flex_top, this.onconnectwalletclick);
+            this.drawConnectWalletPanel(flex, this.onconnectwalletclick);
             break;
         default:
             console.error("unknown state");
             break;
         }
 
-        this.drawReceiptPanel(flex_mid, this.onreceiptclick);
-        this.drawActionPanel(flex_bottom, this.onscanclick, this.onmenuclick);
+        this.drawReceiptPanel(flex, this.onreceiptclick);
+        this.drawActionPanel(flex, this.onscanclick, this.onmenuclick);
     }
 }
 

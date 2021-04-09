@@ -110,7 +110,7 @@ class ManualReceiveScreen extends Screen {
         var across = D.emptyDiv(div, "flex justify-around py-4 bg-gray-800");
         var col1 = D.emptyDiv(across, "flex flex-col");
         D.textSpan(col1, "Available:", "text-gray-300");
-        D.textSpan(col1, wad.toString(), "font-bold text-xl ms-green-txt");
+        D.textSpan(col1, wad.toString(), "font-bold text-xl text-green-400");
         var col2 = D.emptyDiv(across, "flex flex-col items-center");
         var r1 = D.emptyDiv(col2, "flex justify-center");
         D.textSpan(r1, "Can Send:", "text-gray-300");
@@ -136,7 +136,7 @@ class ManualReceiveScreen extends Screen {
     ///////////////////////////////////////////////////////////////////////////
 
     draw() {
-        var flex = D.emptyDiv(this.app_div, "flex flex-col h-screen");
+        var flex = this.screenDiv();
         var flex_top = D.emptyDiv(flex, "flex-none");
         this.drawTitlePanel(flex_top);
 

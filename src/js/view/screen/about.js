@@ -29,6 +29,7 @@ class AboutScreen extends Screen {
                         "text-subheading");
         D.textParagraph(flex, "Reckless! Use at your own risk!",
                         "text-subheading");
+        D.emptyDiv(flex, "h-10");
         D.hyperlinkTabOpen(flex, "Wallet Source",
                            "https://github.com/moneysocket/costanza",
                            "text-link");
@@ -38,6 +39,7 @@ class AboutScreen extends Screen {
                            "text-link");
         D.hyperlinkTabOpen(flex, "Donate", "https://socket.money/#donate",
                            "text-link");
+        D.emptyDiv(flex, "h-10");
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -45,13 +47,13 @@ class AboutScreen extends Screen {
     ///////////////////////////////////////////////////////////////////////////
 
     draw() {
-        var flex = D.emptyDiv(this.app_div, "flex flex-col h-screen");
-        var flex_top = D.emptyDiv(flex, "flex-none");
+        var screen = this.screenDiv();
+        var flex_top = D.emptyDiv(screen, "flex-none");
         this.drawTitlePanel(flex_top);
 
-        var flex_mid = D.emptyDiv(flex, "flex-grow");
+        var flex_mid = D.emptyDiv(screen, "flex-grow");
         this.drawInfoPanel(flex_mid);
-        var flex_bottom = D.emptyDiv(flex, "flex-none");
+        var flex_bottom = D.emptyDiv(screen, "flex-none");
     }
 }
 

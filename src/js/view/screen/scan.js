@@ -117,7 +117,7 @@ class ScanScreen extends Screen {
 
     draw() {
         //console.log("path: " + QrScanner.WORKER_PATH);
-        var flex = D.emptyDiv(this.app_div, "flex flex-col h-screen");
+        var flex = this.screenDiv();
         var flex_top = D.emptyDiv(flex, "flex-none");
         this.drawTitlePanel(flex_top);
 

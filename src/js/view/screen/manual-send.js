@@ -70,13 +70,13 @@ class ManualSendScreen extends Screen {
 
         var val = D.emptyDiv(div, "flex flex-col");
         D.textParagraph(val, this.bolt11,
-                   "font-black break-words text-gray-300 py-5");
+                   "font-black break-all text-gray-300 py-5");
         D.textParagraph(val, "Description: " + description,
                         "font-black text-gray-300 py-5");
         D.textParagraph(val, "Requested: " + send_wad.toString(),
                    "font-black text-gray-300 py-5");
         D.textParagraph(val, "Expires: " + expiryfmt.toString(),
-                   "font-black break-words text-gray-300 py-5");
+                   "font-black break-all text-gray-300 py-5");
 
         var button_div = D.emptyDiv(val, "flex justify-center py-2");
         this.drawPayButton(button_div,
@@ -119,7 +119,7 @@ class ManualSendScreen extends Screen {
 
     draw(bolt11) {
         this.bolt11 = bolt11;
-        var flex = D.emptyDiv(this.app_div, "flex flex-col h-screen");
+        var flex = this.screenDiv();
         var flex_top = D.emptyDiv(flex, "flex-none");
         this.drawTitlePanel(flex_top);
 
