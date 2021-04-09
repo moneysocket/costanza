@@ -193,12 +193,26 @@ class MainScreen extends Screen {
     }
 
     ///////////////////////////////////////////////////////////////////////////
+    // tutorial
+    ///////////////////////////////////////////////////////////////////////////
+
+    drawTutorialLink(div) {
+        var flex = D.emptyDiv(div,
+            "flex flex-col justify-center items-center py-5 bg-gray-800");
+        var row = D.emptyDiv(flex, "flex flex-col justify-center");
+        D.textParagraph(row, "Not sure what's going on?",
+                        "text-gray-400 text-center");
+        D.hyperlinkTabOpen(row, "See Tutorial", "https://socket.money/tutorial",
+                           "text-center font-bold text-2xl text-green-500");
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
     // Panels
     ///////////////////////////////////////////////////////////////////////////
 
     drawConnectWalletPanel(div, connect_func) {
         var flex = D.emptyDiv(div,
-                              "flex flex-col justify-center items-center py-5 bg-gray-700");
+            "flex flex-col justify-center items-center py-5 bg-gray-700");
         var row = D.emptyDiv(flex, "flex flex-row justify-center");
         this.drawConnectWalletButton(row, connect_func);
     }
@@ -240,6 +254,10 @@ class MainScreen extends Screen {
     drawReceipts(click_func) {
         D.deleteChildren(this.receipts_div);
         var receipts = this.model.getReceipts();
+        if (receipts.length == 0) {
+            this.drawTutorialLink(this.receipts_div);
+            return;
+        }
         for (var i = (receipts.length - 1); i >= 0; i--) {
             var r = receipts[i];
             if (r.type == "socket_session") {
