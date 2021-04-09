@@ -156,6 +156,7 @@ class CostanzaModel {
         console.log("consumer revoke");
         this.consumer_state = CONNECT_STATE.DISCONNECTED;
         this.consumer_reported_info = null;
+        this.disconnectProvider();
         if (this.onconsumeroffline != null) {
             this.onconsumeroffline();
         }
