@@ -39,6 +39,7 @@ gulp.task('copyMisc', function copyMisc(cb) {
     gulp.src('src/js/qr-scanner-worker.min.js').pipe(gulp.dest('htdocs/js/'));
     gulp.src('src/js/qr-scanner-worker.min.js.map').pipe(gulp.dest('htdocs/js/'));
     gulp.src('src/browserconfig.xml').pipe(gulp.dest('htdocs/'));
+    gulp.src('src/favicon.ico').pipe(gulp.dest('htdocs/'));
     gulp.src('src/webfonts/*').pipe(gulp.dest('htdocs/webfonts'));
     gulp.src('src/img/*').pipe(gulp.dest('htdocs/img'));
     gulp.src('src/icons/*').pipe(gulp.dest('htdocs/icons'));
