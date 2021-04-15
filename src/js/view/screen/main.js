@@ -159,7 +159,7 @@ class MainScreen extends Screen {
             D.textSpan(flex, "Paid", "pl-4 text-left");
             D.textSpan(flex, description, "text-left pl-4");
             D.emptyDiv(flex, "flex-grow");
-            D.textSpan(flex, "+ " + wad.toString(),
+            D.textSpan(flex, "- " + wad.toString(),
                        "font-bold text-red-400 w-40 text-right");
         }
     }
